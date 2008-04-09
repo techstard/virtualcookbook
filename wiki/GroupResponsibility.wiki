@@ -20,4 +20,4 @@
   * GUI tweaking
 
 === Tobias ===
-  * Return home :)
+  * Create recipe database
