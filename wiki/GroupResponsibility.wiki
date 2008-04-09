@@ -1,0 +1,23 @@
+#summary One-sentence summary of this page.
+
+== Personal Responsibility ==
+
+  * All members must document their code
+
+=== Anders ===
+  * Create recipe database
+
+=== Magnus ===
+  * Research link parser
+
+=== Olof ===
+  * Research link parser
+
+=== Patrik ===
+  * GUI tweaking
+
+=== Robert === 
+  * GUI tweaking
+
+=== Tobias ===
+  * Return home :)
