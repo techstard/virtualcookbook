@@ -1,6 +1,25 @@
 #summary One-sentence summary of this page.
 
-= Introduction =
+= First Header =
+
+Here the stuff can be written.
+
+== This be the second heading ==
+
+Yarr me maities!! Where be the scallywags that we shall send to Davey Jones locker!!
+
+~~skit på dig~~
+  # hej på
+  # dig
+
+Now some code..
+
+{{{
+int main()
+{
+    printf("Hello World");
+}
+}}}
 
 OMG this is the content!!.
 
