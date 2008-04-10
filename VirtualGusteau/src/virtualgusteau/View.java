@@ -4,6 +4,13 @@ package virtualgusteau;
 import java.awt.*;
 import javax.swing.*;
 import java.util.*;
+import javax.swing.border.*;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import java.awt.image.*;
+import javax.imageio.ImageIO;
+import java.io.*;
+
 
 /**
  * @author Robert Krantz
@@ -13,16 +20,18 @@ public class View extends JFrame implements Observer {
     private Controller controller;
     private Model model;
     
+    private JPanel right;
+    private JPanel left;
+    
     private JTextField textField;
     private JTextArea textArea;
-        
+    private JPanel pictureFrame;
+    
     public View(Model model) {
         this.model = model;
         controller = new Controller(model);
         
-        setTitle("Virtual Gusteau");
-        
-        
+        setTitle("Virtual Gusteau");       
         
         /*
          * Create the menu
@@ -39,7 +48,11 @@ public class View extends JFrame implements Observer {
             
             setJMenuBar(menubar);
         
-                
+        left = new JPanel();
+        right = new JPanel();
+        
+        left.setLayout(new BorderLayout());
+                        
         textField = new JTextField();
         textField.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
         textField.setActionCommand("2");
@@ -58,10 +71,24 @@ public class View extends JFrame implements Observer {
         JSeparator separator = new JSeparator();
         separator.setForeground(Color.gray);
         
-        add(pane);
-        add(textField,BorderLayout.SOUTH);
-
-        setSize(400,400);
+        left.add(pane);
+        left.add(textField,BorderLayout.SOUTH);
+        
+        pictureFrame = new JPanel();
+        pictureFrame.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+        pictureFrame.setBounds(15,15,120,120);
+        pictureFrame.setBackground(Color.red);
+                                
+        right.setPreferredSize(new Dimension(150,400));
+        right.setBorder(BorderFactory.createEtchedBorder());
+        right.setLayout(null);
+        
+        right.add(pictureFrame);
+        
+        add(left);
+        add(right,BorderLayout.EAST);
+        
+        setSize(500,400);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
@@ -69,5 +96,15 @@ public class View extends JFrame implements Observer {
     public void update(Observable o, Object arg) {
         textArea.append(model.getArea() + "\n");
         textField.setText(model.getField());
+    }
+    
+    public class AnImage extends JPanel {
+        public void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            
+            Graphics2D g2d = (Graphics2D) g;
+            Image image = new ImageIcon("Gusteau.jpg").getImage();
+            g2d.drawImage(image, 10, 10,null);
+        }
     }
 }
