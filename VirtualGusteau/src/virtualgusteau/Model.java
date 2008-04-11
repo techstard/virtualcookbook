@@ -9,21 +9,36 @@ import java.util.*;
  */
 public class Model extends Observable {
     
-    private String ta = "";
-    private String tf = "";
+    private String input;
+    private String output;
     
-    
-    public String getArea() {
-        return ta;
+    /**
+     * 
+     * @return The system response to a user input
+     */
+    public String getOutput() {
+        return output;
     }
-    public String getField() {
-        return tf;
-    }
-    
+    /**
+     * 
+     * @return What the user inputed into the system
+     */
+    public String getInput() {
+        return input;
+    }    
+    /**
+     * 
+     * @param arg The user input
+     */
     public void parse(String arg) {
         
-        ta = arg;
-        tf = "";
+        input = arg;
+        
+        if(arg.contains("hello")) {
+            output = "Bonjour";
+        } else {
+            output = "qui êtes-vous ?";
+        }
         
         setChanged();
         notifyObservers();
