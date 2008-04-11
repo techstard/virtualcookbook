@@ -76,19 +76,26 @@ public class View extends JFrame implements Observer {
         
         pictureFrame = new JPanel();
         pictureFrame.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-        pictureFrame.setBounds(15,15,120,120);
-        pictureFrame.setBackground(Color.red);
+        pictureFrame.setBounds(63,13,124,124);
                                 
-        right.setPreferredSize(new Dimension(150,400));
+        right.setPreferredSize(new Dimension(250,400));
         right.setBorder(BorderFactory.createEtchedBorder());
         right.setLayout(null);
+        
+        ImageIcon icon = new ImageIcon("Gusteau_icon.jpg");
+        JLabel label = new JLabel();
+        label.setIcon(icon);
+        
+        pictureFrame.setLayout(null);
+        label.setBounds(2,2,120,120);
+        pictureFrame.add(label);
         
         right.add(pictureFrame);
         
         add(left);
         add(right,BorderLayout.EAST);
         
-        setSize(500,400);
+        setSize(700,600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
@@ -96,15 +103,5 @@ public class View extends JFrame implements Observer {
     public void update(Observable o, Object arg) {
         textArea.append(model.getArea() + "\n");
         textField.setText(model.getField());
-    }
-    
-    public class AnImage extends JPanel {
-        public void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            
-            Graphics2D g2d = (Graphics2D) g;
-            Image image = new ImageIcon("Gusteau.jpg").getImage();
-            g2d.drawImage(image, 10, 10,null);
-        }
     }
 }
