@@ -2,7 +2,8 @@
 package virtualgusteau;
 
 import java.util.*;
-
+import com.knowledgebooks.nlp.fasttag.FastTag;
+import com.knowledgebooks.nlp.util.Tokenizer;
 /**
  *
  * @author rkrantz
@@ -32,13 +33,21 @@ public class Model extends Observable {
      */
     public void parse(String arg) {
         
-        input = arg;
+        input = arg;        
         
+        String[] words = com.knowledgebooks.nlp.util.Tokenizer.wordsToArray(arg);
+        String[] tags = (new FastTag()).tag(words);
+        
+        for (int i = 0; i < words.length; i++) {
+            System.out.println(words[i] + "/" + tags[i]);
+        }
+        
+        /*
         if(arg.contains("hello")) {
             output = "Bonjour";
         } else {
             output = "qui êtes-vous ?";
-        }
+        }*/
         
         setChanged();
         notifyObservers();
