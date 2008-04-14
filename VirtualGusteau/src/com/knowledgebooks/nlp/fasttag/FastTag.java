@@ -27,9 +27,9 @@ public class FastTag {
     public static Hashtable<String, String[]> lexicon = new Hashtable<String, String[]>(); // make private after debug
 
     static {
-        System.out.println("Starting to load FastTag data...");
+        //System.out.println("Starting to load FastTag data...");
         try {
-            System.out.println("Starting kbs.fasttag.FastTag static initialization...");
+            //System.out.println("Starting kbs.fasttag.FastTag static initialization...");
             InputStream ins = FastTag.class.getClassLoader().getResourceAsStream("lexicon.txt");
             if (ins == null) {
                 ins = new FileInputStream("data/lexicon.txt");
@@ -45,7 +45,7 @@ public class FastTag {
                 while (scanner.hasNext()) {
                     parseLine(scanner.next());
                 }
-                System.out.println(lexicon.size());
+                //System.out.println(lexicon.size());
                 scanner.close();
             }
         } catch (Exception e) {
