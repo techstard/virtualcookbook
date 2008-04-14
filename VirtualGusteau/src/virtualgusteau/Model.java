@@ -13,7 +13,15 @@ public class Model extends Observable {
     private String input;
     private String output;
     private String nouns;
+    private FastTag fastTag;
     
+    /**
+     * Constructor that's used to initialize the hashing of the lexicon at the start of the program [spanggar]
+     */
+    public Model()
+    {
+        fastTag = new FastTag(); //Puts the damn lexicon in hashtable. [spanggar]
+    }
     /**
      * 
      * @return The system response to a user input
@@ -40,7 +48,8 @@ public class Model extends Observable {
         input = arg;        
         
         String[] words = com.knowledgebooks.nlp.util.Tokenizer.wordsToArray(arg);
-        String[] tags = (new FastTag()).tag(words);
+        //String[] tags = (new FastTag()).tag(words);
+        String[] tags = fastTag.tag(words);
         
         output = "\n";
         nouns = "";
