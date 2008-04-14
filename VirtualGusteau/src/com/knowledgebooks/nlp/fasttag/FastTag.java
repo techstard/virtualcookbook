@@ -45,7 +45,7 @@ public class FastTag {
                 while (scanner.hasNext()) {
                     parseLine(scanner.next());
                 }
-                //System.out.println(lexicon.size());
+                //System.out.println(lexicon.size()); //added by rkrantz
                 scanner.close();
             }
         } catch (Exception e) {
