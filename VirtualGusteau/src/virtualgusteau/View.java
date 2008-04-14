@@ -197,5 +197,6 @@ public class View extends JFrame implements Observer {
         
         chatArea.append("[" + s + "]<Linguini>: " + model.getInput() + "\n");
         chatArea.append("[" + s + "]<Gusteau>: " + model.getOutput() + "\n");
+        recipeArea.append(model.getNouns());
     }
 }

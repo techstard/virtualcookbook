@@ -12,6 +12,7 @@ public class Model extends Observable {
     
     private String input;
     private String output;
+    private String nouns;
     
     /**
      * 
@@ -26,7 +27,10 @@ public class Model extends Observable {
      */
     public String getInput() {
         return input;
-    }    
+    }
+    public String getNouns() {
+        return nouns;
+    }
     /**
      * 
      * @param arg The user input
@@ -38,8 +42,13 @@ public class Model extends Observable {
         String[] words = com.knowledgebooks.nlp.util.Tokenizer.wordsToArray(arg);
         String[] tags = (new FastTag()).tag(words);
         
+        output = "\n";
+        nouns = "";
         for (int i = 0; i < words.length; i++) {
-            System.out.println(words[i] + "/" + tags[i]);
+            if(tags[i].contains("NN")) {
+                nouns += words[i] + "\n";
+            }
+            output += words[i] + "/" + tags[i] + "\n";
         }
         
         /*
