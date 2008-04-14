@@ -6,10 +6,8 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.util.*;
 import javax.swing.border.*;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import java.awt.image.*;
-import javax.imageio.ImageIO;
 import java.io.*;
 
 import java.util.Calendar;

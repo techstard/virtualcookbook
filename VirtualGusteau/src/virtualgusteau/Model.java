@@ -15,12 +15,16 @@ public class Model extends Observable {
     private String nouns;
     private FastTag fastTag;
     
+    public void setFastTag(FastTag fastTag) {
+        this.fastTag = fastTag;
+    }
+    
     /**
      * Constructor that's used to initialize the hashing of the lexicon at the start of the program [spanggar]
      */
     public Model()
     {
-        fastTag = new FastTag(); //Puts the damn lexicon in hashtable. [spanggar]
+        //fastTag = new FastTag(); //Puts the damn lexicon in hashtable. [spanggar]
     }
     /**
      * 
@@ -36,6 +40,11 @@ public class Model extends Observable {
     public String getInput() {
         return input;
     }
+    /**
+     * 
+     * @return A String of all nouns in inputed sentence
+     *         Separated by new line
+     */
     public String getNouns() {
         return nouns;
     }
@@ -47,7 +56,7 @@ public class Model extends Observable {
         
         input = arg;        
         
-        String[] words = com.knowledgebooks.nlp.util.Tokenizer.wordsToArray(arg);
+        String[] words = Tokenizer.wordsToArray(arg);
         //String[] tags = (new FastTag()).tag(words);
         String[] tags = fastTag.tag(words);
         
@@ -59,13 +68,6 @@ public class Model extends Observable {
             }
             output += words[i] + "/" + tags[i] + "\n";
         }
-        
-        /*
-        if(arg.contains("hello")) {
-            output = "Bonjour";
-        } else {
-            output = "qui êtes-vous ?";
-        }*/
         
         setChanged();
         notifyObservers();
