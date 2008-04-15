@@ -8,71 +8,81 @@ package virtualgusteau;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.border.*;
 
 /**
  *
  * @author rkrantz
  */
 public class OptionDialog extends JDialog {
+    
+    private JPanel topPanel;
+    private JPanel leftPanel;
+    private JPanel centerPanel;
+    private JPanel bottomPanel;
+    
     OptionDialog() {
         setTitle("Virtual Gusteau");
         
-        JPanel basic = new JPanel();
-        basic.setLayout(new BoxLayout(basic, BoxLayout.Y_AXIS));
-        add(basic);
+        setLayout(new BorderLayout());
         
-        JPanel topPanel = new JPanel(new BorderLayout(0,0));
-        topPanel.setMaximumSize(new Dimension(450,0));
-        JLabel hint = new JLabel("Preferences");
-        hint.setBorder(BorderFactory.createEmptyBorder(0,25,0,0));
-        topPanel.add(hint);
+        headerPanel();
+        optionPanel();
+        contentPanel();
+        buttonPanel();    
         
-        JLabel label = new JLabel("bild?");
-        label.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-        topPanel.add(label, BorderLayout.EAST);
+        add(topPanel,BorderLayout.NORTH);
+        add(leftPanel,BorderLayout.WEST);
+        add(centerPanel,BorderLayout.CENTER);
+        add(bottomPanel,BorderLayout.SOUTH);
         
-        JSeparator separator = new JSeparator();
-        separator.setForeground(Color.gray);
-        
-        topPanel.add(separator, BorderLayout.SOUTH);
-        
-        basic.add(topPanel);
-        
-        JPanel textPanel = new JPanel(new BorderLayout());
-        textPanel.setBorder(BorderFactory.createEmptyBorder(15, 25, 15, 25));
-        JTextPane pane = new JTextPane();
-        
-        pane.setContentType("text/html");
-        String text = "<p><b>Closing windows using the mouse wheel</b></p>" +
-            "<p>Clicking with the mouse wheel on an editor tab closes the window. " +
-            "This method works also with dockable windows or Log window tabs.</p>";
-        pane.setText(text);
-        pane.setEditable(false);
-        textPanel.add(pane);
-        
-        basic.add(textPanel);
-        
-        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        
-        JButton cancel = new JButton("Cancel");
-        cancel.setMnemonic(KeyEvent.VK_C);
-        cancel.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
-        JButton close = new JButton("OK");
-        close.setMnemonic(KeyEvent.VK_O);
-
-        bottom.add(cancel);
-        bottom.add(close);
-        basic.add(bottom);
-
-        bottom.setMaximumSize(new Dimension(450, 0));
-
-        setSize(new Dimension(450, 350));
+        setSize(new Dimension(550, 350));
         setResizable(false);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
+    }
+    private void headerPanel() {
+        topPanel = new JPanel(new BorderLayout());
+        topPanel.setPreferredSize(new Dimension(550,20));
+        
+        JLabel label = new JLabel("Preferences");        
+        topPanel.add(label,BorderLayout.WEST);
+        
+        ImageIcon i = new ImageIcon("graphics/preferences-16x16.png");
+        JLabel icon = new JLabel();
+        icon.setBorder(BorderFactory.createEmptyBorder(0,0,0,5));
+        icon.setIcon(i);
+        topPanel.add(icon,BorderLayout.EAST);
+        
+        JSeparator separator = new JSeparator();
+        separator.setForeground(Color.BLACK);
+        topPanel.add(separator,BorderLayout.SOUTH);
+        
+    }
+    private void optionPanel() {
+        leftPanel = new JPanel();
+        leftPanel.setPreferredSize(new Dimension(130,350));
+        leftPanel.setBackground(Color.gray);
+    }
+    private void contentPanel() {
+        centerPanel = new JPanel();
+    }
+    private void buttonPanel() {
+        bottomPanel = new JPanel(new BorderLayout());
+        
+        JSeparator separator = new JSeparator();
+        separator.setForeground(Color.black);
+        bottomPanel.add(separator,BorderLayout.NORTH);
+        
+        JButton ok = new JButton("OK");
+        JButton cancel = new JButton("Cancel");
+        
+        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        buttons.add(ok);
+        buttons.add(cancel);
+        
+        bottomPanel.add(buttons,BorderLayout.CENTER);
+        
+        bottomPanel.setPreferredSize(new Dimension(550,40));
     }
 }

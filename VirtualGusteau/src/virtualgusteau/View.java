@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import java.text.DateFormat;
+import javax.swing.plaf.DimensionUIResource;
 
 
 /**
@@ -108,7 +109,7 @@ public class View extends JFrame implements Observer {
         right.setBorder(BorderFactory.createEtchedBorder());
         right.setLayout(null);
         
-        ImageIcon icon = new ImageIcon("Gusteau_icon_200px.jpg");
+        ImageIcon icon = new ImageIcon("graphics/Gusteau_icon_200px.jpg");
         JLabel label = new JLabel();
         label.setIcon(icon);
         
@@ -123,7 +124,7 @@ public class View extends JFrame implements Observer {
         recipeArea.setEditable(true);
         
         recipePane.getViewport().add(recipeArea);
-        recipePane.setBounds(23,206,204,320);
+        recipePane.setBounds(23,206,204,280);
         recipePane.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
         
         right.add(pictureFrame);
@@ -135,7 +136,8 @@ public class View extends JFrame implements Observer {
         setSize(700,600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setResizable(false);
+        setMinimumSize(new Dimension(490,545));
+        setResizable(true);
     }
     public void createMenu() {
         JMenuBar menubar = new JMenuBar();
@@ -162,6 +164,10 @@ public class View extends JFrame implements Observer {
         
         JMenuItem pref = new JMenuItem("Preferences");
         pref.setMnemonic(KeyEvent.VK_P);
+        
+        ImageIcon icon = new ImageIcon("graphics/preferences-16x16.png");
+        pref.setIcon(icon);
+        
         pref.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 OptionDialog o = new OptionDialog();
