@@ -124,8 +124,10 @@ public class View extends JFrame implements Observer {
         recipeArea.setEditable(true);
         
         recipePane.getViewport().add(recipeArea);
+        recipePane.setAutoscrolls(true);
         recipePane.setBounds(23,206,204,280);
         recipePane.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+        recipeArea.setAutoscrolls(true);
         
         right.add(pictureFrame);
         right.add(recipePane);
@@ -149,36 +151,34 @@ public class View extends JFrame implements Observer {
         tools.setMnemonic(KeyEvent.VK_T);
 
         JMenuItem fileClose = new JMenuItem("Close");
+        ImageIcon close_icon = new ImageIcon("graphics/close-16x16.png");
+        fileClose.setIcon(close_icon);
         fileClose.setMnemonic(KeyEvent.VK_C);
-        fileClose.setActionCommand("1");
+        fileClose.setActionCommand("10");
         fileClose.addActionListener(controller);
 
         JMenuItem about = new JMenuItem("About");
+        ImageIcon about_icon = new ImageIcon("graphics/info-about-16x16.png");
+        about.setIcon(about_icon);
         about.setMnemonic(KeyEvent.VK_A);
-        about.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent e) {
-                AboutDialog ad = new AboutDialog();
-                ad.setVisible(true);
-            }
-        });
+        about.setActionCommand("30");
+        about.addActionListener(controller);
         
         JMenuItem pref = new JMenuItem("Preferences");
         pref.setMnemonic(KeyEvent.VK_P);
         
-        ImageIcon icon = new ImageIcon("graphics/preferences-16x16.png");
-        pref.setIcon(icon);
-        
-        pref.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                OptionDialog o = new OptionDialog();
-                o.setVisible(true);
-            }
-        });
+        ImageIcon pref_icon = new ImageIcon("graphics/preferences-16x16.png");
+        pref.setIcon(pref_icon);
+        pref.setActionCommand("20");        
+        pref.addActionListener(controller);
         
         tools.add(pref);
         
         JMenuItem helpMe = new JMenuItem("Help Topics");
+        ImageIcon help_icon = new ImageIcon("graphics/help-16x16.png");
+        helpMe.setIcon(help_icon);
         helpMe.setMnemonic(KeyEvent.VK_E);
+        helpMe.addActionListener(controller);
 
         file.add(fileClose);
         help.add(about);

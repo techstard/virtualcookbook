@@ -75,7 +75,19 @@ public class OptionDialog extends JDialog {
         bottomPanel.add(separator,BorderLayout.NORTH);
         
         JButton ok = new JButton("OK");
+        ok.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent arg0) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+        });
         JButton cancel = new JButton("Cancel");
+        cancel.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent arg0) {
+                dispose();
+            }
+        });
         
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttons.add(ok);
