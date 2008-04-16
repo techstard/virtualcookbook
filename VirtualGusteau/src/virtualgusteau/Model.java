@@ -18,14 +18,6 @@ public class Model extends Observable {
     public void setFastTag(FastTag fastTag) {
         this.fastTag = fastTag;
     }
-    
-    /**
-     * Constructor that's used to initialize the hashing of the lexicon at the start of the program [spanggar]
-     */
-    public Model()
-    {
-        //fastTag = new FastTag(); //Puts the damn lexicon in hashtable. [spanggar]
-    }
     /**
      * 
      * @return The system response to a user input
@@ -66,7 +58,7 @@ public class Model extends Observable {
             if(tags[i].contains("NN")) {
                 nouns += words[i] + "\n";
             }
-            output += words[i] + "/" + tags[i] + "\n";
+            output += words[i] + "/" + tags[i] + " - ";
         }
         
         setChanged();
