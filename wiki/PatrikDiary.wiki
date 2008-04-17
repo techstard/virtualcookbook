@@ -4,5 +4,5 @@ Today we had ourselfs a meeting with Fredrik and had a discussion about starting
 
 Later we started implementing, and have a crude verb-phrase-thing.
 
-We sat for about 3 hours.
+We sat for about 7 hours.
 -------------------------
