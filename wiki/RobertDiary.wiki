@@ -3,7 +3,8 @@
 Dear Diary
 
 Today we had a meeting with Fredrik, it was very informative.
-
 After the meeting we made a simple parser for generating verb phrases from the users input.
 
-Work time: 3h
+Me and Patrik built a Verb Phrase builder that works surprisingly well :D
+
+Work time: 7h
