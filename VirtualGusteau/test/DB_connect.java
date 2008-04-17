@@ -11,10 +11,18 @@ import java.sql.Statement;
  */
 public class DB_connect {
 	
-	private String doWant;
-	private String doNotWant;
-	private String restrictions;
+	// Search variables that configures the query to the database
+	private String wantedIngredients[];
+	private String notWantedIngredients[];
 	
+	private String wantedCategory[];
+	private String notWantedCategory[];
+	
+	private String warnings[];
+	private String specificDish;
+	
+	// This main method should be changed to a 
+	//  constructor class or something in the future.
 	public static void main(String args[]) {
 		Connection con = null;
 
