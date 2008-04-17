@@ -1,5 +1,5 @@
 Today we meet with Fredrik and discussed the project. We got some things clearer and it now feels as if we are more on trak and know what we should do next.
 
-After the meeting with Fredrik we sat down and made a simple....
+After the meeting with Fredrik we sat down and made a simple bit of code so that we now can identifie simple sentance structures such as verbs, nouns, objects and subjects.
 
 WorkTime: 3h
