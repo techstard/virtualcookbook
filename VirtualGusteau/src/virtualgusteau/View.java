@@ -64,6 +64,7 @@ public class View extends JFrame implements Observer {
         controller = new Controller(model);
         
         setTitle("Virtual Gusteau");
+        setIconImage(new ImageIcon("graphics/Gusteau_icon.jpg").getImage()); //Sets the icon of the JFrame.
         createMenu();
         
         left = new JPanel();
