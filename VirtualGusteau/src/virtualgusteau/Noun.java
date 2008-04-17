@@ -9,8 +9,7 @@ package virtualgusteau;
  *
  * @author magnus
  */
-public class Noun extends Word {
-    
+public class Noun extends Word {    
     public Noun(String word) {
         super(word);
     }    
