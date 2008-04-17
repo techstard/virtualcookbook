@@ -14,7 +14,16 @@ public class Model extends Observable {
     private String output;
     private String nouns;
     private FastTag fastTag;
+    private LinkedList<Word> sentence;
     
+    public Model() {
+        sentence = new LinkedList<Word>();
+    }
+    
+    /**
+     * 
+     * @param fastTag Sets the FastTag object of this class
+     */
     public void setFastTag(FastTag fastTag) {
         this.fastTag = fastTag;
     }
@@ -41,27 +50,56 @@ public class Model extends Observable {
         return nouns;
     }
     /**
+     * The initial parsing of the users input
      * 
      * @param arg The user input
      */
     public void parse(String arg) {
         
-        input = arg;        
+        input = arg;      
+        
+        sentence.clear();
         
         String[] words = Tokenizer.wordsToArray(arg);
-        //String[] tags = (new FastTag()).tag(words);
         String[] tags = fastTag.tag(words);
         
-        output = "\n";
-        nouns = "";
-        for (int i = 0; i < words.length; i++) {
-            if(tags[i].contains("NN")) {
-                nouns += words[i] + "\n";
+        for(int i = 0; i < words.length; i++) {
+            if(tags[i].contains("VB")) {
+                sentence.add(new Verb(words[i]));
+            } else if(tags[i].contains("NN") || tags[i].equals("PRP")) {
+                sentence.add(new Noun(words[i]));
             }
-            output += words[i] + "/" + tags[i] + " - ";
         }
+        
+        phrases();
         
         setChanged();
         notifyObservers();
+    }
+    public void phrases() {
+        Verb v  = null;
+        for(int i = 0; i < sentence.size(); i++) {
+            if(sentence.get(i) instanceof Verb) {
+                v = (Verb)sentence.get(i);
+                for(int j = i; j >= 0; j--) {
+                    if(sentence.get(j) instanceof Noun) {
+                        v.setSubject((Noun)sentence.get(j));
+                        break;
+                    }
+                }
+                for(int j = i; j < sentence.size(); j++) {
+                    if(sentence.get(j) instanceof Noun) {
+                        v.setObject((Noun)sentence.get(j));
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+        if(v != null) {
+            System.out.println(v.getWord() + "(" + 
+                    v.getSubject().getWord() + ", " +
+                    v.getObject().getWord() + ")");
+        }
     }
 }
