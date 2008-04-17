@@ -9,25 +9,29 @@ package virtualgusteau;
  *
  * @author magnus
  */
-public class verb {
+public class Verb {
 
     private String verb;
-    private String object;
-    private String subject;
+    private Noun object;
+    private Noun subject;
+    
+    public Verb(String word) {
+        verb = word;
+    }
 
-    public String getObject() {
+    public Noun getObject() {
         return object;
     }
 
-    public void setObject(String object) {
+    public void setObject(Noun object) {
         this.object = object;
     }
 
-    public String getSubject() {
+    public Noun getSubject() {
         return subject;
     }
 
-    public void setSubject(String subject) {
+    public void setSubject(Noun subject) {
         this.subject = subject;
     }
     

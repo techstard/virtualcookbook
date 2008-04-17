@@ -9,9 +9,14 @@ package virtualgusteau;
  *
  * @author magnus
  */
-public class noun {
+public class Noun {
 
     private String noun;
+    
+    public Noun(String word) {
+        noun = word;
+    }
+            
     /**
      * Will return the noun.
      * @return the noun.
