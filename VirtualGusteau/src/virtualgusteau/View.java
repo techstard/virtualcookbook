@@ -63,8 +63,7 @@ public class View extends JFrame implements Observer {
         this.model = model;
         controller = new Controller(model);
         
-        setTitle("Virtual Gusteau");      
-        
+        setTitle("Virtual Gusteau");
         createMenu();
         
         left = new JPanel();
