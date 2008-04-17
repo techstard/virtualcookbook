@@ -7,10 +7,10 @@ package virtualgusteau;
 
 /**
  *
- * @author magnus
+ * @author rkrantz
  */
-public class Verb extends Word {
-    public Verb(String word) {
-        super(word);
-    }
+public class NounPhrase extends Phrase {
+    public NounPhrase(Noun arg) {
+        super(arg);
+    }    
 }
