@@ -9,14 +9,13 @@ package virtualgusteau;
  *
  * @author magnus
  */
-public class Verb {
+public class Verb extends Word{
 
-    private String verb;
     private Noun object;
     private Noun subject;
     
     public Verb(String word) {
-        verb = word;
+        super(word);
     }
 
     public Noun getObject() {
@@ -33,23 +32,5 @@ public class Verb {
 
     public void setSubject(Noun subject) {
         this.subject = subject;
-    }
-    
-    
-    
-    /**
-     * Will return the verb.
-     * @return
-     */
-    public String getVerb() {
-        return verb;
-    }
-    /**
-     * Sets the verb.
-     * @param verb
-     */
-    public void setVerb(String verb) {
-        this.verb = verb;
-    }
-    
+    }    
 }
