@@ -1,0 +1,5 @@
+#summary The diary of Olof Millberg
+
+= 17/4 =
+
+Today we met with Fredrik and he made our picture of the project a bit clearer. After that we worked on the parser and made it able to give a very simple sentence structure. At the moment it can identify subject, verb and object. Next task will probably be to handle more than one object.
