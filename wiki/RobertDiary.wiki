@@ -1,0 +1,9 @@
+2008-04-17
+
+Dear Diary
+
+Today we had a meeting with Fredrik, it was very informative.
+
+After the meeting we made a simple parser for generating verb phrases from the users input.
+
+Work time: 3h
