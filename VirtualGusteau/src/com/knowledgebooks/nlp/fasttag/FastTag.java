@@ -25,7 +25,11 @@ import java.util.*;
 public class FastTag {
 
     public static Hashtable<String, String[]> lexicon = new Hashtable<String, String[]>(); // make private after debug
-
+    
+    /**
+     * This will put the words in lexicon.txt into the Hashtable lexicon.
+     * Commented by spanggar
+     */
     static {
         //System.out.println("Starting to load FastTag data...");
         try {
@@ -53,10 +57,20 @@ public class FastTag {
         }
     }
 
-
+    /**
+     * empty constructor.
+     * Commented by spanggar
+     */
     public FastTag() {
     }
-
+    
+    /**
+     * This function will first search for the word and if not
+     * found search again in lower-case.
+     * @param word is the word to search for in the lexicon.
+     * @return True if the word is in lexicon False otherwise.
+     * Commented by spanggar
+     */
     public boolean wordInLexicon(String word) {
         String[] ss = lexicon.get(word);
         if (ss != null) return true;
@@ -71,11 +85,11 @@ public class FastTag {
         String[] ret = new String[words.length];
         for (int i = 0, size = words.length; i < size; i++) {
             String[] ss = (String[]) lexicon.get(words[i]);
-            // 1/22/2002 mod (from Lisp code): if not in hash, try lower case:
+            // 1/22/2 002 mod (from Lisp code): if not in hash, try lower case:
             if (ss == null)
                 ss = lexicon.get(words[i].toLowerCase());
             if (ss == null && words[i].length() == 1)
-                ret[i] = words[i] + "^";
+                ret[i] = words[i] + "^"; //If no gramatical meaning is found only return ^, spanggar
             if (ss == null)
                 ret[i] = "NN";
             else
@@ -138,7 +152,14 @@ public class FastTag {
             for (int i = 0; i < words.length; i++) System.out.println(words[i] + "/" + tags[i]);
         }
     }
-
+    
+    /**
+     * This function will take a line (formated as in lexicon.txt) and extract
+     * its word and gramatical meanings and add this to the HashTable lexicon as
+     * a tuple of (word, [gramatical meanings]).
+     * @param line is the line from the lexicon that you want to parse and add to the HashTable lexicon.
+     * Commented by spanggar
+     */
     private static void parseLine(String line) {
         int count = 0;
         for (int i=0, size=line.length(); i<size; i++) if (line.charAt(i)==' ') count++;
