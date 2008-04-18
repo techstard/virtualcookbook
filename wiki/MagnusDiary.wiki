@@ -1,5 +1,13 @@
-Today we meet with Fredrik and discussed the project. We got some things clearer and it now feels as if we are more on trak and know what we should do next.
+=April 17=
+Today we met with Fredrik and discussed the project. We got some things clearer and it now feels as if we are more on track and know what we should do next.
 
-After the meeting with Fredrik we sat down and made a simple bit of code so that we now can identifie simple sentance structures such as verbs, nouns, objects and subjects.
+After the meeting with Fredrik we sat down and made a simple bit of code so that we now can identify simple sentence structures such as verbs, nouns, objects and subjects.
+
+WorkTime: 3h
+
+---
+
+=April 18=
+Today I started analyzing the parser (FastTag.java and Tokenizer.java) in an attempt to get an understanding of it and to document it for later use in the report. When done I will hopefully have a quite explanatory Graph (UML) for how the parser works.
 
 WorkTime: 3h
