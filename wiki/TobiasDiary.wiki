@@ -6,7 +6,7 @@
 
 == Week 3 ==
 
-3h trying to get the program to connect to the database correctly
+18/4 -2008 :  3h trying to get the program to connect to the database correctly
 
 == Week 4 ==
 
