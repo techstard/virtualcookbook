@@ -1,4 +1,3 @@
-
 = Tobias Diary =
 
 == Week 1 ==
@@ -6,6 +5,8 @@
 == Week 2 ==
 
 == Week 3 ==
+
+3h trying to get the program to connect to the database correctly
 
 == Week 4 ==
 
