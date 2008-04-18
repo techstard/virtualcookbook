@@ -44,8 +44,7 @@ public class DB_connect {
 			Statement stmt = con.createStatement();
 		
 			// Enter your query.
-			ResultSet rset = stmt.executeQuery ("SELECT * "+
-														"FROM recipes ");
+			ResultSet rset = stmt.executeQuery ("SELECT * FROM recipes ");
 			// Iterate through the result.
 			while (rset.next())
 				System.out.println ("arg2: " + rset.getString(2));
