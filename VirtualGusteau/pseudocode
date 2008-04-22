@@ -1,0 +1,15 @@
+public boolean checkIfIngredient(String ing)
+{
+    handler = connect_to_db():
+    
+    if(handler)
+    {
+        result = query_db("select * from db where ingridient=ing");
+        if(result)
+            reutrn True;
+        else
+            return False;
+    }
+    else
+        System.out.println("failed to connect to db.");
+}
