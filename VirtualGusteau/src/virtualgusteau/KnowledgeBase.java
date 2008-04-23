@@ -18,6 +18,18 @@ public class KnowledgeBase {
     private LinkedList<Word> ingredientsNotWanted = new LinkedList<Word>(); //ingredientsWanted not wanted
     private LinkedList<Word> defects = new LinkedList<Word>(); //defects such as vegetarian
     private int nrOfPersons; //how many people
+
+    public LinkedList<Word> getDefects() {
+        return defects;
+    }
+
+    public LinkedList<Word> getIngredientsNotWanted() {
+        return ingredientsNotWanted;
+    }
+
+    public LinkedList<Word> getIngredientsWanted() {
+        return ingredientsWanted;
+    }
     
     /**
      * This function will try to add the ingredient to the kb and return a bool of its success.
