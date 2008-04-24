@@ -16,13 +16,8 @@ public class Model extends Observable {
     private FastTag fastTag;
     private LinkedList<Word> sentence;
     private LinkedList<Phrase> phraseList;
-    
-    public String[] possessive = {
-        "want","like","wish","love"
-    };
-    public String[] negation = {
-        "not","no","hate"
-    };
+    private String[] words;
+    private String[] tags;
     
     public Model() {
         sentence = new LinkedList<Word>();
@@ -79,20 +74,22 @@ public class Model extends Observable {
          * Call the imported functions for splitting a string into 
          * words and grammatical tags
          */
-        String[] words = Tokenizer.wordsToArray(arg);
-        String[] tags = fastTag.tag(words);
+        words = Tokenizer.wordsToArray(arg);
+        tags = fastTag.tag(words);
         
         
         
         /**
          * Debug code for the result of the parsing
-         *
-        for(int i = 0; i < words.length; i++) {
-            System.out.println(words[i] + "/" + tags[i]);
-        }
          */
-        
-        idNoun(words,tags);
+        output = "";
+        for(int i = 0; i < words.length; i++) {
+            output += words[i] + "/" + tags[i] + " ";
+            //System.out.print(words[i] + "/" + tags[i] + " ");
+        }
+        //System.out.println("\n---------------------------------------");
+                 
+        sentence();
         
         for(int i = 0; i < words.length; i++) {
             if(tags[i].contains("VB")) {                                        // Any form of Verb
@@ -240,37 +237,141 @@ public class Model extends Observable {
                     v.getObject().getWord() + ")");
         }*/
     }
-    public void idNoun(String[] words, String[] tags) {
-        
-        LinkedList<String> t = new LinkedList<String>();
-        String np = "";
+    public LinkedList<String[]> sentence() {
+        LinkedList<String[]> phrases = new LinkedList<String[]>();
+        String np[] = new String[1];
         
         for(int i = 0; i < tags.length; i++) {
-            if(tags[i].contains("NN")) {
-                if(i > 0 && tags[i-1].equals("DT")) {
-                    if(i > 1 && tags[i-2].equals("IN")) {
-                        // ignore since it's part of another NP
-                    } else { 
-                        np = words[i-1] + " " + words[i];
-                        if(i <= tags.length-4 && tags[i+1].equals("IN") && tags[i+2].equals("DT") && tags[i+3].contains("NN")) {
-                            np = np + " " + words[i+1] + " " + words[i+2] + " " + words[i+3];
-                        } else {
-                            // Incorrect sentence ?
-                        }
-                    }
-                } else {
-                    // might be an object
+            if(tags[i].contains("NN") || tags[i].equals("PRP")) {
+                np = idNoun(i);
+            } else if(tags[i].contains("VB")) {
+                idVerb(i);
+            } else if(tags[i].equals("RB")) {
+                // Adverb
+                if(words[i].toLowerCase().equals("not")) {
+                    // Negation
                 }
-            } else if(tags[i].equals("PRP")) {
-                np = words[i];
             }
-            if(t.isEmpty() || !np.equals(t.getLast())) {
-                t.add(np);
+            if(phrases.isEmpty() || !np.equals(phrases.getLast())) {
+                phrases.add(np);
             }
         }
-        for(int i = 0; i < t.size(); i++) {
-            System.out.println(t.get(i));
+        /*
+        for(int i = 0; i < phrases.size(); i++) {
+            System.out.println(phrases.get(i));
         }
+         */
         
+        return phrases;
+    }
+    /**
+     * Extracts the noun phrase(s) from the inputed list of Words given the 
+     * list of grammatical tags using a set of rules to determine what kind of 
+     * noun phrase it is. 
+     * @param words The inputted sentence divided into seperate words stored in a
+     * list of strings
+     * @param tags The list grammatical tags for the word list
+     */
+    public String[] idNoun(int i) {
+        String[] np = new String[1];
+        if(i > 0 && tags[i-1].equals("DT")) {
+            if(i > 1 && tags[i-2].equals("IN")) {
+                // ignore since it's part of another NP
+            } else { 
+                np = new String[2];
+                np[0] = words[i-1] + "/" + tags[i-1];
+                np[1] = words[i] + "/" + tags[i];
+                if(i <= tags.length-4 && tags[i+1].equals("IN") && tags[i+2].equals("DT") && tags[i+3].contains("NN")) {
+                    np = new String[5];
+                    np[0] = words[i-1] + "/" + tags[i-1];
+                    np[1] = words[i] + "/" + tags[i];
+                    np[2] = words[i+1] + "/" + tags[i+1];
+                    np[3] = words[i+2] + "/" + tags[i+2];
+                    np[4] = words[i+3] + "/" + tags[i+3];
+                } else {
+                    // Incorrect sentence ?
+                }
+            }
+        } else {
+            // single noun or pronoun?
+            np = new String[1];
+            np[0] = words[i] + "/" + tags[i];
+        }
+        /*
+        System.out.print("From array: ");
+        for(int j = 0; j < np.length; j++) {
+            System.out.print(np[j] + " ");
+        }
+        System.out.println("");
+         */
+        logic_noun(np);
+        return np;
+    }
+    /**
+     * Creates a set of logical noun phrases of from the inputed noun_phrase
+     * The inputed noun phrases will be of forms:
+     *      Noun
+     *      Determiner + Noun
+     *      Determiner + Noun + Prepositional Phrase
+     *      Pronoun
+     * All words will be followed by a '/' and its grammatical tag
+     * @param phrases
+     */
+    public String logic_noun(String[] noun_phrase) {
+        int length = noun_phrase.length;
+        String logic_noun_phrase = "";
+        
+        if(noun_phrase[0] == null) {
+            
+        }
+        else if(length == 1) {
+            // Noun or Pronoun
+            //System.out.println("Noun or Pronoun");
+            return noun_phrase[0];
+        } else if(length == 2) {            
+            // Determiner + Noun
+            //System.out.println("Determiner + Noun");
+            String word = noun_phrase[0].substring(0, noun_phrase[0].length()-3);
+            if(word.equals("no")) {
+                return "not(" + noun_phrase[1] + ")";
+            } else {
+                return noun_phrase[1];
+            }
+        } else if(length == 5) {
+            // Determiner + Noun + Prepositional Phrase
+            //System.out.println("Determiner + Noun + Prepositional Phrase");
+            return noun_phrase[1];
+        } else {
+            //throw new Exception("Array \"noun_phrase\" is if incorrect length.");
+        }
+        return logic_noun_phrase;
+        
+    }
+    public String[] idVerb(int i) {
+        String[] vp = new String[1];
+        if(tags[i].equals("VB")) {
+            // Verb base form
+        } else if(tags[i].equals("VBD")) {
+            // Verb past tense
+        } else if(tags[i].equals("VBG")) {
+            // Gerund
+        } else if(tags[i].equals("VBN")) {
+            // Verb past participle
+        } else if(tags[i].equals("VBP") || tags[i].equals("VBZ")) {
+            for(int j = i; j < tags.length; j++) {
+                if(tags[j].contains("VB")) {
+                    
+                } else if(tags[j].equals("CC")) {
+                    // Sentence is split
+                    //  e.g. I want apples BUT I do not want pears
+                    break;
+                }
+            }
+        }
+        /*for(int j = 0; j < vp.length; j++) {
+            System.out.print(vp[j] + " ");
+        }
+        System.out.println("\n-------------------");*/
+        return vp;
     }
 }
