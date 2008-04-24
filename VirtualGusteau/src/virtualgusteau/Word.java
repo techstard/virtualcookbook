@@ -24,4 +24,8 @@ public class Word {
     public void setWord(String word) {
         this.word = word;
     }    
+    
+    public String toString() {
+        return word;
+    }
 }
