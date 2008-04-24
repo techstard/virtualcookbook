@@ -13,7 +13,7 @@ import java.util.*;
  * @author magnus
  */
 public class Logic {
-    private KnowledgeBase kb;
+    private KnowledgeBase kb = new KnowledgeBase();
     /**
      * Rules:
      * 1. Objects in ingredientsWanted may not be in ingredientsNotWanted.
@@ -27,6 +27,16 @@ public class Logic {
      * @return true or false depending on if rule #1 is valid or not.
      */
     private boolean ruleOne() {
+        LinkedList<Noun> inw = kb.getIngredientsNotWanted();
+        LinkedList<Noun> iw = kb.getIngredientsWanted();
         
+        for(int i = 0; i < inw.size(); i++) {
+            for(int j = 0; j < iw.size(); j++) {
+                //jämnför object om de är lika.
+                if(inw.get(i).getWord() == iw.get(j).getWord())
+                    return false;
+            }
+        }
+        return true;
     }
 }
