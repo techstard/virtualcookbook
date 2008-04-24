@@ -27,6 +27,7 @@ public class Logic {
      * @return true or false depending on if rule #1 is valid or not.
      */
     private boolean ruleOne() {
+
         LinkedList<Noun> inw = kb.getIngredientsNotWanted();
         LinkedList<Noun> iw = kb.getIngredientsWanted();
         

@@ -60,6 +60,18 @@ public class Model extends Observable {
      */
     public void parse(String arg) {
         
+        if( arg.compareTo("/db") == 0) {
+            DB_connect db = new DB_connect();
+            KnowledgeBase kb = new KnowledgeBase();
+            Noun ingredient = new Noun("banana");
+            kb.addIngredientWanted(ingredient);
+            LinkedList<Noun> ingredientsWanted = kb.getIngredientsWanted();
+            output = db.connect(ingredientsWanted);
+            setChanged();
+            notifyObservers();
+            return;
+        }
+        
         input = arg;      
         
         /**
