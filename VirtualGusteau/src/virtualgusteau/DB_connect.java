@@ -44,7 +44,7 @@ public class DB_connect {
 			/*if(!con.isClosed()) {
 				System.out.println("Successfully connected to " +
 					"MySQL server using TCP/IP...");
-                            return "connection succsessfull";
+                            return "connection successful";
                         } else {
                             return "connection failed";
                         }*/
@@ -55,6 +55,19 @@ public class DB_connect {
 			Statement stmt = con.createStatement();
 		
 			// Enter your query.
+			/*
+			 * För flera ingredienser fyll ut med 
+			 * INNER JOIN (SELECT * FROM contains WHERE name = 'XXXXXXX') AS dtY
+			 * och
+			 * dt1.rID = dtY.rID
+			 * 
+			 SELECT *
+FROM (SELECT * FROM contains WHERE name = 'minced meat') AS dt1
+INNER JOIN (SELECT * FROM contains WHERE name = 'onion') AS dt2
+INNER JOIN (SELECT * FROM contains WHERE name = 'potato') AS dt3
+INNER JOIN (SELECT * FROM contains WHERE name = 'banana') AS dt4
+ON dt1.rID = dt2.rID AND dt1.rID = dt3.rID AND dt1.rID = dt4.rID
+			 */
                         String query = "SELECT r.name FROM recipes r, contains c WHERE r.rID = c.rID AND "
                                 + "c.name = \"" + ingredientsWanted.getFirst().toString() + "\"";
                         System.out.println(query);
