@@ -4,6 +4,7 @@ package virtualgusteau;
 import java.util.*;
 import com.knowledgebooks.nlp.fasttag.FastTag;
 import com.knowledgebooks.nlp.util.Tokenizer;
+import grammar.*;
 /**
  *
  * @author rkrantz
@@ -100,8 +101,15 @@ public class Model extends Observable {
             //System.out.print(words[i] + "/" + tags[i] + " ");
         }
         //System.out.println("\n---------------------------------------");
-                 
-        sentence();
+          
+        grammar.Test t = new grammar.Test();
+        try {
+            t.grammar(words, tags);
+        } catch(Exception e) {
+            System.out.println(e.getMessage());
+        }
+        
+        //sentence();
         
         for(int i = 0; i < words.length; i++) {
             if(tags[i].contains("VB")) {                                        // Any form of Verb
@@ -257,7 +265,7 @@ public class Model extends Observable {
             if(tags[i].contains("NN") || tags[i].equals("PRP")) {
                 np = idNoun(i);
             } else if(tags[i].contains("VB")) {
-                idVerb(i);
+                np = idVerb(i);
             } else if(tags[i].equals("RB")) {
                 // Adverb
                 if(words[i].toLowerCase().equals("not")) {
@@ -280,6 +288,14 @@ public class Model extends Observable {
      * Extracts the noun phrase(s) from the inputed list of Words given the 
      * list of grammatical tags using a set of rules to determine what kind of 
      * noun phrase it is. 
+     * 
+     * NP → Pronoun             → PRP
+     *    | Noun                → NN
+     *    | Article Noun        → DT NN
+     *    | Digit               → CD
+     *    | NP PP
+     *    | NP RelClause
+     * 
      * @param words The inputted sentence divided into seperate words stored in a
      * list of strings
      * @param tags The list grammatical tags for the word list
@@ -290,6 +306,7 @@ public class Model extends Observable {
             if(i > 1 && tags[i-2].equals("IN")) {
                 // ignore since it's part of another NP
             } else { 
+                // Article Noun
                 np = new String[2];
                 np[0] = words[i-1] + "/" + tags[i-1];
                 np[1] = words[i] + "/" + tags[i];
@@ -305,7 +322,7 @@ public class Model extends Observable {
                 }
             }
         } else {
-            // single noun or pronoun?
+            // single noun or pronoun
             np = new String[1];
             np[0] = words[i] + "/" + tags[i];
         }
@@ -316,7 +333,7 @@ public class Model extends Observable {
         }
         System.out.println("");
          */
-        logic_noun(np);
+        System.out.println(logic_noun(np));
         return np;
     }
     /**
@@ -343,8 +360,8 @@ public class Model extends Observable {
         } else if(length == 2) {            
             // Determiner + Noun
             //System.out.println("Determiner + Noun");
-            String word = noun_phrase[0].substring(0, noun_phrase[0].length()-3);
-            if(word.equals("no")) {
+            //String word = noun_phrase[0].substring(0, noun_phrase[0].length()-3);
+            if(noun_phrase[0].equals("no")) {
                 return "not(" + noun_phrase[1] + ")";
             } else {
                 return noun_phrase[1];
