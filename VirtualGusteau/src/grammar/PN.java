@@ -15,5 +15,9 @@ public class PN {
         String tmp = "Pronoun:"+word;
         return tmp;
     }
+
+    public String getWord() {
+        return word;
+    }
     
 }

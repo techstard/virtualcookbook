@@ -14,5 +14,9 @@ public class N {
     public String toString() {
         return "Noun:"+noun;
     }
+
+    public String getNoun() {
+        return noun;
+    }
     
 }

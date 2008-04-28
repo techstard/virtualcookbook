@@ -65,6 +65,23 @@ public class VP {
         left = vp;
         right = rb;
     }
+
+    public Object getLeft() {
+        return left;
+    }
+
+    public void setLeft(Object left) {
+        this.left = left;
+    }
+
+    public Object getRight() {
+        return right;
+    }
+
+    public void setRight(Object right) {
+        this.right = right;
+    }
+    
     @Override
     public String toString() {
         String tmp = "VP:[";

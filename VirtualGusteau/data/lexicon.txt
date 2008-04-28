@@ -16238,6 +16238,7 @@ Hypothesis NN
 Hypothesizing VBG
 Hyun NNP
 Hyundai NNP NNS
+I PRP
 I-5 NNP
 I-75 NN
 I-880 NN NNP
@@ -31782,7 +31783,7 @@ Somers NNP
 Somersaults NNS
 Somerset NNP
 Somerville NNP
-Something NN NNP
+Something PRP
 Sometime RB
 Sometimes RB
 Somewhat RB
@@ -82957,7 +82958,7 @@ somersault NN
 somersaulting JJ NN
 somersaults NNS
 somethin NN
-something NN
+something PRP
 something... :
 sometime RB JJ
 sometimes RB

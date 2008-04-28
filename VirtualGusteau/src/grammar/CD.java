@@ -14,5 +14,9 @@ public class CD {
     public String toString() {
         return "Digit:"+digit;
     }
+
+    public int getDigit() {
+        return digit;
+    }
     
 }
