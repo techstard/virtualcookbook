@@ -10,16 +10,20 @@ import java.util.*;
  * @author rkrantz
  */
 public class PP {
-    LinkedList<Object> PP = new LinkedList<Object>();
+    //LinkedList<Object> PP = new LinkedList<Object>();
+    private Object left;
+    private Object right;
     
     public PP(P p, NP np) {
-        PP.add(p);
-        PP.add(np);
+        //PP.add(p);
+        //PP.add(np);
+        left = p;
+        right = np;
     }
 
     @Override
     public String toString() {
-        return "PP:["+PP.getFirst().toString()+" "+PP.getLast().toString()+"]";        
+        return "PP:["+left.toString()+" "+right.toString()+"]";        
     }
     
 }

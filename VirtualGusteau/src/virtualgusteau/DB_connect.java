@@ -56,7 +56,7 @@ public class DB_connect {
 		
 			// Enter your query.
 			/*
-			 * För flera ingredienser fyll ut med 
+			 * FÃ¶r flera ingredienser fyll ut med 
 			 * INNER JOIN (SELECT * FROM contains WHERE name = 'XXXXXXX') AS dtY
 			 * och
 			 * dt1.rID = dtY.rID

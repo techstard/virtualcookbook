@@ -10,14 +10,16 @@ import java.util.*;
  * @author rkrantz
  */
 public class VP {
-    
-    LinkedList<Object> VP = new LinkedList<Object>();
+    //LinkedList<Object> VP = new LinkedList<Object>();
+    private Object left;
+    private Object right;
     /**
      * 
      * @param v VP is a verb
      */
     public VP(V v) {
-        VP.add(v);
+        //VP.add(v);
+        left = v;
     }
     /**
      * 
@@ -25,8 +27,10 @@ public class VP {
      * @param np Noun Phrase
      */
     public VP(VP vp, NP np) {
-        VP.add(vp);
-        VP.add(np);
+        //VP.add(vp);
+        //VP.add(np);
+        left = vp;
+        right = np;
     }
     /**
      * 
@@ -34,8 +38,10 @@ public class VP {
      * @param jj Adjective
      */
     public VP(VP vp, JJ jj) {
-        VP.add(vp);
-        VP.add(jj);
+        //VP.add(vp);
+        //VP.add(jj);
+        left = vp;
+        right = jj;
     }
     /**
      * 
@@ -43,8 +49,10 @@ public class VP {
      * @param pp Preposition Phrase
      */
     public VP(VP vp, PP pp) {
-        VP.add(vp);
-        VP.add(pp);
+        //VP.add(vp);
+        //VP.add(pp);
+        left = vp;
+        right = pp;
     }
     /**
      * 
@@ -52,18 +60,24 @@ public class VP {
      * @param rb Adverb
      */
     public VP(VP vp, RB rb) {
-        VP.add(vp);
-        VP.add(rb);
+        //VP.add(vp);
+        //VP.add(rb);
+        left = vp;
+        right = rb;
     }
     @Override
     public String toString() {
         String tmp = "VP:[";
-        for(int i = 0; i < VP.size(); i++) {
+        /*for(int i = 0; i < VP.size(); i++) {
             if(i != VP.size()-1) {
                 tmp += VP.get(i).toString() + " ";
             } else {
                 tmp += VP.get(i).toString();
             }
+        }*/
+        tmp += left.toString();
+        if(right != null) {
+            tmp += " "+right.toString();
         }
         tmp += "]";
         return tmp;
