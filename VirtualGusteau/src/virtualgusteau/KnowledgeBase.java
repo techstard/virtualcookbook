@@ -16,13 +16,13 @@ import java.util.*;
 public class KnowledgeBase {
     private LinkedList<Noun> ingredientsWanted = new LinkedList<Noun>(); //all ingredientsWanted mentioned to Gusteau
     private LinkedList<Noun> ingredientsNotWanted = new LinkedList<Noun>(); //ingredientsWanted not wanted
-    private LinkedList<Noun> defects = new LinkedList<Noun>(); //defects such as vegetarian
+    private LinkedList<Defect> defects = new LinkedList<Defect>(); //defects such as vegetarian
     private int nrOfPersons; //how many people
 
     public KnowledgeBase() {
         //empty constructor
     }
-    public LinkedList<Noun> getDefects() {
+    public LinkedList<Defect> getDefects() {
         return defects;
     }
 
@@ -87,7 +87,7 @@ public class KnowledgeBase {
      * @param defect is the defect which you want to add to the kb.
      * @return a boolean if addition is succesfull or not.
      */
-    public boolean addDefects(Noun defect) {
+    private boolean addDefects(Defect defect) {
         if(defects.add(defect))
             return true;
         else
@@ -99,7 +99,7 @@ public class KnowledgeBase {
      * @param defect is the defect you want to remove.
      * @return a boolean if removeal is successfull ot not.
      */
-    public boolean removeDefects(Noun defect) {
+    private boolean removeDefects(Defect defect) {
         if(defects.remove(defect))
             return true;
         else
@@ -159,7 +159,7 @@ public class KnowledgeBase {
         public boolean hasNext() {
             return cnt < defects.size();
         }
-        public Noun next() {
+        public Defect next() {
             return defects.get(cnt++);
         }
         public void remove(){}
