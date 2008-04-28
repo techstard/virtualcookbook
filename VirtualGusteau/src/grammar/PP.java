@@ -21,6 +21,22 @@ public class PP {
         right = np;
     }
 
+    public Object getLeft() {
+        return left;
+    }
+
+    public void setLeft(Object left) {
+        this.left = left;
+    }
+
+    public Object getRight() {
+        return right;
+    }
+
+    public void setRight(Object right) {
+        this.right = right;
+    }
+
     @Override
     public String toString() {
         return "PP:["+left.toString()+" "+right.toString()+"]";        

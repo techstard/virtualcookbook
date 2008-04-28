@@ -14,5 +14,9 @@ public class V {
     public String toString() {
         return "Verb:"+verb;
     }
+
+    public String getVerb() {
+        return verb;
+    }
     
 }

@@ -14,5 +14,9 @@ public class A extends TreeNode {
     public String toString() {
         return "Article:"+article;
     }
+
+    public String getArticle() {
+        return article;
+    }
     
 }

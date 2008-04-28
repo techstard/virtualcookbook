@@ -14,5 +14,9 @@ public class CC {
     public String toString() {
         return "Conjunction:"+conjunction;
     }
+
+    public String getConjunction() {
+        return conjunction;
+    }
     
 }

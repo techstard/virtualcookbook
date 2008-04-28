@@ -14,5 +14,9 @@ public class P {
     public String toString() {
         return "Prep:"+preposition;
     }
+
+    public String getPreposition() {
+        return preposition;
+    }
     
 }

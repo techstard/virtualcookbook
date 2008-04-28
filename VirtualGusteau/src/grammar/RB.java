@@ -5,15 +5,19 @@ package grammar;
  * @author rkrantz
  */
 public class RB {
-    private String word;
+    private String adverb;
     public RB(String word) {
-        this.word = word;
+        this.adverb = word;
     }
 
     @Override
     public String toString() {
-        String tmp = "Adverb:"+word;
+        String tmp = "Adverb:"+adverb;
         return tmp;
+    }
+
+    public String getAdverb() {
+        return adverb;
     }
     
 }

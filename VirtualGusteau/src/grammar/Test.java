@@ -12,10 +12,12 @@ public class Test {
      * S → NP VP
      *   | S Conjunction S
      * 
-     * NP → Pronoun             → PRP
-     *    | Noun                → NN
-     *    | Article Noun        → DT NN
-     *    | Digit               → CD
+     * NP → Pronoun                 → PRP
+     *    | Noun                    → NN
+     *    | Article Noun            → DT NN
+     *    | Adjective Noun          → JJ NN
+     *    | Article NP              → DT NP
+     *    | Digit                   → CD
      *    | NP PP
      *    | NP RelClause
      * 
@@ -77,11 +79,16 @@ public class Test {
                     // Word before was a preposition, make a PP of it
                     P tmp = (P)S.getLast();
                     S.removeLast();
-                    S.add(new PP(tmp,new NP(new PN(words[i])))); 
+                    S.add(new PP(tmp,new NP(new N(words[i])))); 
                 } else if(S.getLast()instanceof CC) {
                     // Second part of sentence preceded by a Conjunction, i.e. and/but/or
                     // The Pronoun is first in second part, add it
                     S.add(new NP(new PN(words[i])));
+                } else if(S.getLast()instanceof JJ) {
+                    // Adjective Noun
+                    JJ j_tmp = (JJ)S.getLast();
+                    S.removeLast();
+                    S.add(new NP(j_tmp, new N(words[i])));
                 } else {
                     throw new Exception("Illegal Sentence Structure - Noun in the wrong place");
                 }
@@ -128,6 +135,9 @@ public class Test {
                     VP tmp = (VP)S.getLast();
                     S.removeLast();
                     S.add(new VP(tmp, new JJ(words[i])));
+                } else if(S.getLast()instanceof A) {
+                    // Article Adjective (Noun)
+                    S.add(new JJ(words[i]));
                 } else {
                     throw new Exception("Illegal Sentence Structure - Adjective in the wrong place");
                 }
@@ -216,9 +226,15 @@ public class Test {
                         P p_tmp = (P)S.get(S.size()-2);
                         S.removeLast(); S.removeLast();
                         S.add(new PP(p_tmp, np_tmp));
+                    } else if(S.get(S.size()-2)instanceof A) {
+                        NP np_tmp = (NP)S.getLast();
+                        A a_tmp = (A)S.get(S.size()-2);
+                        S.removeLast(); S.removeLast();
+                        S.add(new NP(a_tmp, np_tmp));
                     }
                 }
             } else if(S.getLast()instanceof PP) {
+                // Sentence ends in PP → not correct, further checks needed
                 if(S.size() > 2) {
                     if(S.get(S.size()-2)instanceof NP) {
                         PP pp_tmp = (PP)S.getLast();
@@ -274,5 +290,6 @@ public class Test {
          
         GtFO gtfo = new GtFO();
         gtfo.converter(S);
+
     }
 }

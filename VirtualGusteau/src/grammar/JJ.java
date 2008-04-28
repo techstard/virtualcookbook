@@ -15,5 +15,9 @@ public class JJ {
         String tmp = "Adjective:"+word;
         return tmp;
     }
+
+    public String getWord() {
+        return word;
+    }
     
 }

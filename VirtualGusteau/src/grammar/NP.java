@@ -59,6 +59,19 @@ public class NP {
         left = np;
         right = pp;
     }
+    /**
+     * 
+     * @param jj Adjective
+     * @param n Noun
+     */
+    public NP(JJ jj, N n) {
+        left = jj;
+        right = n;
+    }
+    public NP(A a, NP np) {
+        left = a;
+        right = np;
+    }
     public Object getLeft() {
         return left;
     }
