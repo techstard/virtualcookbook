@@ -4,7 +4,7 @@ package grammar;
  *
  * @author rkrantz
  */
-public class A {
+public class A extends TreeNode {
     private String article;
     public A(String s) {
         article = s;
