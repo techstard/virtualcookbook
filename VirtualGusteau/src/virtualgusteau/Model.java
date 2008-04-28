@@ -20,9 +20,12 @@ public class Model extends Observable {
     private String[] words;
     private String[] tags;
     
+    private KnowledgeBase kb;
+    
     public Model() {
         sentence = new LinkedList<Word>();
         phraseList = new LinkedList<Phrase>();
+        kb = new KnowledgeBase();
     }
     
     /**
@@ -71,6 +74,14 @@ public class Model extends Observable {
             setChanged();
             notifyObservers();
             return;
+        } else if(arg.equals("/logic")) {
+            Logic lg = new Logic(kb);
+            Noun ing = new Noun("APpLeS");
+            kb.addIngredientWanted(ing);
+            if(lg.ruleThree())
+                System.out.println("ruleThree == true");
+            else
+                System.out.println("ruleThree == false");
         }
         
         input = arg;      
