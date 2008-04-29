@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.LinkedList;
+import java.util.*;
 
 /**
  * This class connects to the recipe database.
@@ -13,87 +13,102 @@ import java.util.LinkedList;
  * TIN171, 2008
  */
 public class DB_connect {
-	
-	// Search variables that configures the query to the database
-	private String wantedIngredients[];
-	private String notWantedIngredients[];
-	
-	private String wantedCategory[];
-	private String notWantedCategory[];
-	
-	private String warnings[];
-	private String specificDish;
-        private KnowledgeBase kb = new KnowledgeBase();
-	        
+	private Connection con = null;
+
+        public DB_connect() {
+            try{
+                // Create the connection
+                Class.forName("com.mysql.jdbc.Driver").newInstance();
+                //connecting toMySQL server
+                con = DriverManager.getConnection("jdbc:mysql://193.11.241.134:3306/recipe_db",
+                    "Gusteau", "gusteau");
+            } catch (Exception e){}
+        }
 	// This main method should be changed to a 
 	//  constructor class or something in the future.
-	public String connect(LinkedList<Noun> ingredientsWanted) {
-		Connection con = null;
+	public ResultSet connect(String query) {
 
 		try {
-			// Create the connection
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			// Notice the username and password, it's only configured for Anders... yet.
-			//con = DriverManager.getConnection("jdbc:mysql://localhost/recipe_db",
-			//		"root", "vertrigo");
-                        //Testing another MySQL server
-			con = DriverManager.getConnection("jdbc:mysql://193.11.241.134:3306/recipe_db",
-					"Gusteau", "gusteau");
-                        
-			// If this works, you are connected.
-			/*if(!con.isClosed()) {
-				System.out.println("Successfully connected to " +
-					"MySQL server using TCP/IP...");
-                            return "connection successful";
-                        } else {
-                            return "connection failed";
-                        }*/
-      
-			// Now for the real deal.
-			
 			// Create statement
 			Statement stmt = con.createStatement();
 		
 			// Enter your query.
-			/*
-			 * För flera ingredienser fyll ut med 
-			 * INNER JOIN (SELECT * FROM contains WHERE name = 'XXXXXXX') AS dtY
-			 * och
-			 * dt1.rID = dtY.rID
-			 * 
-			 SELECT *
-FROM (SELECT * FROM contains WHERE name = 'minced meat') AS dt1
-INNER JOIN (SELECT * FROM contains WHERE name = 'onion') AS dt2
-INNER JOIN (SELECT * FROM contains WHERE name = 'potato') AS dt3
-INNER JOIN (SELECT * FROM contains WHERE name = 'banana') AS dt4
-ON dt1.rID = dt2.rID AND dt1.rID = dt3.rID AND dt1.rID = dt4.rID
-			 */
-                        String query = "SELECT r.name FROM recipes r, contains c WHERE r.rID = c.rID AND "
-                                + "c.name = \"" + ingredientsWanted.getFirst().toString() + "\"";
-                        System.out.println(query);
+                        //String query = searchRecipe(kb);
+			
 			ResultSet rset = stmt.executeQuery(query);
                         
 			// Iterate through the result.
-                        String output = "Recipies : ";
+                        /*String output = "Recipies : ";
 			while (rset.next()){
                             output = output + rset.getString(1) + "\n";
-                        }
-                        return output;
-                        //rset.next();
-                        //return rset.getString(2);
-			//System.out.println ("arg2: " + rset.getString(1));
+                        }*/
+                        return rset;
 
 		} catch(Exception e) {
-			System.err.println("Exception: " + e.getMessage());
+			System.err.println("Exception in connect : " + e.getMessage());
 			System.err.println(e);
-                        return "Exception : " + e;
-		} finally {
-			try {
-				if(con != null)
-					con.close();
-			} catch(SQLException e) {
-				System.out.println(e);
-			}
-		}
-	}
-}
+                        return null;
+		} 
+	}//End connect
+        
+        public String searchRecipe(KnowledgeBase kb){
+            /*
+             * För flera ingredienser fyll ut med
+             * INNER JOIN (SELECT * FROM contains WHERE name = 'XXXXXXX') AS dtY
+             * och
+             * dt1.rID = dtY.rID
+             * 
+            SELECT *
+            FROM (SELECT * FROM contains WHERE name = 'minced meat') AS dt1
+            INNER JOIN (SELECT * FROM contains WHERE name = 'onion') AS dt2
+            INNER JOIN (SELECT * FROM contains WHERE name = 'potato') AS dt3
+            INNER JOIN (SELECT * FROM contains WHERE name = 'banana') AS dt4
+            ON dt1.rID = dt2.rID AND dt1.rID = dt3.rID AND dt1.rID = dt4.rID
+             */
+            Iterator iW = kb.iWIterator();
+            String query = "SELECT * FROM ";
+            String wanted = "";
+            int i = 0;
+            while(iW.hasNext()){
+                if(i>0){
+                    wanted = wanted+" INNER JOIN ";
+                }
+                i++;
+                System.out.println("test");
+                wanted = wanted + "(SELECT * FROM contains WHERE name = \'" + iW.next() + "\') AS dt"+i;
+            }
+            for(int k=0;k<i-1;k++){
+                if(k==0){
+                    wanted = wanted + " ON";
+                }
+                wanted = wanted + " dt"+1+".rID = "+"dt"+(k+2)+".rID";
+                if(k<(i-2)){
+                    wanted = wanted + " AND";
+                }
+            }
+            System.out.println(query+wanted);
+            try{
+                ResultSet rset = connect(query+wanted);
+
+                String output = "Recipies : ";
+                while (rset.next()){
+                    output = output + rset.getString(1) + "\n";
+                }
+                return output;
+            } catch(Exception e) {
+			System.err.println("Exception in searchRecipe: " + e.getMessage());
+			System.err.println(e);
+                        return null;
+            } 
+        }//End searchRecipe
+        
+        public void closeConnection(){
+            try {
+                    if(con != null)
+                            con.close();
+            } catch(SQLException e) {
+                    System.out.println(e);
+            }
+        }
+        
+}//End DB_connect

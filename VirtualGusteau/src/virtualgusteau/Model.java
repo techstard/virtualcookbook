@@ -67,10 +67,15 @@ public class Model extends Observable {
         if( arg.compareTo("/db") == 0) {
             DB_connect db = new DB_connect();
             KnowledgeBase kb = new KnowledgeBase();
-            Noun ingredient = new Noun("banana");
-            kb.addIngredientWanted(ingredient);
+            Noun ingredient1 = new Noun("minced meat");
+            Noun ingredient2 = new Noun("onion");
+            Noun ingredient3 = new Noun("chocolate");
+            kb.addIngredientWanted(ingredient1);
+            kb.addIngredientWanted(ingredient2);
+            //kb.addIngredientWanted(ingredient3);
             LinkedList<Noun> ingredientsWanted = kb.getIngredientsWanted();
-            output = db.connect(ingredientsWanted);
+            output = db.searchRecipe(kb);
+            db.closeConnection();
             setChanged();
             notifyObservers();
             return;
