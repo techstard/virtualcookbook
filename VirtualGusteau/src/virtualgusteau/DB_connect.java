@@ -15,15 +15,15 @@ import java.util.*;
 public class DB_connect {
 	private Connection con = null;
 
-        public DB_connect() {
-            try{
-                // Create the connection
-                Class.forName("com.mysql.jdbc.Driver").newInstance();
-                //connecting toMySQL server
-                con = DriverManager.getConnection("jdbc:mysql://193.11.241.134:3306/recipe_db",
-                    "Gusteau", "gusteau");
-            } catch (Exception e){}
-        }
+	public DB_connect() {
+		try{
+			// Create the connection
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			//connecting toMySQL server
+			con = DriverManager.getConnection("jdbc:mysql://193.11.241.134:3306/recipe_db",
+					"Gusteau", "gusteau");
+		} catch (Exception e){}
+	s}
 	// This main method should be changed to a 
 	//  constructor class or something in the future.
 	public ResultSet connect(String query) {
