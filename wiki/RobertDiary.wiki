@@ -1,3 +1,26 @@
+2008-04-29
+
+Had a meeting with Harald.
+Continued work on the semantic parser. Started to get some results with 
+collecting relevant information.
+
+Work time: 5
+
+2008-04-28
+
+Continued work on the parser, hit a roadblock here since I'm having 
+difficulty extracting only the relevant information from the sentence.
+Hoping the meeting with HH tomorrow will help
+
+Work time: 6
+
+2008-04-24
+
+Read the book about grammars and such and lo and behold I managed to 
+create a parser that converts the sentence into a tree structure
+
+Work time: 4
+
 2008-04-17
 
 Dear Diary
