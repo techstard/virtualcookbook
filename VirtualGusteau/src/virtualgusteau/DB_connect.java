@@ -13,7 +13,7 @@ import java.util.*;
  * TIN171, 2008
  */
 public class DB_connect {
-	private Connection con = null;
+        private Connection con = null;
 
 	public DB_connect() {
 		try{
@@ -23,7 +23,7 @@ public class DB_connect {
 			con = DriverManager.getConnection("jdbc:mysql://193.11.241.134:3306/recipe_db",
 					"Gusteau", "gusteau");
 		} catch (Exception e){}
-	s}
+	}
 	// This main method should be changed to a 
 	//  constructor class or something in the future.
 	public ResultSet connect(String query) {
@@ -74,7 +74,6 @@ public class DB_connect {
                     wanted = wanted+" INNER JOIN ";
                 }
                 i++;
-                System.out.println("test");
                 wanted = wanted + "(SELECT * FROM contains WHERE name = \'" + iW.next() + "\') AS dt"+i;
             }
             for(int k=0;k<i-1;k++){
@@ -86,7 +85,7 @@ public class DB_connect {
                     wanted = wanted + " AND";
                 }
             }
-            System.out.println(query+wanted);
+            //System.out.println(query+wanted);
             try{
                 ResultSet rset = connect(query+wanted);
 
