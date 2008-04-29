@@ -13,7 +13,7 @@ import java.util.*;
  * TIN171, 2008
  */
 public class DB_connect {
-        private Connection con = null;
+	private Connection con = null;
 
 	public DB_connect() {
 		try{
@@ -25,9 +25,8 @@ public class DB_connect {
 		} catch (Exception e){}
 	}
 	// This main method should be changed to a 
-	//  constructor class or something in the future.
+	// constructor class or something in the future.
 	public ResultSet connect(String query) {
-
 		try {
 			// Create statement
 			Statement stmt = con.createStatement();
@@ -50,7 +49,6 @@ public class DB_connect {
                         return null;
 		} 
 	}//End connect
-        
         public String searchRecipe(KnowledgeBase kb){
             /*
              * För flera ingredienser fyll ut med
@@ -74,6 +72,7 @@ public class DB_connect {
                     wanted = wanted+" INNER JOIN ";
                 }
                 i++;
+                System.out.println("test");
                 wanted = wanted + "(SELECT * FROM contains WHERE name = \'" + iW.next() + "\') AS dt"+i;
             }
             for(int k=0;k<i-1;k++){
@@ -85,7 +84,7 @@ public class DB_connect {
                     wanted = wanted + " AND";
                 }
             }
-            //System.out.println(query+wanted);
+            System.out.println(query+wanted);
             try{
                 ResultSet rset = connect(query+wanted);
 
@@ -100,6 +99,70 @@ public class DB_connect {
                         return null;
             } 
         }//End searchRecipe
+        
+        /**
+         * printRecipe
+         * prints a string with all visual 
+         * @param rID The chosen recipe to print
+         * @return String with all information about the recipe 'rID'
+         */
+        public String printRecipe(int rID){
+        	// Make query in DB for 'rID' in fields: recipe, contains
+        	// to obtain all visual information about the chosen recipe.
+        	try{
+        		// variables
+            	String query = "SELECT * FROM recipes WHERE rID = '" + rID + "'";
+            	System.out.println(query);
+            	String part1of3 = "";
+        		String part2of3 = "";
+        		String part3of3 = "";
+        		String output;
+        		int portions = 5;
+            	// first query, get recipe information.
+        		ResultSet rset = connect(query);
+        		rset.next();
+        		// #1 -> Title
+        		part1of3 += "- " + rset.getString(2) + " - \n\n";
+        		// #2 -> Description
+        		part1of3 += rset.getString(3) + "\n\n";
+        		// #3 -> Time and difficulty
+        		part1of3 += "Time: " + rset.getString(5) + " minutes\nDifficulty from 1-5: " + rset.getString(6) + "\nFor " + portions + " people.\n\n";
+        		// #5 -> Plan
+        		part3of3 += rset.getString(4) + "\n\n";
+        		// #4 -> List of ingredients
+        		// last line needs another query from the field 'contains'
+            	query = "SELECT * FROM contains WHERE rID = '" + rID + "'";
+            	System.out.println(query);
+            	rset = connect(query);
+            	while(rset.next()){
+            		// Check if its several of the ingredients, then go plural form.
+            		String pluralEnd = "";
+            		String amountOf = "";
+            		if (rset.getDouble(4) != 1)
+            			pluralEnd = "s";
+            		// Take away .0 for example: 500.0 g -> 500 g
+            		if (portions*rset.getDouble(4) % 1 == 0)
+            			amountOf = ""+(int)(portions*rset.getDouble(4));
+            		else
+            			amountOf = ""+portions*rset.getDouble(4);
+            		// Watch out for rows with no measures
+            		if (rset.getString(3).compareTo("") != 0)
+            			part2of3 += amountOf + " " + rset.getString(3) + " " + rset.getString(2) + pluralEnd + "\n";
+            		else
+            			part2of3 += amountOf + " " + rset.getString(2) + pluralEnd +"\n";
+            	}
+            	// Unite all the parts
+            	output = "\n" + part1of3 + part2of3 + "\n" + part3of3;
+            	// test the output
+        		System.out.println(output);
+        		return output;
+        	} 
+        	catch(Exception e) {
+        		System.err.println("Exception in printRecipe(): " + e.getMessage());
+        		System.err.println(e);
+        		return null;
+            } 
+        }
         
         public void closeConnection(){
             try {
