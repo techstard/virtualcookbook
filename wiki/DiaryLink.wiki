@@ -4,9 +4,9 @@ _back to Project Home ->_ http://code.google.com/p/virtualcookbook/
 
 = Diaries =
 
-  *Anders Lorentzen -> 
-  *Magnus Spånggård -> 
-  *Olof Millberg -> 
-  *Patrik Björkman -> 
-  *Robert Krantz -> 
-  *Tobias Alette -> 
+  * Anders Lorentzen -> AndersDiary
+  * Magnus Spånggård -> MagnusDiary
+  * Olof Millberg -> OlofDiary
+  * Patrik Björkman -> PatrikDiary
+  * Robert Krantz -> RobertDiary
+  * Tobias Alette -> TobiasDiary
