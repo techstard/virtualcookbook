@@ -14,8 +14,8 @@ import java.util.*;
  * @author magnus
  */
 public class KnowledgeBase {
-    private LinkedList<Noun> ingredientsWanted = new LinkedList<Noun>(); //all ingredientsWanted mentioned to Gusteau
-    private LinkedList<Noun> ingredientsNotWanted = new LinkedList<Noun>(); //ingredientsWanted not wanted
+    private LinkedList<NounPhrase> ingredientsWanted = new LinkedList<NounPhrase>(); //all ingredientsWanted mentioned to Gusteau
+    private LinkedList<NounPhrase> ingredientsNotWanted = new LinkedList<NounPhrase>(); //ingredientsWanted not wanted
     private LinkedList<Defect> defects = new LinkedList<Defect>(); //defects such as vegetarian
     private int nrOfPersons; //how many people
 
@@ -26,11 +26,11 @@ public class KnowledgeBase {
         return defects;
     }
 
-    public LinkedList<Noun> getIngredientsNotWanted() {
+    public LinkedList<NounPhrase> getIngredientsNotWanted() {
         return ingredientsNotWanted;
     }
 
-    public LinkedList<Noun> getIngredientsWanted() {
+    public LinkedList<NounPhrase> getIngredientsWanted() {
         return ingredientsWanted;
     }
     
@@ -39,7 +39,7 @@ public class KnowledgeBase {
      * @param ingredient is the ingredient which you want to add to the knowledge base.
      * @return true or false depending on if the ingredient was succesfully added to the kb or not.
      */
-    public boolean addIngredientWanted(Noun ingredient) {
+    public boolean addIngredientWanted(NounPhrase ingredient) {
         if(ingredientsWanted.add(ingredient))
             return true;
         else
@@ -51,7 +51,7 @@ public class KnowledgeBase {
      * @param ingredient is the ingredient which you want to remove from the knowledge base.
      * @return true or false depending on if the ingredient was succesfullt removed from the kb or not.
      */
-    public boolean removeIngredidentWanted(Noun ingredient) {
+    public boolean removeIngredidentWanted(NounPhrase ingredient) {
         if(ingredientsWanted.remove(ingredient))
             return true;
         else
@@ -63,7 +63,7 @@ public class KnowledgeBase {
      * @param ingredient is the ingredient not wanted which you want to add to the knowledge base.
      * @return true or false depending on if the ingredient was succesfully added to the kb or not.
      */
-    public boolean addIngredientNotWanted(Noun ingredient) {
+    public boolean addIngredientNotWanted(NounPhrase ingredient) {
         if(ingredientsNotWanted.add(ingredient))
             return true;
         else
@@ -75,7 +75,7 @@ public class KnowledgeBase {
      * @param ingredient is the ingredient not wanted which you want to remove from the knowledge base.
      * @return true or false depending on if the ingredient was succesfullt removed from the kb or not.
      */
-    public boolean removeIngreidentNotWanted(Noun ingredient) {
+    public boolean removeIngreidentNotWanted(NounPhrase ingredient) {
         if(ingredientsNotWanted.remove(ingredient))
             return true;
         else
@@ -139,20 +139,30 @@ public class KnowledgeBase {
         public boolean hasNext() {
             return cnt < ingredientsWanted.size();
         }
-        public Noun next() {
+        public NounPhrase next() {
             return ingredientsWanted.get(cnt++);
         }
-        public void remove(){}
+        public void remove(){
+            defects.remove(cnt);
+        }
+        public void reset(){
+            cnt = 0;
+        }
     }
     private class ingredientsNotWantedIterator implements Iterator {
         private int cnt = 0;
         public boolean hasNext() {
             return cnt < ingredientsNotWanted.size();
         }
-        public Noun next() {
+        public NounPhrase next() {
             return ingredientsNotWanted.get(cnt++);
         }
-        public void remove(){}
+        public void remove(){
+            defects.remove(cnt);
+        }
+        public void reset(){
+            cnt = 0;
+        }
     }
     private class defectsIterator implements Iterator {
         private int cnt = 0;
@@ -162,6 +172,11 @@ public class KnowledgeBase {
         public Defect next() {
             return defects.get(cnt++);
         }
-        public void remove(){}
+        public void remove(){
+            defects.remove(cnt);
+        }
+        public void reset(){
+            cnt = 0;
+        }
     }
 }
