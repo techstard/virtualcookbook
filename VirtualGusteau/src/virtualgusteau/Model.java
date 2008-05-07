@@ -15,8 +15,8 @@ public class Model extends Observable {
     private String output;
     private String nouns;
     private FastTag fastTag;
-    private LinkedList<Word> sentence;
-    private LinkedList<Phrase> phraseList;
+    //private LinkedList<Word> sentence;
+    //private LinkedList<Phrase> phraseList;
     private String[] words;
     private String[] tags;
     
@@ -29,8 +29,8 @@ public class Model extends Observable {
     private LinkedList<String[]> semanticsResult;
     
     public Model() {
-        sentence = new LinkedList<Word>();
-        phraseList = new LinkedList<Phrase>();
+        //sentence = new LinkedList<Word>();
+        //phraseList = new LinkedList<Phrase>();
         kb = new KnowledgeBase();
         grammar = new Grammar();
         semantics = new Semantics();
@@ -75,13 +75,13 @@ public class Model extends Observable {
         if( arg.compareTo("/db") == 0) {
             DB_connect db = new DB_connect();
             KnowledgeBase kb = new KnowledgeBase();
-            NounPhrase ingredient1 = new NounPhrase(new Noun("minced meat"));
-            NounPhrase ingredient2 = new NounPhrase(new Noun("onion"));
-            NounPhrase ingredient3 = new NounPhrase(new Noun("chocolate"));
+            Noun ingredient1 = new Noun("minced meat");
+            Noun ingredient2 = new Noun("onion");
+            Noun ingredient3 = new Noun("chocolate");
             kb.addIngredientWanted(ingredient1);
             kb.addIngredientWanted(ingredient2);
             //kb.addIngredientWanted(ingredient3);
-            LinkedList<NounPhrase> ingredientsWanted = kb.getIngredientsWanted();
+            LinkedList<Noun> ingredientsWanted = kb.getIngredientsWanted();
             //output = db.searchRecipe(kb);
             output = db.printRecipe(1) +db.printRecipe(2) +db.printRecipe(3) +db.printRecipe(4) +db.printRecipe(5) +db.printRecipe(6) +db.printRecipe(7);
             db.closeConnection();
@@ -90,7 +90,7 @@ public class Model extends Observable {
             return;
         } else if(arg.equals("/logic")) {
             KBValidator lg = new KBValidator(kb);
-            NounPhrase ing = new NounPhrase(new Noun("APpLeS"));
+            Noun ing = new Noun("APpLeS");
             kb.addIngredientWanted(ing);
             if(lg.ruleThree())
                 System.out.println("ruleThree == true");
@@ -98,14 +98,14 @@ public class Model extends Observable {
                 System.out.println("ruleThree == false");
         }
         
-        input = arg;      
+        input = arg;
         
         /**
          * Reset these fields so that no words from one input is 
          * mixed with those from another
          */
-        sentence.clear();
-        phraseList.clear();
+        //sentence.clear();
+        //phraseList.clear();
         output = "No output";
         
         /**
@@ -150,8 +150,8 @@ public class Model extends Observable {
     }
     public void phrases() {
         
-        VerbPhrase vp = null;
-        NounPhrase np = null;
+        Verb vp = null;
+        Noun np = null;
         
         /**
          * At this point the words in the user input has made into instances of their 
