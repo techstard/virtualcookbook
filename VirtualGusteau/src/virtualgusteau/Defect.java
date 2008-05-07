@@ -6,27 +6,28 @@
 package virtualgusteau;
 
 import java.util.LinkedList;
+import grammar.*;
 /**
  *
  * @author magnus
  */
 public class Defect {
     private String name;
-    private LinkedList<NounPhrase> ingredients;
+    private LinkedList<Noun> ingredients;
     
     public Defect() {
         //empty
     }
-    public Defect(String name, NounPhrase ing) {
+    public Defect(String name, Noun ing) {
         this.name = name;
         this.ingredients.add(ing);
     }
 
-    public LinkedList<NounPhrase> getIngredients() {
+    public LinkedList<Noun> getIngredients() {
         return ingredients;
     }
 
-    private boolean addIngredient(NounPhrase ingredient) {
+    private boolean addIngredient(Noun ingredient) {
         if(ingredients.add(ingredient))
             return true;
         else

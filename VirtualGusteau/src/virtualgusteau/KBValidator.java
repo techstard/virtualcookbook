@@ -8,6 +8,7 @@ package virtualgusteau;
 import java.util.LinkedList;
 import java.util.*;
 import java.util.regex.Pattern;
+import grammar.*;
 
 /**
  *
@@ -36,13 +37,13 @@ public class KBValidator {
      */
     public boolean ruleOne() {
 
-        LinkedList<NounPhrase> inw = kb.getIngredientsNotWanted();
-        LinkedList<NounPhrase> iw = kb.getIngredientsWanted();
+        LinkedList<Noun> inw = kb.getIngredientsNotWanted();
+        LinkedList<Noun> iw = kb.getIngredientsWanted();
         
         for(int i = 0; i < inw.size(); i++) {
             for(int j = 0; j < iw.size(); j++) {
                 //check if objects are equal
-                if(inw.get(i).getPhrase().equals(iw.get(j).getPhrase()))
+                if(inw.get(i).getNoun().equals(iw.get(j).getNoun()))
                     return false;
             }
         }
@@ -55,8 +56,8 @@ public class KBValidator {
      */
     public boolean ruleTwo() {
         LinkedList<Defect> dfs = kb.getDefects();
-        LinkedList<NounPhrase> iw = kb.getIngredientsWanted();
-        LinkedList<NounPhrase> ings;
+        LinkedList<Noun> iw = kb.getIngredientsWanted();
+        LinkedList<Noun> ings;
         
         for(int i = 0; i < dfs.size(); i++) {
             ings = dfs.get(i).getIngredients();
@@ -73,7 +74,7 @@ public class KBValidator {
      * @return true if no word was found in plural.
      */
     public boolean ruleThree() {
-        LinkedList<NounPhrase> iw = kb.getIngredientsWanted();
+        LinkedList<Noun> iw = kb.getIngredientsWanted();
         String tmp;
         for(int i = 0; i < iw.size(); i++) {
             tmp = iw.get(i).toString().toLowerCase();

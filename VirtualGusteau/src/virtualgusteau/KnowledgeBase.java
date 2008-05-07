@@ -7,6 +7,7 @@ package virtualgusteau;
 
 import java.util.LinkedList;
 import java.util.*;
+import grammar.*;
 
 
 /**
@@ -14,8 +15,8 @@ import java.util.*;
  * @author magnus
  */
 public class KnowledgeBase {
-    private LinkedList<NounPhrase> ingredientsWanted = new LinkedList<NounPhrase>(); //all ingredientsWanted mentioned to Gusteau
-    private LinkedList<NounPhrase> ingredientsNotWanted = new LinkedList<NounPhrase>(); //ingredientsWanted not wanted
+    private LinkedList<Noun> ingredientsWanted = new LinkedList<Noun>(); //all ingredientsWanted mentioned to Gusteau
+    private LinkedList<Noun> ingredientsNotWanted = new LinkedList<Noun>(); //ingredientsWanted not wanted
     private LinkedList<Defect> defects = new LinkedList<Defect>(); //defects such as vegetarian
     private int nrOfPersons; //how many people
 
@@ -26,11 +27,11 @@ public class KnowledgeBase {
         return defects;
     }
 
-    public LinkedList<NounPhrase> getIngredientsNotWanted() {
+    public LinkedList<Noun> getIngredientsNotWanted() {
         return ingredientsNotWanted;
     }
 
-    public LinkedList<NounPhrase> getIngredientsWanted() {
+    public LinkedList<Noun> getIngredientsWanted() {
         return ingredientsWanted;
     }
     
@@ -39,7 +40,7 @@ public class KnowledgeBase {
      * @param ingredient is the ingredient which you want to add to the knowledge base.
      * @return true or false depending on if the ingredient was succesfully added to the kb or not.
      */
-    public boolean addIngredientWanted(NounPhrase ingredient) {
+    public boolean addIngredientWanted(Noun ingredient) {
         if(ingredientsWanted.add(ingredient))
             return true;
         else
@@ -51,7 +52,7 @@ public class KnowledgeBase {
      * @param ingredient is the ingredient which you want to remove from the knowledge base.
      * @return true or false depending on if the ingredient was succesfullt removed from the kb or not.
      */
-    public boolean removeIngredidentWanted(NounPhrase ingredient) {
+    public boolean removeIngredidentWanted(Noun ingredient) {
         if(ingredientsWanted.remove(ingredient))
             return true;
         else
@@ -63,7 +64,7 @@ public class KnowledgeBase {
      * @param ingredient is the ingredient not wanted which you want to add to the knowledge base.
      * @return true or false depending on if the ingredient was succesfully added to the kb or not.
      */
-    public boolean addIngredientNotWanted(NounPhrase ingredient) {
+    public boolean addIngredientNotWanted(Noun ingredient) {
         if(ingredientsNotWanted.add(ingredient))
             return true;
         else
@@ -75,7 +76,7 @@ public class KnowledgeBase {
      * @param ingredient is the ingredient not wanted which you want to remove from the knowledge base.
      * @return true or false depending on if the ingredient was succesfullt removed from the kb or not.
      */
-    public boolean removeIngreidentNotWanted(NounPhrase ingredient) {
+    public boolean removeIngreidentNotWanted(Noun ingredient) {
         if(ingredientsNotWanted.remove(ingredient))
             return true;
         else
@@ -139,7 +140,7 @@ public class KnowledgeBase {
         public boolean hasNext() {
             return cnt < ingredientsWanted.size();
         }
-        public NounPhrase next() {
+        public Noun next() {
             return ingredientsWanted.get(cnt++);
         }
         public void remove(){
@@ -154,7 +155,7 @@ public class KnowledgeBase {
         public boolean hasNext() {
             return cnt < ingredientsNotWanted.size();
         }
-        public NounPhrase next() {
+        public Noun next() {
             return ingredientsNotWanted.get(cnt++);
         }
         public void remove(){
