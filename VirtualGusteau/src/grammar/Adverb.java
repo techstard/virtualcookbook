@@ -4,9 +4,9 @@ package grammar;
  *
  * @author rkrantz
  */
-public class RB {
+public class Adverb {
     private String adverb;
-    public RB(String word) {
+    public Adverb(String word) {
         this.adverb = word;
     }
 

@@ -1,40 +1,35 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package grammar;
 import java.util.*;
 /**
  *
  * @author rkrantz
  */
-public class NP {    
-    //LinkedList<Object> NP = new LinkedList<Object>();
+public class NounPhrase {    
+    //LinkedList<Object> NounPhrase = new LinkedList<Object>();
     private Object left;
     private Object right;
     /**
      * 
      * @param pn Noun Phrase consists of a Pronoun
      */
-    public NP(PN pn) {
-        //NP.add(pn);
+    public NounPhrase(Pronoun pn) {
+        //NounPhrase.add(pn);
         left = pn;
     }
     /**
      * 
      * @param n Noun Phrase consists of a single noun
      */
-    public NP(N n) {
-        //NP.add(n);
+    public NounPhrase(Noun n) {
+        //NounPhrase.add(n);
         left = n;
     }
     /**
      * 
      * @param cd Noun Phrase consists of a Digit
      */
-    public NP(CD cd) {
-        //NP.add(cd);
+    public NounPhrase(Digit cd) {
+        //NounPhrase.add(cd);
         left = cd;
     }
     /**
@@ -42,20 +37,20 @@ public class NP {
      * @param a The Article of the Noun Phrase
      * @param n The Noun
      */
-    public NP(A a, N n) {
-        //NP.add(a);
-        //NP.add(n);
+    public NounPhrase(Article a, Noun n) {
+        //NounPhrase.add(a);
+        //NounPhrase.add(n);
         left = a;
         right = n;
     }
     /**
      * 
-     * @param np A Noun Phrase
-     * @param pp A Prepositional Phrase
+     * @param np Article Noun Phrase
+     * @param pp Article Prepositional Phrase
      */
-    public NP(NP np, PP pp) {
-        //NP.add(np);
-        //NP.add(pp);
+    public NounPhrase(NounPhrase np, PrepositionalPhrase pp) {
+        //NounPhrase.add(np);
+        //NounPhrase.add(pp);
         left = np;
         right = pp;
     }
@@ -64,11 +59,11 @@ public class NP {
      * @param jj Adjective
      * @param n Noun
      */
-    public NP(JJ jj, N n) {
+    public NounPhrase(Adjective jj, Noun n) {
         left = jj;
         right = n;
     }
-    public NP(A a, NP np) {
+    public NounPhrase(Article a, NounPhrase np) {
         left = a;
         right = np;
     }
@@ -90,12 +85,12 @@ public class NP {
     @Override
     public String toString() {
         String tmp = "NP:[";
-        /*for(int i = 0; i < NP.size(); i++) {
+        /*for(int i = 0; i < NounPhrase.size(); i++) {
             
-            if(i != NP.size()-1) {
-                tmp += NP.get(i).toString() + " ";
+            if(i != NounPhrase.size()-1) {
+                tmp += NounPhrase.get(i).toString() + " ";
             } else {
-                tmp += NP.get(i).toString();
+                tmp += NounPhrase.get(i).toString();
             }
         }*/
         tmp += left.toString();

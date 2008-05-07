@@ -1,42 +1,16 @@
 package grammar;
+import java.util.*;
 
-import java.util.LinkedList;
-
-/**
- *
- * @author rkrantz
- */
-public class Test {
+public class Grammar {
+    
     private LinkedList<Object> S;
-    /**
-     * S → NounPhrase VerbPhrase
-     *   | S Conjunction S
-     * 
-     * NounPhrase → Pronoun                 → PRP
-     *    | Noun                    → NN
-     *    | Article Noun            → DT NN
-     *    | Adjective Noun          → Adjective NN
-     *    | Article NounPhrase              → DT NounPhrase
-     *    | Digit                   → Digit
-     *    | NounPhrase PrepositionalPhrase
-     *    | NounPhrase RelClause
-     * 
-     * VerbPhrase → Verb
-     *    | VerbPhrase NounPhrase
-     *    | VerbPhrase Adjective
-     *    | VerbPhrase PrepositionalPhrase
-     *    | VerbPhrase Adverb
-     * 
-     * PrepositionalPhrase → Preposition NounPhrase
-     * RelClause → that VerbPhrase
-     * 
-     * @param words
-     * @param tags
-     */
-    public Test() {        
+    
+    public Grammar() {
         S = new LinkedList<Object>();
     }
-    public void grammar(String[] words, String[] tags) throws Exception {
+    
+    public LinkedList<Object> parser(String[] words, String[] tags) throws Exception {
+        S.clear();
         for(int i = 0; i < tags.length; i++) {
             if(tags[i].equals("PRP")) {
                 if(S.isEmpty()) {
@@ -83,7 +57,7 @@ public class Test {
                 } else if(S.getLast()instanceof Conjunction) {
                     // Second part of sentence preceded by a Conjunction, i.e. and/but/or
                     // The Pronoun is first in second part, add it
-                    S.add(new NounPhrase(new Pronoun(words[i])));
+                    S.add(new NounPhrase(new Noun(words[i])));
                 } else if(S.getLast()instanceof Adjective) {
                     // Adjective Noun
                     Adjective j_tmp = (Adjective)S.getLast();
@@ -183,7 +157,9 @@ public class Test {
                 }
                 if(S.isEmpty()) {
                     throw new Exception("Illegal Sentence Structure - Conjunction cannot be first in sentence");
-                } else if(S.getLast()instanceof VerbPhrase && S.get(S.size()-2)instanceof NounPhrase) {
+                } else if(S.getLast()instanceof VerbPhrase && S.get(S.size()-2) instanceof NounPhrase) {
+                    S.add(new Conjunction(words[i]));
+                } else if(S.getLast() instanceof NounPhrase) {
                     S.add(new Conjunction(words[i]));
                 } else {
                     throw new Exception("Illegal Sentence Structure - CC");
@@ -295,14 +271,10 @@ public class Test {
             S.removeLast();
             S.add(new RelClause(p_tmp, vp_tmp));
         }
-        
-        for(int i = 0; i < S.size(); i++) {
-            System.out.print(S.get(i).toString() + " ");
+        for (int i = 0; i < S.size(); i++) {
+            System.out.println(S.get(i));
         }
-        System.out.println("\n-------------------------");
-         
-        GtFO gtfo = new GtFO();
-        //gtfo.converter(S);
 
+        return S;
     }
 }

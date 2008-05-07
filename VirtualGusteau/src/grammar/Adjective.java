@@ -4,15 +4,15 @@ package grammar;
  *
  * @author rkrantz
  */
-public class PN {
+public class Adjective {
     private String word;
-    public PN(String word) {
+    public Adjective(String word) {
         this.word = word;
     }
 
     @Override
     public String toString() {
-        String tmp = "Pronoun:"+word;
+        String tmp = "Adjective:"+word;
         return tmp;
     }
 

@@ -4,9 +4,9 @@ package grammar;
  *
  * @author rkrantz
  */
-public class CD {
+public class Digit {
     private int digit;
-    public CD(String s) {
+    public Digit(String s) {
         digit = Integer.parseInt(s);
     }
 

@@ -4,9 +4,9 @@ package grammar;
  *
  * @author rkrantz
  */
-public class N {
+public class Noun {
     private String noun;
-    public N(String s) {
+    public Noun(String s) {
         noun = s;
     }
 

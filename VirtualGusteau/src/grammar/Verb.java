@@ -4,9 +4,9 @@ package grammar;
  *
  * @author rkrantz
  */
-public class V {
+public class Verb {
     private String verb;
-    public V(String s) {
+    public Verb(String s) {
         verb = s;
     }
 

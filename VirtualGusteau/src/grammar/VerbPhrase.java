@@ -9,16 +9,16 @@ import java.util.*;
  *
  * @author rkrantz
  */
-public class VP {
-    //LinkedList<Object> VP = new LinkedList<Object>();
+public class VerbPhrase {
+    //LinkedList<Object> VerbPhrase = new LinkedList<Object>();
     private Object left;
     private Object right;
     /**
      * 
-     * @param v VP is a verb
+     * @param v VerbPhrase is a verb
      */
-    public VP(V v) {
-        //VP.add(v);
+    public VerbPhrase(Verb v) {
+        //VerbPhrase.add(v);
         left = v;
     }
     /**
@@ -26,9 +26,9 @@ public class VP {
      * @param vp Verb Phrase
      * @param np Noun Phrase
      */
-    public VP(VP vp, NP np) {
-        //VP.add(vp);
-        //VP.add(np);
+    public VerbPhrase(VerbPhrase vp, NounPhrase np) {
+        //VerbPhrase.add(vp);
+        //VerbPhrase.add(np);
         left = vp;
         right = np;
     }
@@ -37,9 +37,9 @@ public class VP {
      * @param vp Verb Phrase
      * @param jj Adjective
      */
-    public VP(VP vp, JJ jj) {
-        //VP.add(vp);
-        //VP.add(jj);
+    public VerbPhrase(VerbPhrase vp, Adjective jj) {
+        //VerbPhrase.add(vp);
+        //VerbPhrase.add(jj);
         left = vp;
         right = jj;
     }
@@ -48,9 +48,9 @@ public class VP {
      * @param vp Verb Phrase
      * @param pp Preposition Phrase
      */
-    public VP(VP vp, PP pp) {
-        //VP.add(vp);
-        //VP.add(pp);
+    public VerbPhrase(VerbPhrase vp, PrepositionalPhrase pp) {
+        //VerbPhrase.add(vp);
+        //VerbPhrase.add(pp);
         left = vp;
         right = pp;
     }
@@ -59,9 +59,9 @@ public class VP {
      * @param vp Verb Phrase
      * @param rb Adverb
      */
-    public VP(VP vp, RB rb) {
-        //VP.add(vp);
-        //VP.add(rb);
+    public VerbPhrase(VerbPhrase vp, Adverb rb) {
+        //VerbPhrase.add(vp);
+        //VerbPhrase.add(rb);
         left = vp;
         right = rb;
     }
@@ -85,11 +85,11 @@ public class VP {
     @Override
     public String toString() {
         String tmp = "VP:[";
-        /*for(int i = 0; i < VP.size(); i++) {
-            if(i != VP.size()-1) {
-                tmp += VP.get(i).toString() + " ";
+        /*for(int i = 0; i < VerbPhrase.size(); i++) {
+            if(i != VerbPhrase.size()-1) {
+                tmp += VerbPhrase.get(i).toString() + " ";
             } else {
-                tmp += VP.get(i).toString();
+                tmp += VerbPhrase.get(i).toString();
             }
         }*/
         tmp += left.toString();
