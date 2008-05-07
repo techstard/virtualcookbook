@@ -112,6 +112,8 @@ public class Semantics {
     
     public LinkedList<String[]> parser(LinkedList<Object> sentence) {
         semSentences.clear();
+        withPP = null;
+        forPP = null;
         String[] stat = new String[3];
         Object o = null;
         for (int i = 0; i < sentence.size(); i++) {
@@ -160,7 +162,10 @@ public class Semantics {
                      */
                     stat[0] = semSentences.getLast()[0];
                     stat[1] = semSentences.getLast()[1];
-                    stat[2] = findNoun((NounPhrase)o);                   
+                    
+                    String tmp = findNoun((NounPhrase)o);
+                    
+                    stat[2] = (negation ? "not("+tmp+")" : tmp);
                 } else {
                     // Something is wrong
                 }
