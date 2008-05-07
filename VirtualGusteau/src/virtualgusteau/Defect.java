@@ -12,21 +12,21 @@ import java.util.LinkedList;
  */
 public class Defect {
     private String name;
-    private LinkedList<Noun> ingredients;
+    private LinkedList<NounPhrase> ingredients;
     
     public Defect() {
         //empty
     }
-    public Defect(String name, Noun ing) {
+    public Defect(String name, NounPhrase ing) {
         this.name = name;
         this.ingredients.add(ing);
     }
 
-    public LinkedList<Noun> getIngredients() {
+    public LinkedList<NounPhrase> getIngredients() {
         return ingredients;
     }
 
-    private boolean addIngredient(Noun ingredient) {
+    private boolean addIngredient(NounPhrase ingredient) {
         if(ingredients.add(ingredient))
             return true;
         else

@@ -75,13 +75,13 @@ public class Model extends Observable {
         if( arg.compareTo("/db") == 0) {
             DB_connect db = new DB_connect();
             KnowledgeBase kb = new KnowledgeBase();
-            Noun ingredient1 = new Noun("minced meat");
-            Noun ingredient2 = new Noun("onion");
-            Noun ingredient3 = new Noun("chocolate");
+            NounPhrase ingredient1 = new NounPhrase(new Noun("minced meat"));
+            NounPhrase ingredient2 = new NounPhrase(new Noun("onion"));
+            NounPhrase ingredient3 = new NounPhrase(new Noun("chocolate"));
             kb.addIngredientWanted(ingredient1);
             kb.addIngredientWanted(ingredient2);
             //kb.addIngredientWanted(ingredient3);
-            LinkedList<Noun> ingredientsWanted = kb.getIngredientsWanted();
+            LinkedList<NounPhrase> ingredientsWanted = kb.getIngredientsWanted();
             //output = db.searchRecipe(kb);
             output = db.printRecipe(1) +db.printRecipe(2) +db.printRecipe(3) +db.printRecipe(4) +db.printRecipe(5) +db.printRecipe(6) +db.printRecipe(7);
             db.closeConnection();
@@ -89,8 +89,8 @@ public class Model extends Observable {
             notifyObservers();
             return;
         } else if(arg.equals("/logic")) {
-            Logic lg = new Logic(kb);
-            Noun ing = new Noun("APpLeS");
+            KBValidator lg = new KBValidator(kb);
+            NounPhrase ing = new NounPhrase(new Noun("APpLeS"));
             kb.addIngredientWanted(ing);
             if(lg.ruleThree())
                 System.out.println("ruleThree == true");
