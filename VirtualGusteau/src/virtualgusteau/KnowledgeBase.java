@@ -52,7 +52,7 @@ public class KnowledgeBase {
      * @param ingredient is the ingredient which you want to remove from the knowledge base.
      * @return true or false depending on if the ingredient was succesfullt removed from the kb or not.
      */
-    public boolean removeIngredidentWanted(Noun ingredient) {
+    public boolean removeIngredientWanted(Noun ingredient) {
         if(ingredientsWanted.remove(ingredient))
             return true;
         else
