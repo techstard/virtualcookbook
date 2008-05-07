@@ -127,7 +127,6 @@ public class View extends JFrame implements Observer {
         recipePane.setAutoscrolls(true);
         recipePane.setBounds(23,206,204,280);
         recipePane.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-        recipeArea.setAutoscrolls(true);
         
         right.add(pictureFrame);
         right.add(recipePane);

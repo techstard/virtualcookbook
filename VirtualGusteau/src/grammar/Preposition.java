@@ -4,9 +4,9 @@ package grammar;
  *
  * @author rkrantz
  */
-public class P {
+public class Preposition {
     private String preposition;
-    public P(String s) {
+    public Preposition(String s) {
         preposition = s;
     }
 

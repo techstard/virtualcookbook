@@ -9,14 +9,14 @@ import java.util.*;
  *
  * @author rkrantz
  */
-public class PP {
-    //LinkedList<Object> PP = new LinkedList<Object>();
+public class PrepositionalPhrase {
+    //LinkedList<Object> PrepositionalPhrase = new LinkedList<Object>();
     private Object left;
     private Object right;
     
-    public PP(P p, NP np) {
-        //PP.add(p);
-        //PP.add(np);
+    public PrepositionalPhrase(Preposition p, NounPhrase np) {
+        //PrepositionalPhrase.add(p);
+        //PrepositionalPhrase.add(np);
         left = p;
         right = np;
     }

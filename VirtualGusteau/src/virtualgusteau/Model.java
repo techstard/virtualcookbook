@@ -22,10 +22,18 @@ public class Model extends Observable {
     
     private KnowledgeBase kb;
     
+    private Grammar grammar;
+    private Semantics semantics;
+    
+    private LinkedList<Object> grammarResult;
+    private LinkedList<String[]> semanticsResult;
+    
     public Model() {
         sentence = new LinkedList<Word>();
         phraseList = new LinkedList<Phrase>();
         kb = new KnowledgeBase();
+        grammar = new Grammar();
+        semantics = new Semantics();
     }
     
     /**
@@ -118,25 +126,24 @@ public class Model extends Observable {
             //System.out.print(words[i] + "/" + tags[i] + " ");
         }
         //System.out.println("\n---------------------------------------");
-          
-        grammar.Test t = new grammar.Test();
+        
         try {
-            t.grammar(words, tags);
+            grammarResult = grammar.parser(words, tags);
         } catch(Exception e) {
             System.out.println(e.getMessage());
         }
         
-        //sentence();
+        semanticsResult = semantics.parser(grammarResult);
         
-        for(int i = 0; i < words.length; i++) {
-            if(tags[i].contains("VB")) {                                        // Any form of Verb
-                sentence.add(new Verb(words[i]));
-            } else if(tags[i].contains("NN") || tags[i].equals("PRP")) {        // Any form of Noun and Personal Pronouns
-                sentence.add(new Noun(words[i]));
-            }
+        for(int i = 0; i < semanticsResult.size(); i++) {
+            System.out.print(semanticsResult.get(i)[0]);
+            System.out.print("(");
+            System.out.print(semanticsResult.get(i)[1]);
+            System.out.print(",");
+            System.out.print(semanticsResult.get(i)[2]);
+            System.out.println(")");
         }
-        
-        //phrases();
+        System.out.println("-----------------------------");
         
         setChanged();
         notifyObservers();

@@ -1,41 +1,21 @@
 package grammar;
 import java.util.*;
-/**
- *
- * @author rkrantz
- */
 
-
-/**
- * S → NounPhrase VerbPhrase
- *   | S Conjunction S
- * 
- * NounPhrase → Pronoun                 → PRP
- *    | Noun                    → NN
- *    | Article Noun            → DT NN
- *    | Adjective Noun          → Adjective NN
- *    | Article NounPhrase              → DT NounPhrase
- *    | Digit                   → Digit
- *    | NounPhrase PrepositionalPhrase
- *    | NounPhrase RelClause
- * 
- * VerbPhrase → Verb
- *    | VerbPhrase NounPhrase
- *    | VerbPhrase Adjective
- *    | VerbPhrase PrepositionalPhrase
- *    | VerbPhrase Adverb
- * 
- * PrepositionalPhrase → Preposition NounPhrase
- * RelClause → that VerbPhrase
- */
-
-public class GtFO {
+public class Semantics {
+    
+    public Semantics() {
+        semSentences = new LinkedList<String[]>();
+    }
+    
     private String object = null;
     private String action = null;
     private String subject = null;
     
     private String[] atomic = new String[3];
     
+    private LinkedList<String[]> semSentences;
+    
+    private boolean negation = false;
     
     /**
      * In a sentence we limit the number of PrepositionalPhrase's there can be 
@@ -47,75 +27,6 @@ public class GtFO {
     private PrepositionalPhrase forPP;
     
     private int numberOfPeople;
-    
-    public void rec(Object o) {
-        if(o instanceof NounPhrase) {
-            
-            if(((NounPhrase)o).getLeft()instanceof Pronoun) {
-                
-                String tmp = ((Pronoun)((NounPhrase)o).getLeft()).getWord();
-                System.out.println(tmp);
-                
-            } else if(((NounPhrase)o).getLeft() instanceof Noun) {
-                
-                String tmp = ((Noun)((NounPhrase)o).getLeft()).getNoun();
-                System.out.println(tmp);
-                
-            } else if(((NounPhrase)o).getLeft() instanceof Article) {
-                
-                if(((NounPhrase)o).getRight() instanceof Noun) {
-                                        
-                    String tmp = ((Noun)((NounPhrase)o).getRight()).getNoun();
-                    System.out.println(tmp);
-                    
-                } else if(((NounPhrase)o).getRight() instanceof NounPhrase) {
-                    rec(((NounPhrase)o).getRight());
-                }
-            } else if(((NounPhrase)o).getLeft() instanceof Digit) {
-                
-                System.out.println(((Digit)((NounPhrase)o).getLeft()).getDigit());
-                
-            } else if(((NounPhrase)o).getLeft() instanceof NounPhrase) {
-                
-                rec(((NounPhrase)o).getLeft());
-                
-                if(((NounPhrase)o).getRight() instanceof PrepositionalPhrase) {
-                    rec(((NounPhrase)o).getRight());
-                }
-            } else if(((NounPhrase)o).getLeft() instanceof Adjective) {
-                if(((NounPhrase)o).getRight() instanceof Noun) {
-                    String jj_tmp = ((Adjective)((NounPhrase)o).getLeft()).getWord();
-                    String n_tmp = ((Noun)((NounPhrase)o).getRight()).getNoun();
-                    System.out.println(jj_tmp + " " + n_tmp);
-                }
-            }
-        } else if(o instanceof VerbPhrase) {
-            if(((VerbPhrase)o).getLeft() instanceof Verb) {                
-                System.out.println(((Verb)((VerbPhrase)o).getLeft()).getVerb());
-            } else if(((VerbPhrase)o).getLeft() instanceof VerbPhrase) {
-                rec(((VerbPhrase)o).getLeft());
-                if(((VerbPhrase)o).getRight() instanceof NounPhrase) {
-                    rec(((VerbPhrase)o).getRight());
-                } else if(((VerbPhrase)o).getRight() instanceof PrepositionalPhrase) {
-                    rec(((VerbPhrase)o).getRight());
-                } else if(((VerbPhrase)o).getRight() instanceof Adverb) {
-                    String tmp = ((Adverb)(((VerbPhrase)o).getRight())).getAdverb();
-                    System.out.println(tmp);
-                }
-            }
-        } else if(o instanceof Conjunction) {
-            
-        } else if(o instanceof PrepositionalPhrase) {
-            String prep = ((Preposition)((PrepositionalPhrase)o).getLeft()).getPreposition();
-            System.out.println(prep);
-            if(((PrepositionalPhrase)o).getRight() instanceof NounPhrase) {
-                rec(((PrepositionalPhrase)o).getRight());
-            }
-        } else if(o instanceof RelClause) {
-            System.out.println(((RelClause)o).getLeft());
-            rec(((RelClause)o).getRight());
-        }
-    }
     
     public String findVerb(VerbPhrase vp) {
         while(vp.getLeft()instanceof VerbPhrase) {
@@ -129,6 +40,10 @@ public class GtFO {
         } else if(np.getLeft()instanceof Noun) {
             return ((Noun)np.getLeft()).getNoun();
         } else if(np.getLeft()instanceof Article) {
+            Article a = (Article)np.getLeft();
+            if(a.getArticle().toLowerCase().equals("no")) {
+                negation = true;
+            }
             if(np.getRight()instanceof Noun) {
                 return ((Noun)np.getRight()).getNoun();
             } else if(np.getRight()instanceof NounPhrase) {
@@ -183,6 +98,9 @@ public class GtFO {
             return findNoun((NounPhrase)vp.getRight());
         } else if(vp.getRight() instanceof PrepositionalPhrase) {
            return findNinPP((PrepositionalPhrase)vp.getRight());
+        } else if(vp.getRight() instanceof Adverb) {
+            negation = true;
+            return findNoun((NounPhrase)parent.getRight());
         } else {
             return "No NP";
         }
@@ -192,9 +110,8 @@ public class GtFO {
     }
     
     
-    public LinkedList<Object> semantics(LinkedList<Object> sentence) {
-
-        LinkedList<Object> list = new LinkedList<Object>();
+    public LinkedList<String[]> parser(LinkedList<Object> sentence) {
+        semSentences.clear();
         String[] stat = new String[3];
         Object o = null;
         for (int i = 0; i < sentence.size(); i++) {
@@ -202,6 +119,10 @@ public class GtFO {
             if(o instanceof VerbPhrase) {
                 stat[0] = findVerb((VerbPhrase)o);
                 stat[2] = findNinV((VerbPhrase)o);
+                if(negation) { 
+                    stat[2] = "not("+stat[2]+")";
+                }
+                negation = false;
                 
                 if(stat[0].toLowerCase().equals("would")) {
                     // replace with want
@@ -214,7 +135,7 @@ public class GtFO {
                     tmp[0] = stat[0];
                     tmp[1] = stat[1];
                     tmp[2] = findNoun((NounPhrase)withPP.getRight());
-                    list.add(tmp);
+                    semSentences.add(tmp);
                 }
                 
                 if(forPP != null) {
@@ -225,25 +146,42 @@ public class GtFO {
                 
             } else if(o instanceof Conjunction) {
                 // uhm, maybe do something...
-                list.add(stat);
+                semSentences.add(stat);
                 stat = new String[3];
             } else if(o instanceof NounPhrase) {
+                
+                if(i < sentence.size()-1) {
+                    // Not last Phrase in sentence 
+                } else if(i == sentence.size()-1) {
+                    /* Last Phrase in sentence
+                     * Since we cannot have Noun Phrase by themselves 
+                     * we can assume this is refering back to a previous 
+                     * Verb Phrase or is an answer to a question
+                     */
+                    stat[0] = semSentences.getLast()[0];
+                    stat[1] = semSentences.getLast()[1];
+                    stat[2] = findNoun((NounPhrase)o);                   
+                } else {
+                    // Something is wrong
+                }
+                
+                
                 if(stat[0] == null) {
                     // no verb found, this should then be the subject
                     stat[1] = findNoun((NounPhrase)o);
                 }
             }
         }
-        list.add(stat);
-        for (int i = 0; i < list.size(); i++) {
-            String a = ((String[])list.get(i))[0];
-            String b = ((String[])list.get(i))[1];
-            String c = ((String[])list.get(i))[2];
+        semSentences.add(stat);
+        for (int i = 0; i < semSentences.size(); i++) {
+            String a = ((String[])semSentences.get(i))[0];
+            String b = ((String[])semSentences.get(i))[1];
+            String c = ((String[])semSentences.get(i))[2];
             //System.out.println(a+"("+b+","+c+")");
         }
         //System.out.println("Number of people: "+numberOfPeople);
         
-        return list;
+        return semSentences;
 
     }
 }

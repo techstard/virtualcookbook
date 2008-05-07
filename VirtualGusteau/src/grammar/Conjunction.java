@@ -4,9 +4,9 @@ package grammar;
  *
  * @author rkrantz
  */
-public class CC {
+public class Conjunction {
     private String conjunction;
-    public CC(String s) {
+    public Conjunction(String s) {
         conjunction = s;
     }
 
