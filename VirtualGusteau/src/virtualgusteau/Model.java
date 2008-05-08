@@ -26,7 +26,7 @@ public class Model extends Observable {
     private Semantics semantics;
     
     private LinkedList<Object> grammarResult;
-    private LinkedList<String[]> semanticsResult;
+    private LinkedList<Object> semanticsResult;
     
     public Model() {
         //sentence = new LinkedList<Word>();
@@ -34,7 +34,7 @@ public class Model extends Observable {
         kb = new KnowledgeBase();
         grammar = new Grammar();
         semantics = new Semantics();
-        semanticsResult = new LinkedList<String[]>();
+        semanticsResult = new LinkedList<Object>();
     }
     
     /**
@@ -135,12 +135,7 @@ public class Model extends Observable {
             semanticsResult = semantics.parser(grammarResult);
 
             for(int i = 0; i < semanticsResult.size(); i++) {
-                System.out.print(semanticsResult.get(i)[0]);
-                System.out.print("(");
-                System.out.print(semanticsResult.get(i)[1]);
-                System.out.print(",");
-                System.out.print(semanticsResult.get(i)[2]);
-                System.out.println(")");
+                System.out.println(semanticsResult.get(i).toString());
             }
             System.out.println("Number of people: "+semantics.getNumberOfPeople());
             System.out.println("-----------------------------");

@@ -37,6 +37,13 @@ public class Target {
     public void setSubTarget(Target subTarget) {
         this.subTarget = subTarget;
     }
-    
+    @Override
+    public String toString() {
+        if(subTarget instanceof Target) {
+            return name+"("+subTarget+")";
+        } else {
+            return name;
+        }
+    }
     
 }

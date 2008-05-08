@@ -10,6 +10,11 @@ public class Action {
         this.target = target;
     }
 
+    @Override
+    public String toString() {
+        return name+"("+target+")";
+    }
+
     public Action(String name) {
         this.name = name;
     }
