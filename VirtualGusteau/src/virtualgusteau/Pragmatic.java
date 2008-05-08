@@ -54,6 +54,10 @@ public class Pragmatic {
             }
         }
     }
+    /**
+     * ölkölkmvdsa
+     * @return ölkjdsagölkjdsg
+     */
     public int doWeHaveNeccesaryInfo() {
         if(kb.getIngredientsWanted().size() > 0) //we have something we want
             return 1;
