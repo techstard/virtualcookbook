@@ -53,6 +53,8 @@ public class Pragmatic {
                     kb.removeIngreidentNotWanted(new Noun(object));
             }
         }
+        
+        return "lolatmagnus";
     }
     
     /**

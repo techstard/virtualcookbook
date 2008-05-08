@@ -16,6 +16,10 @@ public class Semantics {
     private LinkedList<String[]> semSentences;
     
     private boolean negation = false;
+
+    public int getNumberOfPeople() {
+        return numberOfPeople;
+    }
     
     /**
      * In a sentence we limit the number of PrepositionalPhrase's there can be 
@@ -52,10 +56,16 @@ public class Semantics {
         } else if(np.getLeft()instanceof Adjective) {
             return ((Noun)np.getRight()).getNoun();
         } else if(np.getLeft()instanceof Digit) {
+            
+            if(np.getRight() instanceof Adjective) {
+                numberOfPeople = ((Digit)np.getLeft()).getDigit();
+                
+            }
+            
             int a = ((Digit)np.getLeft()).getDigit();
             return Integer.toString(a);
         } else if(np.getLeft()instanceof NounPhrase) {
-            findNoun((NounPhrase)np.getLeft());
+            return findNoun((NounPhrase)np.getLeft());
         }
         return "Fail";
     }
@@ -116,67 +126,103 @@ public class Semantics {
         forPP = null;
         String[] stat = new String[3];
         Object o = null;
-        for (int i = 0; i < sentence.size(); i++) {
-            o = sentence.get(i);
-            if(o instanceof VerbPhrase) {
-                stat[0] = findVerb((VerbPhrase)o);
-                stat[2] = findNinV((VerbPhrase)o);
-                if(negation) { 
-                    stat[2] = "not("+stat[2]+")";
-                }
-                negation = false;
-                
-                if(stat[0].toLowerCase().equals("would")) {
-                    // replace with want
-                    stat[0] = "want";
-                }
-                
-                
-                if(withPP != null) {
-                    String[] tmp = new String[3];
-                    tmp[0] = stat[0];
-                    tmp[1] = stat[1];
-                    tmp[2] = findNoun((NounPhrase)withPP.getRight());
-                    semSentences.add(tmp);
-                }
-                
-                if(forPP != null) {
-                    numberOfPeople = Integer.parseInt(findNoun((NounPhrase)forPP.getRight()));
-                }
-                
-                //System.out.println(findNoun((NounPhrase)withPP.getRight()));
-                
-            } else if(o instanceof Conjunction) {
-                // uhm, maybe do something...
-                semSentences.add(stat);
-                stat = new String[3];
-            } else if(o instanceof NounPhrase) {
-                
-                if(i < sentence.size()-1) {
-                    // Not last Phrase in sentence 
-                } else if(i == sentence.size()-1) {
-                    /* Last Phrase in sentence
-                     * Since we cannot have Noun Phrase by themselves 
-                     * we can assume this is refering back to a previous 
-                     * Verb Phrase or is an answer to a question
+        numberOfPeople = 0;
+        
+        if(sentence.size() == 1) {
+            /* One phrase sentence
+             */
+            
+            if(sentence.getLast() instanceof NounPhrase) {
+                if(((NounPhrase)sentence.getLast()).getLeft() instanceof Digit) {
+                    /**
+                     * Probably and answer to a question
                      */
-                    stat[0] = semSentences.getLast()[0];
-                    stat[1] = semSentences.getLast()[1];
-                    
-                    String tmp = findNoun((NounPhrase)o);
-                    
-                    stat[2] = (negation ? "not("+tmp+")" : tmp);
+                    numberOfPeople = ((Digit)((NounPhrase)sentence.getLast()).getLeft()).getDigit();
                 } else {
-                    // Something is wrong
+                    stat[1] = findNoun((NounPhrase)sentence.getLast());
                 }
-                
-                
-                if(stat[0] == null) {
-                    // no verb found, this should then be the subject
-                    stat[1] = findNoun((NounPhrase)o);
+                if(((NounPhrase)sentence.getLast()).getRight() instanceof PrepositionalPhrase) {
+                    NounPhrase np = (NounPhrase)sentence.getLast();
+                    PrepositionalPhrase pp = (PrepositionalPhrase)np.getRight();
+                    Preposition p = (Preposition)pp.getLeft();
+                    stat[0] = (p.toString()).substring((p.toString()).indexOf(":")+1);
+                    stat[2] = findNinPP(pp);
+                }
+            }
+        } else {
+            for (int i = 0; i < sentence.size(); i++) {
+                o = sentence.get(i);
+                if(o instanceof VerbPhrase) {
+                    stat[0] = findVerb((VerbPhrase)o);
+                    stat[2] = findNinV((VerbPhrase)o);
+                    if(negation) { 
+                        stat[2] = "not("+stat[2]+")";
+                    }
+                    negation = false;
+
+                    if(stat[0].toLowerCase().equals("would")) {
+                        // replace with want
+                        stat[0] = "want";
+                    }
+
+
+                    if(withPP != null) {
+                        String[] tmp = new String[3];
+                        tmp[0] = stat[0];
+                        tmp[1] = stat[1];
+                        tmp[2] = findNoun((NounPhrase)withPP.getRight());
+                        semSentences.add(tmp);
+                    }
+
+                    if(forPP != null) {
+                        numberOfPeople = Integer.parseInt(findNoun((NounPhrase)forPP.getRight()));
+                    }
+
+                    //System.out.println(findNoun((NounPhrase)withPP.getRight()));
+
+                } else if(o instanceof Conjunction) {
+                    // uhm, maybe do something...
+                    semSentences.add(stat);
+                    stat = new String[3];
+                } else if(o instanceof NounPhrase) {
+
+                    if(i < sentence.size()-1) {
+                        // Not last Phrase in sentence 
+                    } else if(i == sentence.size()-1) {
+                        /* Last Phrase in sentence
+                         * Since we cannot have Noun Phrase by themselves 
+                         * we can assume this is refering back to a previous 
+                         * Verb Phrase or is an answer to a question
+                         */
+                        stat[0] = semSentences.getLast()[0];
+                        stat[1] = semSentences.getLast()[1];
+
+                        String tmp = findNoun((NounPhrase)o);
+                        
+                        if(semSentences.getLast()[2].startsWith("not(")) {
+                            /**
+                             * Previous logical statement contained a negation 
+                             * of the object, therefor the current object 
+                             * needs to be negated as well.
+                             */
+                            stat[2] = "not("+tmp+")";
+                        } else {
+                            stat[2] = (negation ? "not("+tmp+")" : tmp);
+                        }
+                    } else {
+                        // Something is wrong
+                    }
+
+
+                    if(stat[0] == null) {
+                        // no verb found, this should then be the subject
+                        stat[1] = findNoun((NounPhrase)o);
+                    }
                 }
             }
         }
+        
+        
         semSentences.add(stat);
         for (int i = 0; i < semSentences.size(); i++) {
             String a = ((String[])semSentences.get(i))[0];

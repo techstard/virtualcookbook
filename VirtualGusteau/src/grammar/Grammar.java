@@ -8,7 +8,6 @@ public class Grammar {
     public Grammar() {
         S = new LinkedList<Object>();
     }
-    
     public LinkedList<Object> parser(String[] words, String[] tags) throws Exception {
         S.clear();
         for(int i = 0; i < tags.length; i++) {
@@ -179,7 +178,10 @@ public class Grammar {
             } else if(tags[i].equals("CD")) {
                 // Word is a number - treat as NounPhrase
                 if(S.isEmpty()) {
-                    // Legal or not?
+                    /**
+                     * Could be an answer 
+                     */
+                    S.add(new NounPhrase(new Digit(words[i])));
                 } else if(S.getLast()instanceof NounPhrase) {
                     throw new Exception("Illegal Sentence Structure - Digit cannot follow NP");
                 } else if(S.getLast()instanceof VerbPhrase) {
@@ -216,7 +218,7 @@ public class Grammar {
                         S.add(new NounPhrase(a_tmp, np_tmp));
                     }
                 }
-            } else if(S.getLast()instanceof PrepositionalPhrase) {
+            } if(S.getLast()instanceof PrepositionalPhrase) {
                 // Sentence ends in PrepositionalPhrase → not correct, further checks needed
                 if(S.size() > 2) {
                     if(S.get(S.size()-2)instanceof NounPhrase) {
