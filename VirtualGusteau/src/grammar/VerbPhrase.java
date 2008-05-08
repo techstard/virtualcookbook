@@ -65,6 +65,10 @@ public class VerbPhrase {
         left = vp;
         right = rb;
     }
+    public VerbPhrase(VerbPhrase vp, Gerund g) {
+        left = vp;
+        right = g;
+    }
 
     public Object getLeft() {
         return left;

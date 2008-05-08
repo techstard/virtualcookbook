@@ -8,6 +8,23 @@ public class Grammar {
     public Grammar() {
         S = new LinkedList<Object>();
     }
+    
+    /**
+     * VP → Verb            stinks
+     *    | VP NP           feel + a breeze
+     *    | VP Adjective    is + smelly
+     *    | VP PP           turn + to the east
+     *    | VP Adverb       go + ahead
+     *    | VP Gerund       want a pie + containing
+     * 
+     * 
+     * 
+     * @param words
+     * @param tags
+     * @return
+     * @throws java.lang.Exception
+     */
+    
     public LinkedList<Object> parser(String[] words, String[] tags) throws Exception {
         S.clear();
         for(int i = 0; i < tags.length; i++) {
@@ -80,7 +97,7 @@ public class Grammar {
                         throw new Exception("Illegal Sentence Structure - Preposition in the wrong place");
                     }                
                 }
-            } else if(tags[i].contains("VB") || tags[i].equals("MD")) {
+            } else if(tags[i].contains("VB") || tags[i].equals("MD")) {                
                 if(S.isEmpty()) {
                     throw new Exception("Illegal Sentence Structure - Verb cannot be first in sentence");
                 } else if(words[i].toLowerCase().equals("do")) {
@@ -103,7 +120,19 @@ public class Grammar {
                     S.add(new VerbPhrase(new Verb(words[i])));
                 } else if(S.getLast()instanceof Preposition && ((Preposition)S.getLast()).getPreposition().equals("that")) {
                     S.add(new VerbPhrase(new Verb(words[i])));
-                } else {
+                } else if(S.getLast() instanceof VerbPhrase && !(((VerbPhrase)S.getLast()).getRight() instanceof Adverb)) {
+                    if(tags[i].equals("VBG")) {
+                        /**
+                         * A Gerund following a Verb, Verb Phrase without adverb,
+                         * Preposition or adjective
+                         */
+                        VerbPhrase tmp = (VerbPhrase)S.getLast();
+                        S.removeLast();
+                        S.add(new VerbPhrase(tmp, new Gerund(words[i])));
+                    }
+                }
+                
+                else {
                     throw new Exception("Illegal Sentence Structure - Verb in the wrong place");
                 }
             } else if(tags[i].contains("JJ")) {
