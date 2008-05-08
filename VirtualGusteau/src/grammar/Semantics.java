@@ -1,5 +1,6 @@
 package grammar;
 import java.util.*;
+import virtualgusteau.*;
 
 public class Semantics {
     
@@ -11,7 +12,7 @@ public class Semantics {
      */
     
     public Semantics() {
-        semSentences = new LinkedList<String[]>();
+        semSentences = new LinkedList<Object>();
     }
     
     private String object = null;
@@ -20,7 +21,7 @@ public class Semantics {
     
     private String[] atomic = new String[3];
     
-    private LinkedList<String[]> semSentences;
+    private LinkedList<Object> semSentences;
     
     private boolean negation = false;
 
@@ -127,11 +128,10 @@ public class Semantics {
     }
     
     
-    public LinkedList<String[]> parser(LinkedList<Object> sentence) {
+    public LinkedList<Object> parser(LinkedList<Object> sentence) {
         semSentences.clear();
         withPP = null;
         forPP = null;
-        String[] stat = new String[3];
         Object o = null;
         numberOfPeople = 0;
         negation = false;
@@ -147,39 +147,41 @@ public class Semantics {
                      */
                     numberOfPeople = ((Digit)((NounPhrase)sentence.getLast()).getLeft()).getDigit();
                 } else {
-                    stat[1] = findNoun((NounPhrase)sentence.getLast());
+                    //stat[1] = findNoun((NounPhrase)sentence.getLast());
                 }
                 if(((NounPhrase)sentence.getLast()).getRight() instanceof PrepositionalPhrase) {
                     NounPhrase np = (NounPhrase)sentence.getLast();
                     PrepositionalPhrase pp = (PrepositionalPhrase)np.getRight();
                     Preposition p = (Preposition)pp.getLeft();
-                    stat[0] = (p.toString()).substring((p.toString()).indexOf(":")+1);
-                    stat[2] = findNinPP(pp);
+                    String ob = (p.toString()).substring((p.toString()).indexOf(":")+1);
+                    String t = findNinPP(pp);
+                    
+                    semSentences.add(new Action(ob, new Target(t)));
                 }
             }
         } else {
             for (int i = 0; i < sentence.size(); i++) {
                 o = sentence.get(i);
                 if(o instanceof VerbPhrase) {
-                    stat[0] = findVerb((VerbPhrase)o);
-                    stat[2] = findNinV((VerbPhrase)o);
+                    String action = findVerb((VerbPhrase)o);
+                    String target = findNinV((VerbPhrase)o);
+                    
+                    semSentences.add(new Action(action, new Target(target)));
+                    
                     if(negation) { 
-                        stat[2] = "not("+stat[2]+")";
+                        ((Action)semSentences.getLast()).setNegation(negation);
                     }
                     negation = false;
 
-                    if(stat[0].toLowerCase().equals("would")) {
-                        // replace with want
-                        stat[0] = "want";
+                    if(((Action)semSentences.getLast()).getName().toLowerCase().equals("would")) {
+                        ((Action)semSentences.getLast()).setName("want");
                     }
 
 
-                    if(withPP != null) {
-                        String[] tmp = new String[3];
-                        tmp[0] = stat[0];
-                        tmp[1] = stat[1];
-                        tmp[2] = findNoun((NounPhrase)withPP.getRight());
-                        semSentences.add(tmp);
+                    if(withPP != null) {                        
+                        Target t = new Target(findNoun((NounPhrase)withPP.getRight()));
+                        
+                        ((Target)((Action)semSentences.getLast()).getTarget()).setSubTarget(t);
                     }
 
                     if(forPP != null) {
@@ -190,8 +192,7 @@ public class Semantics {
 
                 } else if(o instanceof Conjunction) {
                     // uhm, maybe do something...
-                    semSentences.add(stat);
-                    stat = new String[3];
+                    
                 } else if(o instanceof NounPhrase) {
 
                     if(i < sentence.size()-1) {
@@ -202,45 +203,35 @@ public class Semantics {
                          * we can assume this is refering back to a previous 
                          * Verb Phrase or is an answer to a question
                          */
-                        stat[0] = semSentences.getLast()[0];
-                        stat[1] = semSentences.getLast()[1];
-
-                        String tmp = findNoun((NounPhrase)o);
-                        
-                        if(semSentences.getLast()[2].startsWith("not(")) {
-                            /**
-                             * Previous logical statement contained a negation 
-                             * of the object, therefor the current object 
-                             * needs to be negated as well.
-                             */
-                            stat[2] = "not("+tmp+")";
+                        String name = ((Action)semSentences.getLast()).getName();
+                        String t = findNoun((NounPhrase)o);
+                        boolean n = ((Action)semSentences.getLast()).isNegation();
+                        semSentences.add(new Action(name, new Target(t)));
+                        if(n) {
+                            ((Action)semSentences.getLast()).setNegation(n);
                         } else {
-                            stat[2] = (negation ? "not("+tmp+")" : tmp);
+                            if(negation) {
+                                ((Action)semSentences.getLast()).setNegation(negation);
+                            }
                         }
+                        
                     } else {
                         // Something is wrong
-                    }
-
-
-                    if(stat[0] == null) {
-                        // no verb found, this should then be the subject
-                        stat[1] = findNoun((NounPhrase)o);
                     }
                 }
             }
         }
         
         
-        semSentences.add(stat);
+        /*semSentences.add(stat);
         for (int i = 0; i < semSentences.size(); i++) {
             String a = ((String[])semSentences.get(i))[0];
             String b = ((String[])semSentences.get(i))[1];
             String c = ((String[])semSentences.get(i))[2];
             //System.out.println(a+"("+b+","+c+")");
         }
-        //System.out.println("Number of people: "+numberOfPeople);
+        //System.out.println("Number of people: "+numberOfPeople);*/
         
         return semSentences;
-
     }
 }
