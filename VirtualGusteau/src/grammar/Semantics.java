@@ -132,6 +132,7 @@ public class Semantics {
         String[] stat = new String[3];
         Object o = null;
         numberOfPeople = 0;
+        negation = false;
         
         if(sentence.size() == 1) {
             /* One phrase sentence
