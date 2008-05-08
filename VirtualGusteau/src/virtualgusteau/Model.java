@@ -130,21 +130,24 @@ public class Model extends Observable {
         
         try {
             grammarResult = grammar.parser(words, tags);
+            
+            semanticsResult.clear();
+            semanticsResult = semantics.parser(grammarResult);
+
+            for(int i = 0; i < semanticsResult.size(); i++) {
+                System.out.print(semanticsResult.get(i)[0]);
+                System.out.print("(");
+                System.out.print(semanticsResult.get(i)[1]);
+                System.out.print(",");
+                System.out.print(semanticsResult.get(i)[2]);
+                System.out.println(")");
+            }
+            System.out.println("Number of people: "+semantics.getNumberOfPeople());
+            System.out.println("-----------------------------");
         } catch(Exception e) {
             System.out.println(e.getMessage());
         }
-        semanticsResult.clear();
-        semanticsResult = semantics.parser(grammarResult);
         
-        for(int i = 0; i < semanticsResult.size(); i++) {
-            System.out.print(semanticsResult.get(i)[0]);
-            System.out.print("(");
-            System.out.print(semanticsResult.get(i)[1]);
-            System.out.print(",");
-            System.out.print(semanticsResult.get(i)[2]);
-            System.out.println(")");
-        }
-        System.out.println("-----------------------------");
         
         setChanged();
         notifyObservers();
