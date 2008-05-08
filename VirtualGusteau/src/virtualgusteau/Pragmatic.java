@@ -53,8 +53,14 @@ public class Pragmatic {
                     kb.removeIngreidentNotWanted(new Noun(object));
             }
         }
-        
-        return "lolatmagnus";
+    }
+    public int doWeHaveNeccesaryInfo() {
+        if(kb.getIngredientsWanted().size() > 0) //we have something we want
+            return 1;
+        else if(kb.getNrOfPersons() > 0) //we know how many that want to eat
+            return 2;
+        else
+            return 0;
     }
     
     /**

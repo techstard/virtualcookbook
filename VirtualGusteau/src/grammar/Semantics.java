@@ -5,7 +5,9 @@ public class Semantics {
     
     /**
      * Not Working:
-     *  
+     * I want a pie containing apples
+     * We will be 20 people dining today
+     * The dish should not contain any milk products
      */
     
     public Semantics() {
