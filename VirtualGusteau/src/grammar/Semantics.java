@@ -4,9 +4,6 @@ import java.util.*;
 public class Semantics {
     
     /**
-     * Working:
-     *  
-     * 
      * Not Working:
      *  
      */
