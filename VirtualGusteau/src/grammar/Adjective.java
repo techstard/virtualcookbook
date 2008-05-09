@@ -16,7 +16,7 @@ public class Adjective {
         return tmp;
     }
 
-    public String getWord() {
+    public String getAdjective() {
         return word;
     }
     

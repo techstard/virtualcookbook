@@ -10,12 +10,23 @@ public class Grammar {
     }
     
     /**
+     * NP → Pronoun         I
+     *    | Noun            dog
+     *    | Article Noun    the + dog
+     *    | Article NP      the + dog on the log
+     *    | Adjective Noun  yellow + submarine
+     *    | Digit           4
+     *    | NP PP           the dog + on the log
+     *    | Modal NP        can + the dog
+     * 
+     * 
      * VP → Verb            stinks
      *    | VP NP           feel + a breeze
      *    | VP Adjective    is + smelly
      *    | VP PP           turn + to the east
      *    | VP Adverb       go + ahead
      *    | VP Gerund       want a pie + containing
+     *    | Modal PP        would + like
      * 
      * 
      * 
@@ -47,6 +58,10 @@ public class Grammar {
                     Preposition tmp = (Preposition)S.getLast();
                     S.removeLast();
                     S.add(new PrepositionalPhrase(tmp,new NounPhrase(new Pronoun(words[i]))));
+                } else if(S.getLast() instanceof Modal) {
+                    Modal m = (Modal)S.getLast();
+                    S.removeLast();
+                    S.add(new NounPhrase(m, new NounPhrase(new Pronoun(words[i]))));
                 } else if(S.getLast()instanceof Article) {
                     throw new Exception("Possible Illegal Sentence Structure - Article before Pronoun");
                 } else {
@@ -69,7 +84,7 @@ public class Grammar {
                     // Word before was a preposition, make a PrepositionalPhrase of it
                     Preposition tmp = (Preposition)S.getLast();
                     S.removeLast();
-                    S.add(new PrepositionalPhrase(tmp,new NounPhrase(new Noun(words[i])))); 
+                    S.add(new PrepositionalPhrase(tmp,new NounPhrase(new Noun(words[i]))));
                 } else if(S.getLast()instanceof Conjunction) {
                     // Second part of sentence preceded by a Conjunction, i.e. and/but/or
                     // The Pronoun is first in second part, add it
@@ -79,6 +94,10 @@ public class Grammar {
                     Adjective j_tmp = (Adjective)S.getLast();
                     S.removeLast();
                     S.add(new NounPhrase(j_tmp, new Noun(words[i])));
+                } else if(S.getLast() instanceof Modal) {
+                    Modal m = (Modal)S.getLast();
+                    S.removeLast();
+                    S.add(new NounPhrase(m, new NounPhrase(new Noun(words[i]))));
                 } else {
                     throw new Exception("Illegal Sentence Structure - Noun in the wrong place");
                 }
@@ -87,17 +106,28 @@ public class Grammar {
                     // The beginning of a relClause following a NounPhrase
                     S.add(new Preposition(words[i]));
                 } else {
-                    if(S.getLast()instanceof NounPhrase) {
+                    if(S.getLast() instanceof NounPhrase) {
                     // NounPhrase preceding the preposition → correct
                     S.add(new Preposition(words[i]));
                     } else if(S.getLast()instanceof VerbPhrase) {
                         // VerbPhrase preceding the preposition → correct
                         S.add(new Preposition(words[i]));
+                    } else if(S.getLast() instanceof Modal) {
+                        S.add(new Preposition(words[i]));
                     } else {
                         throw new Exception("Illegal Sentence Structure - Preposition in the wrong place");
                     }                
                 }
-            } else if(tags[i].contains("VB") || tags[i].equals("MD")) {                
+            } else if(tags[i].equals("MD")) {
+                /**
+                 * A modal verb explains the mood of a verb, the folloing verbs
+                 * are modals:
+                 * CAN / COULD / MAY / MIGHT / MUST / SHALL / SHOULD / OUGHT TO / WILL / WOULD 
+                 * 
+                 * The modal always preceeds a Noun Phrase or Verb Phrase
+                 */
+                S.add(new Modal(words[i]));
+            } else if(tags[i].contains("VB")) {
                 if(S.isEmpty()) {
                     throw new Exception("Illegal Sentence Structure - Verb cannot be first in sentence");
                 } else if(words[i].toLowerCase().equals("do")) {
@@ -130,9 +160,11 @@ public class Grammar {
                         S.removeLast();
                         S.add(new VerbPhrase(tmp, new Gerund(words[i])));
                     }
-                }
-                
-                else {
+                } else if(S.getLast() instanceof Modal) {
+                    Modal m = (Modal)S.getLast();
+                    S.removeLast();
+                    S.add(new VerbPhrase(m, new VerbPhrase(new Verb(words[i]))));
+                } else {
                     throw new Exception("Illegal Sentence Structure - Verb in the wrong place");
                 }
             } else if(tags[i].contains("JJ")) {
@@ -168,7 +200,7 @@ public class Grammar {
                             S.add(new PrepositionalPhrase(p_tmp, np_tmp));
                         }
                     }
-                } else if(S.getLast()instanceof PrepositionalPhrase) {
+                } else if(S.getLast() instanceof PrepositionalPhrase) {
                     if(S.size() > 2) {
                         if(S.get(S.size()-2)instanceof NounPhrase) {
                             PrepositionalPhrase pp_tmp = (PrepositionalPhrase)S.getLast();
@@ -180,6 +212,14 @@ public class Grammar {
                             VerbPhrase vp_tmp = (VerbPhrase)S.get(S.size()-2);
                             S.removeLast(); S.removeLast();
                             S.add(new VerbPhrase(vp_tmp, pp_tmp));
+                        } else if(S.get(S.size()-2)instanceof Modal) {
+                            
+                            PrepositionalPhrase pp_tmp = (PrepositionalPhrase)S.getLast();
+                            
+                            Modal m_tmp = (Modal)S.get(S.size()-2);
+                            
+                            S.removeLast(); S.removeLast();
+                            S.add(new NounPhrase(m_tmp, pp_tmp));
                         }
                     }
                 }
@@ -245,6 +285,13 @@ public class Grammar {
                         Article a_tmp = (Article)S.get(S.size()-2);
                         S.removeLast(); S.removeLast();
                         S.add(new NounPhrase(a_tmp, np_tmp));
+                    } else if(S.get(S.size()-2)instanceof Modal) {
+                        NounPhrase np_tmp = (NounPhrase)S.getLast();
+
+                        Modal m_tmp = (Modal)S.get(S.size()-2);
+
+                        S.removeLast(); S.removeLast();
+                        S.add(new NounPhrase(m_tmp, np_tmp));
                     }
                 }
             } if(S.getLast()instanceof PrepositionalPhrase) {
@@ -260,9 +307,29 @@ public class Grammar {
                         VerbPhrase vp_tmp = (VerbPhrase)S.get(S.size()-2);
                         S.removeLast(); S.removeLast();
                         S.add(new VerbPhrase(vp_tmp, pp_tmp));
+                    } else if(S.get(S.size()-2)instanceof Modal) {
+                        
+                        PrepositionalPhrase pp_tmp = (PrepositionalPhrase)S.getLast();
+
+                        Modal m_tmp = (Modal)S.get(S.size()-2);
+
+                        
+                        
+                        /**
+                         * If there is a Noun Phrase before the modal the 
+                         * modal itself cannot belong to a Noun Phrase but must 
+                         * be part of a Verb Phrase
+                         */
+                        if(S.get(S.size()-3)instanceof NounPhrase) {
+                            S.removeLast(); S.removeLast();
+                            S.add(new VerbPhrase(m_tmp, pp_tmp));
+                        } else {
+                            S.removeLast(); S.removeLast();
+                            S.add(new NounPhrase(m_tmp, pp_tmp));
+                        }
                     }
                 }
-            }
+            } 
         }
         if(S.getLast()instanceof NounPhrase) {
             // Sentence ends in NounPhrase → not correct, further checks needed
