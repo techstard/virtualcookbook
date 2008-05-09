@@ -139,7 +139,13 @@ public class Semantics {
              * contain a noun or a digit. We must therefor extract it
              */
             if(parent.getRight() instanceof NounPhrase) {
-                return findNoun((NounPhrase)parent.getRight());
+                NounPhrase np = (NounPhrase)parent.getRight();
+                if(np.getRight() instanceof Digit) {
+                    numberOfPeople = ((Digit)np.getRight()).getDigit();
+                    return findNoun((NounPhrase)latestNP.getRight());
+                } else {
+                    return findNoun((NounPhrase)parent.getRight());
+                }
             } else if(latestNP instanceof NounPhrase) {
                 return findNoun(latestNP);
             } else if(parent.getRight() instanceof Adjective) {
@@ -174,6 +180,7 @@ public class Semantics {
             }
         } else if(vp.getLeft() instanceof Modal) {
             if(vp.getRight() instanceof VerbPhrase) {
+                VerbPhrase v = (VerbPhrase)vp.getRight();
                 return findNinV((VerbPhrase)vp.getRight());
             } else if(vp.getRight() instanceof PrepositionalPhrase) {
                 return findNinPP((PrepositionalPhrase)vp.getRight());
@@ -203,7 +210,12 @@ public class Semantics {
                     negation = true;
                 }
             } else if(vp.getRight() instanceof NounPhrase) {
-                latestNP = (NounPhrase)vp.getRight();
+                NounPhrase np = (NounPhrase)vp.getRight();
+                if(np.getLeft() instanceof Digit) {
+                    // Do nothing maybe?
+                } else {
+                    latestNP = (NounPhrase)vp.getRight();
+                }
             }
             return findNinV((VerbPhrase)vp.getLeft());
         } else {
