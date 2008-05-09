@@ -94,6 +94,17 @@ public class Model extends Observable {
             setChanged();
             notifyObservers();
             return;
+        } else if(arg.equals("/isai")) { // test the isAnIngredient function
+            DB_connect db = new DB_connect();
+            // two test strings
+            String test1 = "shrimpos";
+            String test2 = "red wine";
+            System.out.println(test1 + " = " + db.isAnIngredient(test1) + ", " + test2 + " = " + db.isAnIngredient(test2));
+            //output = db.isAnIngredient("banana");
+            db.closeConnection();
+            setChanged();
+            notifyObservers();
+            return;
         } else if(arg.equals("/logic")) {
             KBValidator lg = new KBValidator(kb);
             Noun ing = new Noun("APpLeS");
