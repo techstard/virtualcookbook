@@ -84,7 +84,12 @@ public class Model extends Observable {
             //kb.addIngredientWanted(ingredient3);
             LinkedList<Noun> ingredientsWanted = kb.getIngredientsWanted();
             //output = db.searchRecipe(kb);
-            output = db.printRecipe(1) +db.printRecipe(2) +db.printRecipe(3) +db.printRecipe(4) +db.printRecipe(5) +db.printRecipe(6) +db.printRecipe(7);
+            //output = db.printRecipe(1) +db.printRecipe(2) +db.printRecipe(3) +db.printRecipe(4) +db.printRecipe(5) +db.printRecipe(6) +db.printRecipe(7);
+            if (db.isCategory("meathej")){
+                output = "true";
+            }else{
+                output = "false";
+            }
             db.closeConnection();
             setChanged();
             notifyObservers();

@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
+import java.util.LinkedList;
 
 /**
  * This class connects to the recipe database.
@@ -14,6 +15,7 @@ import java.util.*;
  */
 public class DB_connect {
 	private Connection con = null;
+        private LinkedList recept = new LinkedList();
 
 	public DB_connect() {
 		try{
@@ -49,6 +51,7 @@ public class DB_connect {
                         return null;
 		} 
 	}//End connect
+        
         public String searchRecipe(KnowledgeBase kb){
             /*
              * För flera ingredienser fyll ut med
@@ -90,6 +93,7 @@ public class DB_connect {
 
                 String output = "Recipies : ";
                 while (rset.next()){
+                    recept.add(rset.getInt(1));
                     output = output + rset.getString(1) + "\n";
                 }
                 return output;
@@ -99,6 +103,29 @@ public class DB_connect {
                         return null;
             } 
         }//End searchRecipe
+        
+        /**
+         * isCategory
+         * checks if word is a category
+         * @param word to check
+         * @return Boolean true if it is a category, false otherwise
+         */
+        public boolean isCategory(String word){
+            String q = "SELECT count(*) FROM category WHERE name = '" + word + "';";
+            try{
+                ResultSet rset = connect(q);
+                rset.next();
+                if(rset.getInt(1) >= 1){
+                    return true;
+                }
+                return false;
+                }
+            catch(Exception e) {
+                System.err.println("Exception in searchRecipe: " + e.getMessage());
+		System.err.println(e);
+                return false;
+            }
+        }
         
         /**
          * printRecipe
