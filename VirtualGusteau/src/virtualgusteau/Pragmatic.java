@@ -14,15 +14,13 @@ import java.util.LinkedList;
  */
 public class Pragmatic {
     
-    private LinkedList<String[]> semantics;
+    private LinkedList<Object> semantics;
     private KnowledgeBase kb = new KnowledgeBase();
     private KBValidator kbv = new KBValidator(kb);
     private LinkedList<String> wantPhrases = new LinkedList<String>();
     
-    private String[] memory = new String[3];
     
-    
-    public Pragmatic(KnowledgeBase kb, LinkedList<String[]> sem) {
+    public Pragmatic(KnowledgeBase kb, LinkedList<Object> sem) {
         semantics = sem;
         this.kb = kb;
         
@@ -30,43 +28,45 @@ public class Pragmatic {
         wantPhrases.add("wants");
         wantPhrases.add("love");
         wantPhrases.add("like");
-    }
-    
-    /**
-     * This function will analyze the input from the semantics and put the relevant information into the KnowledgeBase.
-     * @param sentance is the sentance that we want to analyze before putting it in to the KnowledgeBase.
-     */
-    public void kbAnalyzeInput(String[] sentance) {
-        String action = sentance[0];
-        String subject = sentance[1];
-        String object = sentance[2];
         
-        if(wantPhrases.contains(object)) {
-            if(object.matches("^not(")) {
-                kb.addIngredientNotWanted(new Noun(object));
-                if(!kbv.ruleOne())
-                    kb.removeIngredientWanted(new Noun(object));
-            }
-            else {
-                kb.addIngredientWanted(new Noun(object));
-                if(!kbv.ruleOne())
-                    kb.removeIngreidentNotWanted(new Noun(object));
-            }
-        }
-    }
-    /**
-     * ölkölkmvdsa
-     * @return ölkjdsagölkjdsg
-     */
-    public int doWeHaveNeccesaryInfo() {
-        if(kb.getIngredientsWanted().size() > 0) //we have something we want
-            return 1;
-        else if(kb.getNrOfPersons() > 0) //we know how many that want to eat
-            return 2;
-        else
-            return 0;
     }
     
+    public void checkObject(Object obj) {
+        if(obj instanceof Action) {
+            if(wantPhrases.contains(((Action)obj).getName()) && ((Action)obj).isNegation()) {
+                //This means that we don't want something.
+                kb.addIngredientNotWanted(new Noun(((Action)obj).getTarget().getName())); //Add to not want.
+                if(!kbv.ruleOne()) //if we have conflict.
+                    kb.removeIngredientWanted(new Noun(((Action)obj).getTarget().getName())); //remove so no conflict.
+            } else if(wantPhrases.contains(((Action)obj).getName())) {
+                //this means that we want something.
+                kb.addIngredientWanted(new Noun(((Action)obj).getTarget().getName())); //Add to want.
+                if(!kbv.ruleOne()) //if we have conflict.
+                     kb.removeIngreidentNotWanted(new Noun(((Action)obj).getTarget().getName())); //remove so no conflict.
+            } else {
+                //This means that the action isn't an want or an do not want.
+            }
+            //WHAT DO WE WANT TO DO WITH THE TARGETS!!!
+            //check target
+            //check target has subtarget.
+            //if taget has subtarget make target class of recipe.
+        } else if(obj instanceof Target) {
+            //one word seantance. porbably answer to a question.
+        }
+            
+    }
+    
+    public int checkRecipies() {
+        //connect to db and get amount of recipies and return that amount.
+        return 0;
+    }
+    public String checkKB() {
+        if(kb.getIngredientsWanted().size() <= 0 && kb.getIngredientsNotWanted().size() <= 0 && kb.getNrOfPersons() <= 0 && kb.getDefects().size() <= 0)
+            return "Hi I'm sorry I may be stupid or you haven't specified anything of importance.";
+        else
+            return "OMG this is the shit LOLzErS!!"; //todo
+            
+    }
     /**
      * if(he,she,it,they,you) {
      *      look at last sentance and get the last person or last noun

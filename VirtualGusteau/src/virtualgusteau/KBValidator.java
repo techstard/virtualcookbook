@@ -33,7 +33,7 @@ public class KBValidator {
     
     /**
      * Check so there is no conflict between ingredientsWanted and ingredientsNotWanted.
-     * @return true or false depending on if rule #1 is valid or not.
+     * @return true if no conflict is detected false otherwise.
      */
     public boolean ruleOne() {
 
