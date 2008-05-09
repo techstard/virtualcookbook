@@ -65,9 +65,22 @@ public class VerbPhrase {
         left = vp;
         right = rb;
     }
+    /**
+     * 
+     * @param vp
+     * @param g
+     */
     public VerbPhrase(VerbPhrase vp, Gerund g) {
         left = vp;
         right = g;
+    }
+    public VerbPhrase(Modal m, VerbPhrase vp) {
+        left = m;
+        right = vp;
+    }
+    public VerbPhrase(Modal m, PrepositionalPhrase pp) {
+        left = m;
+        right = pp;
     }
 
     public Object getLeft() {

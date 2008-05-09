@@ -84,7 +84,7 @@ public class GtFO {
                 }
             } else if(((NounPhrase)o).getLeft() instanceof Adjective) {
                 if(((NounPhrase)o).getRight() instanceof Noun) {
-                    String jj_tmp = ((Adjective)((NounPhrase)o).getLeft()).getWord();
+                    String jj_tmp = ((Adjective)((NounPhrase)o).getLeft()).getAdjective();
                     String n_tmp = ((Noun)((NounPhrase)o).getRight()).getNoun();
                     System.out.println(jj_tmp + " " + n_tmp);
                 }

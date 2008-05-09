@@ -63,9 +63,22 @@ public class NounPhrase {
         left = jj;
         right = n;
     }
+    /**
+     * 
+     * @param a
+     * @param np
+     */
     public NounPhrase(Article a, NounPhrase np) {
         left = a;
         right = np;
+    }
+    public NounPhrase(Modal m, NounPhrase np) {
+        left = m;
+        right = np;
+    }
+    public NounPhrase(Modal m, PrepositionalPhrase pp) {
+        left = m;
+        right = pp;
     }
     public Object getLeft() {
         return left;

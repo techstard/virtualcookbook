@@ -6,7 +6,6 @@ public class Semantics {
     
     /**
      * Not Working:
-     * I want a pie containing apples
      * We will be 20 people dining today
      * The dish should not contain any milk products
      */
@@ -14,6 +13,26 @@ public class Semantics {
     public Semantics() {
         semSentences = new LinkedList<Object>();
     }
+    /*
+     * NP → Pronoun         I
+     *    | Noun            dog
+     *    | Article Noun    the + dog
+     *    | Article NP      the + dog on the log
+     *    | Adjective Noun  yellow + submarine
+     *    | Digit           4
+     *    | NP PP           the dog + on the log
+     *    | Modal NP        can + the dog
+     * 
+     * 
+     * VP → Verb            stinks
+     *    | VP NP           feel + a breeze
+     *    | VP Adjective    is + smelly
+     *    | VP PP           turn + to the east
+     *    | VP Adverb       go + ahead
+     *    | VP Gerund       want a pie + containing
+     *    | Modal PP        would + like
+     */
+    
     
     private String object = null;
     private String action = null;
@@ -37,14 +56,34 @@ public class Semantics {
      */
     private PrepositionalPhrase withPP;
     private PrepositionalPhrase forPP;
+    private VerbPhrase gerundPhrase;
     
     private int numberOfPeople;
     
     public String findVerb(VerbPhrase vp) {
-        while(vp.getLeft()instanceof VerbPhrase) {
+        while(vp.getLeft() instanceof VerbPhrase) {
             vp = (VerbPhrase)vp.getLeft();
         }
-        return ((Verb)vp.getLeft()).getVerb();
+        if(vp.getLeft() instanceof Modal) {
+            if(vp.getRight() instanceof VerbPhrase) {
+                 return findVerb((VerbPhrase)vp.getRight());
+            } else if(vp.getRight() instanceof PrepositionalPhrase) {
+                /** 
+                 * Not sure about this!
+                 * As far as I know when using, e.g, the modal "would" 
+                 * you leave out the verb which means there is no "action". 
+                 * But can it be so that in these cases the preposition 
+                 * can serve as the "action"?
+                 */
+                return ((Preposition)((PrepositionalPhrase)vp.getRight()).getLeft()).getPreposition();
+            } else {
+                return "Error - findVerb - incorrect use of Modal";
+            }
+        } else if(vp.getLeft() instanceof Verb) {
+            return ((Verb)vp.getLeft()).getVerb();
+        } else {
+            return "Error - findVerb - incorrect use of Verb Phrase";
+        }        
     }
     public String findNoun(NounPhrase np) {
         if(np.getLeft()instanceof Pronoun) {
@@ -78,27 +117,66 @@ public class Semantics {
         return "Fail";
     }
     /**
-     * We want to find the direct Object of the Verb Phrase.
-     * 
-     * We do this by going down throught the Verb Phrase, 
-     * constantly checking the current nodes left childs left child. 
-     * If this is a verb that means we've reached the end of the VerbPhrase.
-     * By looking at the grammar definition for we see that if there is 
-     * a noun in the VerbPhrase there has to be a NounPhrase to the right.
      * 
      * 
      * @param vp The Verb Phrase in which we want to find a noun
      * @return The result of findNoun
      */
+    private VerbPhrase parent;
     public String findNinV(VerbPhrase vp) {
-        VerbPhrase parent = vp;
-        while(((VerbPhrase)vp.getLeft()).getLeft()instanceof VerbPhrase) {
+        /**
+         * Check if the input VP's left child is a Verb, if so 
+         * we cannot do traverse through the tree
+         */
+        if(vp.getLeft() instanceof Verb) {
+            /**
+             * The Verbs sibling is a NounPhrase and should therefor
+             * contain a noun or a digit. We must therefor extract it
+             */
+            if(parent.getRight() instanceof NounPhrase) {
+                return findNoun((NounPhrase)parent.getRight());
+            } else if(parent.getRight() instanceof Adjective) {
+                /**
+                 * Verbs sibling is an Adjective, can also be seen
+                 * as a target
+                 */
+                return ((Adjective)parent.getRight()).getAdjective();
+            } else if(parent.getRight() instanceof Adverb) {
+                /**
+                 * Verbs sibling is an Adverb, can probably also 
+                 * be considered as a target but we're stretching 
+                 * the analogy pretty thin
+                 * 
+                 * If the Advers is "not" that means we have a 
+                 * negation of the target
+                 */
+                String adverb = ((Adverb)parent.getRight()).getAdverb();
+                if(adverb.toLowerCase().equals("not")) {
+                    return findNoun((NounPhrase)parent.getRight());
+                } else {
+                    return ((Adverb)parent.getRight()).getAdverb();
+                }                
+            } else if(parent.getRight() instanceof Gerund) {
+                /**
+                 * Verbs sibling is a Gerund, as with Adverb, 
+                 * this is stretching the analogy
+                 */
+                return ((Gerund)parent.getRight()).getGerund();
+            } else {
+                return "Error - findNinV - Verb";
+            }
+        } else if(vp.getLeft() instanceof Modal) {
+            if(vp.getRight() instanceof VerbPhrase) {
+                return findNinV((VerbPhrase)vp.getRight());
+            } else if(vp.getRight() instanceof PrepositionalPhrase) {
+                return findNinPP((PrepositionalPhrase)vp.getRight());
+            } else {
+                return "Error - findNinV - incorrect use of Modal";
+            }
+        } else if(vp.getLeft() instanceof VerbPhrase) {
             parent = vp;
-            vp = (VerbPhrase)vp.getLeft();
-            
-            if(parent.getRight() instanceof PrepositionalPhrase) {
-                // Check which preposition
-                PrepositionalPhrase tmp = (PrepositionalPhrase)parent.getRight();
+            if(vp.getRight() instanceof PrepositionalPhrase) {
+                PrepositionalPhrase tmp = (PrepositionalPhrase)vp.getRight();
                 Preposition left = (Preposition)tmp.getLeft();
                 NounPhrase right = (NounPhrase)tmp.getRight();
 
@@ -106,22 +184,17 @@ public class Semantics {
                     withPP = tmp;
                 } else if(left.getPreposition().toLowerCase().equals("for")) {
                     forPP = tmp;
-                } else if(left.getPreposition().toLowerCase().equals("like")) {
-                    
+                }
+            } else if(vp.getRight() instanceof Gerund) {
+                Gerund tmp = (Gerund)vp.getRight();
+                if(tmp.getGerund().toLowerCase().equals("containing")) {
+                    gerundPhrase = vp;
                 }
             }            
-        }       
-        
-        if(vp.getRight() instanceof NounPhrase) {
-            return findNoun((NounPhrase)vp.getRight());
-        } else if(vp.getRight() instanceof PrepositionalPhrase) {
-           return findNinPP((PrepositionalPhrase)vp.getRight());
-        } else if(vp.getRight() instanceof Adverb) {
-            negation = true;
-            return findNoun((NounPhrase)parent.getRight());
+            return findNinV((VerbPhrase)vp.getLeft());
         } else {
-            return "No NP";
-        }
+            return "Error - findNinV";
+        }        
     }
     public String findNinPP(PrepositionalPhrase pp) {
         return findNoun((NounPhrase)pp.getRight());
@@ -135,6 +208,7 @@ public class Semantics {
         Object o = null;
         numberOfPeople = 0;
         negation = false;
+        parent = null;
         
         if(sentence.size() == 1) {
             /* One phrase sentence
@@ -187,6 +261,15 @@ public class Semantics {
                     if(forPP != null) {
                         numberOfPeople = Integer.parseInt(findNoun((NounPhrase)forPP.getRight()));
                     }
+                    
+                    if(gerundPhrase != null) {
+                        VerbPhrase tmp = (VerbPhrase)o;
+                        while(!gerundPhrase.equals((VerbPhrase)tmp.getLeft())) {
+                            tmp = (VerbPhrase)tmp.getLeft();
+                        }
+                        Target t = ((Action)semSentences.getLast()).getTarget();
+                        t.setSubTarget(new Target(findNoun((NounPhrase)tmp.getRight())));
+                    }
 
                     //System.out.println(findNoun((NounPhrase)withPP.getRight()));
 
@@ -198,23 +281,36 @@ public class Semantics {
                     if(i < sentence.size()-1) {
                         // Not last Phrase in sentence 
                     } else if(i == sentence.size()-1) {
-                        /* Last Phrase in sentence
-                         * Since we cannot have Noun Phrase by themselves 
-                         * we can assume this is refering back to a previous 
-                         * Verb Phrase or is an answer to a question
-                         */
-                        String name = ((Action)semSentences.getLast()).getName();
-                        String t = findNoun((NounPhrase)o);
-                        boolean n = ((Action)semSentences.getLast()).isNegation();
-                        semSentences.add(new Action(name, new Target(t)));
-                        if(n) {
-                            ((Action)semSentences.getLast()).setNegation(n);
-                        } else {
-                            if(negation) {
-                                ((Action)semSentences.getLast()).setNegation(negation);
-                            }
-                        }
                         
+                        NounPhrase np = (NounPhrase)o;
+                        if(np.getLeft() instanceof Modal) {
+                            if(np.getRight() instanceof PrepositionalPhrase) {
+                                String prep = ((Preposition)((PrepositionalPhrase)
+                                        np.getRight()).getLeft()).getPreposition();
+                                String obj = findNinPP((PrepositionalPhrase)np.getRight());
+                                semSentences.add(new Action(prep, new Target(obj)));
+                            } else if(np.getRight() instanceof NounPhrase) {
+                                findNoun((NounPhrase)np.getRight());
+                            } 
+                        } else {
+                        
+                            /* Last Phrase in sentence
+                             * Since we cannot have Noun Phrase by themselves 
+                             * we can assume this is refering back to a previous 
+                             * Verb Phrase or is an answer to a question
+                             */
+                            String name = ((Action)semSentences.getLast()).getName();
+                            String t = findNoun((NounPhrase)o);
+                            boolean n = ((Action)semSentences.getLast()).isNegation();
+                            semSentences.add(new Action(name, new Target(t)));
+                            if(n) {
+                                ((Action)semSentences.getLast()).setNegation(n);
+                            } else {
+                                if(negation) {
+                                    ((Action)semSentences.getLast()).setNegation(negation);
+                                }
+                            }
+                        }                        
                     } else {
                         // Something is wrong
                     }
