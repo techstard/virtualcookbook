@@ -126,6 +126,7 @@ public class Semantics {
      * @return The result of findNoun
      */
     private VerbPhrase parent;
+    private NounPhrase latestNP;
     public String findNinV(VerbPhrase vp) {
         /**
          * Check if the input VP's left child is a Verb, if so 
@@ -138,6 +139,8 @@ public class Semantics {
              */
             if(parent.getRight() instanceof NounPhrase) {
                 return findNoun((NounPhrase)parent.getRight());
+            } else if(latestNP instanceof NounPhrase) {
+                return findNoun(latestNP);
             } else if(parent.getRight() instanceof Adjective) {
                 /**
                  * Verbs sibling is an Adjective, can also be seen
@@ -193,7 +196,14 @@ public class Semantics {
                 if(tmp.getGerund().toLowerCase().equals("containing")) {
                     gerundPhrase = vp;
                 }
-            }            
+            } else if(vp.getRight() instanceof Adverb) {
+                Adverb a = (Adverb)vp.getRight();
+                if(a.getAdverb().toLowerCase().equals("not")) {
+                    negation = true;
+                }
+            } else if(vp.getRight() instanceof NounPhrase) {
+                latestNP = (NounPhrase)vp.getRight();
+            }
             return findNinV((VerbPhrase)vp.getLeft());
         } else {
             return "Error - findNinV";
@@ -248,6 +258,7 @@ public class Semantics {
                     if(negation) { 
                         ((Action)semSentences.getLast()).setNegation(negation);
                     }
+                    System.out.println("Negation: "+((Action)semSentences.getLast()).isNegation());
                     negation = false;
 
                     if(((Action)semSentences.getLast()).getName().toLowerCase().equals("would")) {
