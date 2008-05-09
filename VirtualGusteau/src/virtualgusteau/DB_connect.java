@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
 import java.util.LinkedList;
+import grammar.*;
 
 /**
  * This class connects to the recipe database.
@@ -15,7 +16,7 @@ import java.util.LinkedList;
  */
 public class DB_connect {
 	private Connection con = null;
-        private LinkedList recept = new LinkedList();
+        private LinkedList<Integer> recept = new LinkedList<Integer>();
 
 	public DB_connect() {
 		try{
@@ -52,7 +53,7 @@ public class DB_connect {
 		} 
 	}//End connect
         
-        public String searchRecipe(KnowledgeBase kb){
+        public String searchRecipe(Iterator iW){
             /*
              * För flera ingredienser fyll ut med
              * INNER JOIN (SELECT * FROM contains WHERE name = 'XXXXXXX') AS dtY
@@ -66,7 +67,7 @@ public class DB_connect {
             INNER JOIN (SELECT * FROM contains WHERE name = 'banana') AS dt4
             ON dt1.rID = dt2.rID AND dt1.rID = dt3.rID AND dt1.rID = dt4.rID
              */
-            Iterator iW = kb.iWIterator();
+            recept.clear(); //töm recept för att söka om på nytt efter recept.
             String query = "SELECT * FROM ";
             String wanted = "";
             int i = 0;
@@ -76,7 +77,7 @@ public class DB_connect {
                 }
                 i++;
                 System.out.println("test");
-                wanted = wanted + "(SELECT * FROM contains WHERE name = \'" + iW.next() + "\') AS dt"+i;
+                wanted = wanted + "(SELECT * FROM contains WHERE name = \'" + ((Noun)iW.next()).getNoun() + "\') AS dt"+i;
             }
             for(int k=0;k<i-1;k++){
                 if(k==0){
@@ -103,6 +104,91 @@ public class DB_connect {
                         return null;
             } 
         }//End searchRecipe
+        
+        /**
+         * checkIfWantedRecipe
+         * takes away recipes including not wanted ingredients
+         * @param nwi not wanted ingredients as a linked list
+         * @return void
+         */
+        public void removeNotWantedRecipes(String nwi){
+        /*SELECT rID FROM 
+        (SELECT rID FROM contains WHERE name = 'cream') as rpt      this is the not wanted ingredient
+        WHERE rpt.rID = 2 OR rpt.rID = 7                            this is the wanted recipes*/
+            String query = "SELECT rID FROM (SELECT rID FROM contains WHERE name = '" + nwi + "') AS rpt ";
+            query = query + "WHERE rpt.rID = ";
+            for(int i = 0; i < recept.size();i++){
+                query = query + recept.get(i);
+                if(i != recept.size() -1){
+                    query = query + " OR rpt.rID = ";
+                }
+            }
+            System.out.println(query);
+            System.out.println("recept innan while "+recept.size());
+            try{
+                ResultSet rset = connect(query);
+                while(rset.next()){
+                    if(recept.indexOf(rset.getInt(1)) >= 0){
+                        recept.remove(recept.indexOf(rset.getInt(1)));
+                    }
+                }
+                System.out.println("recept efter while "+recept.size());
+            }
+            catch(Exception e) {
+                System.err.println("Exception in removeNotWantedRecipes: " + e.getMessage());
+		System.err.println(e);
+            }
+        }
+        
+        /**
+         * addCategoryRecipes
+         * adds all recipes containing ingredients from a category
+         * @param category the category
+         * @return void
+         */
+        public void addCategoryRecipes(String category){        
+            String query = "SELECT DISTINCT(rID) FROM contains WHERE name IN" +
+                    " ( SELECT ingredient FROM is_categorized_by WHERE category = '"+category + "')";
+            System.out.println("recept innan lägger till category "+recept.size());
+            try{
+                ResultSet rset = connect(query);
+                while(rset.next()){
+                    if(!recept.contains(rset.getInt(1))){
+                        recept.add(rset.getInt(1));
+                    }
+                }
+            System.out.println("recept efter att ha lagt till category "+recept.size());    
+            }
+            catch(Exception e) {
+                System.err.println("Exception in addCategoryRecipes: " + e.getMessage());
+		System.err.println(e);
+            }
+        }
+        
+        /**
+         * removeCategoryRecipes
+         * adds all recipes containing ingredients from a category
+         * @param category the category
+         * @return void
+         */
+        public void removeCategoryRecipes(String category){        
+            String query = "SELECT DISTINCT(rID) FROM contains WHERE name IN" +
+                    " ( SELECT ingredient FROM is_categorized_by WHERE category = '"+category + "')";
+            System.out.println("removeCategoryRecipes innan borttagning "+recept.size());
+            try{
+                ResultSet rset = connect(query);
+                while(rset.next()){
+                    if(recept.indexOf(rset.getInt(1)) >= 0){
+                        recept.remove(recept.indexOf(rset.getInt(1)));
+                    }
+                }
+            System.out.println("removeCategoryRecipes efter borttagning "+recept.size());    
+            }
+            catch(Exception e) {
+                System.err.println("Exception in removeCategoryRecipes: " + e.getMessage());
+		System.err.println(e);
+            }
+        }
         
         /**
          * isCategory

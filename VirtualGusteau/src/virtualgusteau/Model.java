@@ -82,14 +82,17 @@ public class Model extends Observable {
             kb.addIngredientWanted(ingredient1);
             kb.addIngredientWanted(ingredient2);
             //kb.addIngredientWanted(ingredient3);
-            LinkedList<Noun> ingredientsWanted = kb.getIngredientsWanted();
-            //output = db.searchRecipe(kb);
+            
+            Iterator iW = kb.iWIterator();
+            output = db.searchRecipe(iW);
+            db.removeNotWantedRecipes("potato");
+            //db.removeCategoryRecipes("meat");
             //output = db.printRecipe(1) +db.printRecipe(2) +db.printRecipe(3) +db.printRecipe(4) +db.printRecipe(5) +db.printRecipe(6) +db.printRecipe(7);
-            if (db.isCategory("meathej")){
+            /*if (db.isCategory("meathej")){
                 output = "true";
             }else{
                 output = "false";
-            }
+            }*/
             db.closeConnection();
             setChanged();
             notifyObservers();
