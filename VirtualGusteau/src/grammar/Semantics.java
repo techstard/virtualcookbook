@@ -11,6 +11,7 @@ public class Semantics {
      * I want an apple pie
      * I do not want onions
      * i do not want apples
+     * I want apples and i like pears
      */
     
     public Semantics() {
@@ -273,6 +274,7 @@ public class Semantics {
                     }
 
                     if(forPP != null) {
+                    	// TODO: Handle numbers in text form ("one", "two", ... , "twelve" )
                         numberOfPeople = Integer.parseInt(findNoun((NounPhrase)forPP.getRight()));
                     }
                     
