@@ -139,8 +139,8 @@ public class Model extends Observable {
          */
         output = "";
         for(int i = 0; i < words.length; i++) {
-            output += words[i] + "/" + tags[i] + " ";
-            //System.out.print(words[i] + "/" + tags[i] + " ");
+            //output += words[i] + "/" + tags[i] + " ";
+            System.out.print(words[i] + "/" + tags[i] + " ");
         }
         //System.out.println("\n---------------------------------------");
         
@@ -153,16 +153,47 @@ public class Model extends Observable {
             for(int i = 0; i < semanticsResult.size(); i++) {
                 System.out.println(semanticsResult.get(i).toString());
             }
+            
+            generateResponse();
+            
             System.out.println("Number of people: "+semantics.getNumberOfPeople());
             System.out.println("-----------------------------");
         } catch(Exception e) {
-            System.out.println(e.getMessage());
+            System.err.println(e);
         }
         
         
         setChanged();
         notifyObservers();
     }
+    
+    private void generateResponse() {
+        output += "So you ";
+        String name = "";
+        for(int i = 0; i < semanticsResult.size(); i++) {
+        	Action action = (Action)semanticsResult.get(i);
+        	if (i > 0) {
+        		if (name.equals(action.getName())) {
+        			if (action.isNegation())
+        				output += " but not ";
+        			else
+        				output += " and ";
+        			output += action.getTarget();
+        		} else {
+        			if (action.isNegation())
+        				output += " but you do not ";
+        			else
+        				output += " and you ";
+        			output += action.getName() + " " + action.getTarget();
+        		}
+        	} else
+        		output += action.getName() + " " + action.getTarget();
+        	name = action.getName();
+        }
+        output += " for " + semantics.getNumberOfPeople() + " people";
+        output += "?";
+    }
+    
 //    public void phrases() {
 //        
 //        Verb vp = null;
