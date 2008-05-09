@@ -129,7 +129,7 @@ public class DB_connect {
         
         /**
          * printRecipe
-         * prints a string with all visual 
+         * prints a string with a whole recipe based on the rID.
          * @param rID The chosen recipe to print
          * @return String with all information about the recipe 'rID'
          */
@@ -186,6 +186,34 @@ public class DB_connect {
         	} 
         	catch(Exception e) {
         		System.err.println("Exception in printRecipe(): " + e.getMessage());
+        		System.err.println(e);
+        		return null;
+            } 
+        }
+        /**
+         * isAIngredient
+         * Checks if a given string is an existing ingredient in the recipe_db
+         * @param ing
+         * @return boolean
+         */
+        public boolean isAIngredient(String ing){
+        	// Make query in DB and search for the string
+        	try{
+        		// variables
+            	String query = "SELECT * FROM ingredients WHERE name = '" + string + "'";
+            	System.out.println(query);
+        		String output;
+        		// connect with the query
+        		ResultSet rset = connect(query);
+        		if (rset.first() == false){
+        			return false;
+        		} else {
+        			System.out.println(getString(1));
+        			return true;
+        		}
+        	} 
+        	catch(Exception e) {
+        		System.err.println("Exception in isAIngredient(): " + e.getMessage());
         		System.err.println(e);
         		return null;
             } 
