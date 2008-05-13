@@ -7,17 +7,19 @@ public class NS {
     private LinkedList sentenceTree;
     private LinkedList logicSentences;
     
-    private LinkedList actions;
-    private LinkedList subjects;
-    private LinkedList objects;
+    private Object action;
+    private Object subject;
+    private Object object;
+    private Object secondaryObject;
+    private boolean negation;
         
+    private String objectName = null;
+    private int numberOfPeople = 0;
+    
     private LinkedList<PrepositionalPhrase> nounSpecifiers;
     
     public NS() {
         logicSentences = new LinkedList();
-        actions = new LinkedList();
-        subjects = new LinkedList();
-        objects = new LinkedList();
         nounSpecifiers = new LinkedList<PrepositionalPhrase>();
     }
     /**
@@ -41,14 +43,21 @@ public class NS {
      * 
      */
     public void parser(LinkedList sentenceTree) throws Exception {
+        this.sentenceTree = sentenceTree;
         if(sentenceTree.size() == 1) {
-            findNoun((NounPhrase)sentenceTree.get(0));
+            Object o = sentenceTree.getFirst();
+            if(o instanceof NounPhrase) {
+                findNoun((NounPhrase)o);
+            } else if(o instanceof VerbPhrase) {
+                findVerb((VerbPhrase)o);
+            }       
+            createLogic();
         } else if(sentenceTree.size() == 2) {
             findNoun((NounPhrase)sentenceTree.get(0));
-            subjects.addLast(objects.pollLast());            
+            subject = object; object = null;
             findVerb((VerbPhrase)sentenceTree.get(1));
             createLogic();
-        } else if(sentenceTree.size() > 3) {
+        } else if(sentenceTree.size() > 2) {
             conjunctions();
         }
 //        System.out.println("Actions:");
@@ -71,6 +80,14 @@ public class NS {
 //            System.out.print(nounSpecifiers.get(i)+" ");
 //        }
 //        System.out.println("\n---------------------------");
+        
+        for(int i = 0; i < logicSentences.size(); i++) {
+            System.out.println("Action: "+((Action)logicSentences.get(i)).getName());
+            System.out.println("Negation: "+((Action)logicSentences.get(i)).isNegation());
+            System.out.println("Target: "+((Action)logicSentences.get(i)).getTarget());
+            System.out.println("Number of People: "+((Action)logicSentences.get(i)).getNumberOfPeople());
+            System.out.println("\n---------------------------");
+        }
     }
     /**
      * @author Robert Krantz
@@ -79,98 +96,111 @@ public class NS {
      * @see
      */
     public void createLogic() throws Exception {
-        String action = null;
-        boolean negation = false;
-        if(!actions.isEmpty()) {
-            Object o = actions.getFirst();
-            if(o instanceof Boolean) {
-                negation = (Boolean)o;
-                Object next = actions.getLast();
-                if(next instanceof Verb) {
-                    action = ((Verb)next).getVerb();
+        String actionWord = null;
+        //boolean neg = false;
+        if(action != null) {
+            Object o = action;
+            if(negation) {
+                if(o instanceof Verb) {
+                    actionWord = ((Verb)o).getVerb();
                 }
             } else if(o instanceof Verb) {
-                action = ((Verb)o).getVerb();
+                actionWord = ((Verb)o).getVerb();
             } else if(o instanceof Preposition) {
-                action = ((Preposition)o).getPreposition();
+                actionWord = ((Preposition)o).getPreposition();
             } else if(o instanceof Gerund) {
-                action = ((Gerund)o).getGerund();
+                actionWord = ((Gerund)o).getGerund();
             }
         } else {
-            // This means there is no action and most likely
+            // This means there is no actionWord and most likely
             // a list of Nouns
         }
         
-        if(!subjects.isEmpty()) {
+        if(subject != null) {
             // extract the subject
         } else {
             // No subject means either a list of objects or 
             // a syntax error that has gotten through
         }
-        String object = null;
-        int numberOfPeople = 0;
-        if(!objects.isEmpty()) {
-            if(objects.size() > 1) {
-                // more than one object
-                // can be '# object'
-                Object first = objects.get(0);
-                Object second = objects.get(1);
+        numberOfPeople = 0;
+        
+        extractObject();        
+        
+        if(actionWord != null) {
+            logicSentences.addLast(new Action(actionWord));
+        } else {
+            // No actionWord
+        }
+        if(objectName != null) {
+            ((Action)logicSentences.getLast()).setTarget(
+                    new Target(objectName));
+        } else {
+            // No objectName
+        }
+        ((Action)logicSentences.getLast()).setNegation(negation);
+        
+        // Extract information from nounSpecifiers
+        for(int i = 0; i < nounSpecifiers.size(); i++) {
+            object = null;
+            PrepositionalPhrase pp = nounSpecifiers.get(i);
+            Preposition p = (Preposition)pp.getLeft();
+            
+            if(p.getPreposition().toLowerCase().equals("with")) {
+                findNoun((NounPhrase)pp.getRight());
+                Object o = object;
+                if(o instanceof Noun) {
+                    ((Action)logicSentences.getLast()).getTarget().setSubTarget(new Target(
+                        ((Noun)o).getNoun()));
+                } else if(o instanceof Digit) {
+                    Object next = object;
+                    ((Action)logicSentences.getLast()).getTarget().setSubTarget(new Target(
+                        ((Noun)next).getNoun()));
+                }
+                
+            } else if(p.getPreposition().toLowerCase().equals("for")) {
+                findNoun((NounPhrase)pp.getRight());
+                extractObject();
+            } else {
+            }
+        }
+        ((Action)logicSentences.getLast()).setNumberOfPeople(numberOfPeople);
+    }
+    /**
+     * Extracts the correct information from object and secondary object
+     * 
+     * @author Robert Krantz
+     * @since 2008-05-13
+     */
+    public void extractObject() {
+        if(object != null) {
+            if(secondaryObject != null) {
+                // more than one objectName
+                // can be '# objectName'
+                Object first = object;
+                Object second = secondaryObject;
                 if(first instanceof Digit) {
                     numberOfPeople = ((Digit)first).getDigit();
                 } else {
                     // Not sure what to do
                 }
                 if(second instanceof Noun) {
-                    object = ((Noun)second).getNoun();
+                    objectName = ((Noun)second).getNoun();
                 } else {
                     // Not sure what to do
                 }
             } else {
-                Object o = objects.getFirst();
+                Object o = object;
                 if(o instanceof Noun) {
-                    object = ((Noun)o).getNoun();
+                    objectName = ((Noun)o).getNoun();
                 } else if(o instanceof Digit) {
                     numberOfPeople = ((Digit)o).getDigit();
+                } else if(o instanceof Adjective) {
+                    objectName = ((Adjective)o).getAdjective();
                 }
             }
         } else {
             // The sentence might have a gerund as noun
-        }        
-        if(action != null) {
-            logicSentences.addLast(new Action(action));
-        } else {
-            // No action
         }
-        if(object != null) {
-            ((Action)logicSentences.getLast()).setTarget(
-                    new Target(object));
-        } else {
-            // No object
-        }
-        if(negation) {
-            ((Action)logicSentences.getLast()).setNegation(negation);
-        }
-        objects.clear();
-        // Extract information from nounSpecifiers
-        for(int i = 0; i < nounSpecifiers.size(); i++) {
-            PrepositionalPhrase pp = nounSpecifiers.get(i);
-            Preposition p = (Preposition)pp.getLeft();
-            
-            if(p.getPreposition().toLowerCase().equals("with")) {
-                findNoun((NounPhrase)pp.getRight());
-                ((Action)logicSentences.getLast()).getTarget().setSubTarget(new Target(
-                        ((Noun)objects.getFirst()).getNoun()));
-            } else if(p.getPreposition().toLowerCase().equals("for")) {
-                findNoun((NounPhrase)pp.getRight());
-            } else {
-                
-            }
-        }
-        
-        System.out.println("Action: "+((Action)logicSentences.getLast()).getName());
-        System.out.println("Negation: "+((Action)logicSentences.getLast()).isNegation());
-        System.out.println("Target: "+((Action)logicSentences.getLast()).getTarget());
-        
     }
     /**
      * When a sentence contains one or more conjunctions (and, or, but) they
@@ -193,19 +223,21 @@ public class NS {
             if(o instanceof NounPhrase) {
                 findNoun((NounPhrase)o);
             } else if(o instanceof VerbPhrase) {
-                subjects.addLast(objects.pollLast());
+                subject = object; object = null;
                 findVerb((VerbPhrase)o);
             } else if(o instanceof Conjunction) {
                 /* finilize this part of the sentence 
                  * by calling createLogic
                  */
                 createLogic();
+                nounSpecifiers.clear();
             }
         }
         /* You need to call createLogic here as well, 
          * otherwise the last part of the sentence 
          * wont be included
          */
+        createLogic();
     }
     /**
      * Locates the main verb of a VerbPhrase
@@ -234,15 +266,13 @@ public class NS {
                     findNoun((NounPhrase)vp.getRight());
                 }
                 // This is the verb I'm looking for
-                actions.addLast(vp.getLeft());
+                action = vp.getLeft();
             }
         } else if(vp.getLeft() instanceof AdverbPhrase) {
             AdverbPhrase ap = (AdverbPhrase)vp.getLeft();
-            if(adverbisNegation(ap)) {
-                actions.addLast(true);
-            }
+            negation = adverbisNegation(ap);
             // This is the verb I'm looking for
-            actions.addLast(vp.getRight());
+            action = vp.getRight();
         } else if(vp.getLeft() instanceof Modal) {
             if(vp.getRight() instanceof VerbPhrase) {
                 findVerb((VerbPhrase)vp.getRight());
@@ -251,8 +281,8 @@ public class NS {
                 if(pp.getRight() instanceof NounPhrase) {
                     findNoun((NounPhrase)pp.getRight());
                 }
-                // This is probably the action I'm looking for
-                actions.addLast(pp.getLeft());
+                // This is probably the actionWord I'm looking for
+                action = pp.getLeft();
             }
         }
     }
@@ -275,42 +305,42 @@ public class NS {
             np = (NounPhrase)np.getLeft();
         }
         if(np.getLeft() instanceof Noun) {
-            objects.addLast((Noun)np.getLeft());
+            object = (Noun)np.getLeft();
         } else if(np.getLeft() instanceof Article) {
             Article a = (Article)np.getLeft();
             if(a.getArticle().toLowerCase().equals("no")) {
-                actions.addLast(true);
+                negation = true;
             }
             if(np.getRight() instanceof NounPhrase) {
                 findNoun((NounPhrase)np.getRight());
             } else {
-                objects.addLast((Noun)np.getRight());
+                object = (Noun)np.getRight();
             }
         } else if(np.getLeft() instanceof AdjectivePhrase) {
             if(np.getRight() instanceof Noun) {
-                objects.addLast((Noun)np.getLeft());
+                object = (Noun)np.getRight();
             } else {
-                adjectiveisObject((AdjectivePhrase)np.getLeft());
+                object = adjectiveisObject((AdjectivePhrase)np.getLeft());
             }
         } else if(np.getLeft() instanceof Pronoun) {
             String word = ((Pronoun)np.getLeft()).getWord();
             if(word.toLowerCase().equals("something") ||
                     word.toLowerCase().equals("anything")) {
-                objects.addLast(new Noun(word));
+                object = new Noun(word);
             } else {
-                objects.addLast((Pronoun)np.getLeft());
+                object = np.getLeft();
             }
         } else if(np.getLeft() instanceof Digit) {
-            objects.addLast(np.getLeft());
+            object = np.getLeft();
             if(np.getRight() instanceof Noun) {
-                objects.addLast(np.getRight());
+                secondaryObject = np.getRight();
             }
         } else if(np.getLeft() instanceof Gerund) {
             if(np.getRight() instanceof Noun) {
                 // Not sure what this means
             } else {
                 // This is what is being done
-                actions.addLast(np.getLeft());
+                action = np.getLeft();
             }
         }
     }
@@ -339,12 +369,12 @@ public class NS {
         }
     }
     /**
-     * Checks if the inputed AdverbPhrase is a negation or not
+     * Checks if the inputed AdverbPhrase is a neg or not
      * 
      * @author Robert Krantz
      * @param ap The AdverbPhrase to be checked
-     * @return True - Adverb is negation<br>
-     *          False - Adverb is not negation
+     * @return True - Adverb is neg<br>
+     *          False - Adverb is not neg
      * @throws java.lang.Exception
      * @since 2008-05-13
      */

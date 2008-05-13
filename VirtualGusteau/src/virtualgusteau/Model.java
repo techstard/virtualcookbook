@@ -153,6 +153,10 @@ public class Model extends Observable {
             NS ns = new NS();
             ns.parser(grammarResult);
 
+        } catch(KeyWordException key) {
+            // Do something
+            String keyWord = key.getKeyWord();
+            System.out.println(keyWord);
         } catch (Exception exception) {
             System.out.println(exception.getMessage());
         }

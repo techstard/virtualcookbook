@@ -4,7 +4,7 @@ import java.util.*;
 public class NG {
     
     private LinkedList sentenceTree;
-    
+    private String keyWord;
     
     public NG() {
         sentenceTree = new LinkedList();
@@ -65,29 +65,53 @@ public class NG {
      * @see #connectVerbPhrasesWithPrep
      */
     public LinkedList parser(String[] tags, String[] words) throws Exception {
-        convert(tags,words);
-        identifyAdverbPhrases();
-        connectAdverb();
-        identifyAdjectivePhrases();
-        connectAdjectiveWithNoun();
-        identifyCompoundNouns();
-        identifyNounPhrases();
-        identifyInfinitiveForm();
-        identifyPrepositionalPhrases();
-        connectPrepPhraseWithNounPhrase();
-        identifyVerbPhrases();
-        identifyAuxiliaries();
-        connectModals();
-        connectVerbPhrasesWithNounPhrases();
-        connectVerbPhrasesWithPrep();
+        if(identifyKeyWords(tags, words)) {
+            throw new KeyWordException(keyWord);
+        } else {
+            convert(tags,words);
+            identifyAdverbPhrases();
+            connectAdverb();
+            identifyAdjectivePhrases();
+            connectAdjectiveWithNoun();
+            identifyCompoundNouns();
+            identifyNounPhrases();
+            identifyInfinitiveForm();
+            identifyPrepositionalPhrases();
+            connectPrepPhraseWithNounPhrase();
+            identifyVerbPhrases();
+            identifyAuxiliaries();
+            connectModals();
+            connectVerbPhrasesWithNounPhrases();
+            connectVerbPhrasesWithPrep();
         
-        System.out.println("Word identification");
-        for (int i = 0; i < sentenceTree.size(); i++) {
-            System.out.print(sentenceTree.get(i).toString()+" ");
+        
+            System.out.println("Word identification");
+            for (int i = 0; i < sentenceTree.size(); i++) {
+                System.out.print(sentenceTree.get(i).toString()+" ");
+            }
+            System.out.println("\n----------------------");
+
+            return sentenceTree;
         }
-        System.out.println("\n----------------------");
-        
-        return sentenceTree;
+    }
+    public boolean identifyKeyWords(String[] tags, String[] words) {
+        if(words.length == 1) {
+            String word = words[0];
+            if(word.toLowerCase().equals("yes")) {
+                keyWord = word;
+                return true;
+            } else if(word.toLowerCase().equals("no")) {
+                keyWord = word;
+                return true;
+            } else if(word.toLowerCase().equals("quit")) {
+                keyWord = word;
+                return true;
+            } else if(word.toLowerCase().equals("restart")) {
+                keyWord = word;
+                return true;
+            }
+        }
+        return false;
     }
     /**
      * Goes through the input sentence and converts the words
