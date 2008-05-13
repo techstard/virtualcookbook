@@ -88,7 +88,7 @@ public class Test {
                     // Adjective Noun
                     Adjective j_tmp = (Adjective)S.getLast();
                     S.removeLast();
-                    S.add(new NounPhrase(j_tmp, new Noun(words[i])));
+                    //S.add(new NounPhrase(j_tmp, new Noun(words[i])));
                 } else {
                     throw new Exception("Illegal Sentence Structure - Noun in the wrong place");
                 }

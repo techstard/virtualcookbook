@@ -32,6 +32,16 @@ public class NounPhrase {
         //NounPhrase.add(cd);
         left = cd;
     }
+    public NounPhrase(Gerund g) {
+        left = g;
+    }
+    public NounPhrase(Digit d, Noun n) {
+        left = d;
+        right = n;
+    }
+    public NounPhrase(AdjectivePhrase a) {
+        left = a;
+    }
     /**
      * 
      * @param a The Article of the Noun Phrase
@@ -59,8 +69,16 @@ public class NounPhrase {
      * @param jj Adjective
      * @param n Noun
      */
-    public NounPhrase(Adjective jj, Noun n) {
-        left = jj;
+    public NounPhrase(AdjectivePhrase ap, Noun n) {
+        left = ap;
+        right = n;
+    }
+    public NounPhrase(Gerund g, Noun n) {
+        left = g;
+        right = n;
+    }
+    public NounPhrase(Gerund g, NounPhrase n) {
+        left = g;
         right = n;
     }
     /**

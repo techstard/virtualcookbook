@@ -18,5 +18,7 @@ public class Noun {
     public String getNoun() {
         return noun;
     }
-    
+    public void makeCompoun(String s) {
+        noun = noun + " "+s;
+    }
 }

@@ -6,11 +6,6 @@ public class Semantics {
     
     /**
      * Not Working:
-     * We will be 20 people dining today
-     * The dish should not contain any milk products
-     * I want an apple pie
-     * I do not want onions
-     * i do not want apples
      * I want apples and i like pears
      */
     

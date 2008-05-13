@@ -18,5 +18,4 @@ public class Digit {
     public int getDigit() {
         return digit;
     }
-    
 }
