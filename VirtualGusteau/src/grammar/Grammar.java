@@ -93,7 +93,7 @@ public class Grammar {
                     // Adjective Noun
                     Adjective j_tmp = (Adjective)S.getLast();
                     S.removeLast();
-                    S.add(new NounPhrase(j_tmp, new Noun(words[i])));
+                   // S.add(new NounPhrase(j_tmp, new Noun(words[i])));
                 } else if(S.getLast() instanceof Modal) {
                     Modal m = (Modal)S.getLast();
                     S.removeLast();

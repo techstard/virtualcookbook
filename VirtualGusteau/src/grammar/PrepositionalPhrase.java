@@ -20,7 +20,10 @@ public class PrepositionalPhrase {
         left = p;
         right = np;
     }
-
+    public PrepositionalPhrase(Preposition p, VerbPhrase vp) {
+        left = p;
+        right = vp;
+    }
     public Object getLeft() {
         return left;
     }

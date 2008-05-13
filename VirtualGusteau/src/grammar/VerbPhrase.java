@@ -21,6 +21,26 @@ public class VerbPhrase {
         //VerbPhrase.add(v);
         left = v;
     }
+    public VerbPhrase(AdverbPhrase ap, Verb v) {
+        left = ap;
+        right = v;
+    }
+    public VerbPhrase(VerbPhrase vp, AdjectivePhrase ap) {
+        left = vp;
+        right = ap;
+    }
+    public VerbPhrase(To to, Verb v) {
+        left = to;
+        right = v;
+    }
+    public VerbPhrase(Verb v, AdverbPhrase ap) {
+        left = v;
+        right = ap;
+    }
+    public VerbPhrase(Verb v, VerbPhrase vp) {
+        left = v;
+        right = vp;
+    }
     /**
      * 
      * @param vp Verb Phrase

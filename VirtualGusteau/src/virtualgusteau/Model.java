@@ -141,29 +141,40 @@ public class Model extends Observable {
          * Debug code for the result of the parsing
          */
         output = "";
-        for(int i = 0; i < words.length; i++) {
-            //output += words[i] + "/" + tags[i] + " ";
-            System.out.print(words[i] + "/" + tags[i] + " ");
-        }
-        //System.out.println("\n---------------------------------------");
+//        for(int i = 0; i < words.length; i++) {
+//            //output += words[i] + "/" + tags[i] + " ";
+//            System.out.print(words[i] + "/" + tags[i] + " ");
+//        }
+//        System.out.println("\n---------------------------------------");
         
         try {
-            grammarResult = grammar.parser(words, tags);
-            
-            semanticsResult.clear();
-            semanticsResult = semantics.parser(grammarResult);
+            NG ng = new NG();
+            grammarResult = ng.parser(tags, words);
+            NS ns = new NS();
+            ns.parser(grammarResult);
 
-            for(int i = 0; i < semanticsResult.size(); i++) {
-                System.out.println(semanticsResult.get(i).toString());
-            }
-            
-            generateResponse();
-            
-            System.out.println("Number of people: "+semantics.getNumberOfPeople());
-            System.out.println("-----------------------------");
-        } catch(Exception e) {
-            System.err.println(e);
+        } catch (Exception exception) {
+            System.out.println(exception.getMessage());
         }
+
+        
+//        try {
+//            grammarResult = grammar.parser(words, tags);
+//            
+//            semanticsResult.clear();
+//            semanticsResult = semantics.parser(grammarResult);
+//
+//            for(int i = 0; i < semanticsResult.size(); i++) {
+//                System.out.println(semanticsResult.get(i).toString());
+//            }
+//            
+//            generateResponse();
+//            
+//            System.out.println("Number of people: "+semantics.getNumberOfPeople());
+//            System.out.println("-----------------------------");
+//        } catch(Exception e) {
+//            System.err.println(e);
+//        }
         
         
         setChanged();
