@@ -107,15 +107,69 @@ public class NS {
             // No subject means either a list of objects or 
             // a syntax error that has gotten through
         }
-        
+        String object = null;
+        int numberOfPeople = 0;
         if(!objects.isEmpty()) {
-            
+            if(objects.size() > 1) {
+                // more than one object
+                // can be '# object'
+                Object first = objects.get(0);
+                Object second = objects.get(1);
+                if(first instanceof Digit) {
+                    numberOfPeople = ((Digit)first).getDigit();
+                } else {
+                    // Not sure what to do
+                }
+                if(second instanceof Noun) {
+                    object = ((Noun)second).getNoun();
+                } else {
+                    // Not sure what to do
+                }
+            } else {
+                Object o = objects.getFirst();
+                if(o instanceof Noun) {
+                    object = ((Noun)o).getNoun();
+                } else if(o instanceof Digit) {
+                    numberOfPeople = ((Digit)o).getDigit();
+                }
+            }
         } else {
-            // The sentence might actually 
+            // The sentence might have a gerund as noun
+        }        
+        if(action != null) {
+            logicSentences.addLast(new Action(action));
+        } else {
+            // No action
+        }
+        if(object != null) {
+            ((Action)logicSentences.getLast()).setTarget(
+                    new Target(object));
+        } else {
+            // No object
+        }
+        if(negation) {
+            ((Action)logicSentences.getLast()).setNegation(negation);
+        }
+        objects.clear();
+        // Extract information from nounSpecifiers
+        for(int i = 0; i < nounSpecifiers.size(); i++) {
+            PrepositionalPhrase pp = nounSpecifiers.get(i);
+            Preposition p = (Preposition)pp.getLeft();
+            
+            if(p.getPreposition().toLowerCase().equals("with")) {
+                findNoun((NounPhrase)pp.getRight());
+                ((Action)logicSentences.getLast()).getTarget().setSubTarget(new Target(
+                        ((Noun)objects.getFirst()).getNoun()));
+            } else if(p.getPreposition().toLowerCase().equals("for")) {
+                findNoun((NounPhrase)pp.getRight());
+            } else {
+                
+            }
         }
         
-        System.out.println("Action: "+action);
-        System.out.println("Negation: "+negation);
+        System.out.println("Action: "+((Action)logicSentences.getLast()).getName());
+        System.out.println("Negation: "+((Action)logicSentences.getLast()).isNegation());
+        System.out.println("Target: "+((Action)logicSentences.getLast()).getTarget());
         
     }
     /**
@@ -239,7 +293,13 @@ public class NS {
                 adjectiveisObject((AdjectivePhrase)np.getLeft());
             }
         } else if(np.getLeft() instanceof Pronoun) {
-            objects.addLast((Pronoun)np.getLeft());
+            String word = ((Pronoun)np.getLeft()).getWord();
+            if(word.toLowerCase().equals("something") ||
+                    word.toLowerCase().equals("anything")) {
+                objects.addLast(new Noun(word));
+            } else {
+                objects.addLast((Pronoun)np.getLeft());
+            }
         } else if(np.getLeft() instanceof Digit) {
             objects.addLast(np.getLeft());
             if(np.getRight() instanceof Noun) {

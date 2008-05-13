@@ -94,9 +94,12 @@ public class NG {
      * into their respective class instances. They are stored in a 
      * globally know variable, sentenceTree.
      * 
+     * @author Robert Krantz
      * @param tags The input sentence represented as a series of
      * grammatical tags
      * @param words The input sentence
+     * @since 2008-05-13
+     * 
      */
     public void convert(String[] tags, String[] words) {        
         for (int i = 0; i < words.length; i++) {
@@ -147,6 +150,10 @@ public class NG {
      * Nouns, i.e. words comprised of two words.
      * 
      * Example: Apple Pie, Strawberry Souflé ...
+     * 
+     * @author Robert Krantz
+     * @since 2008-05-13
+     * 
      */
     public void identifyCompoundNouns() {
         for(int i = 0; i < sentenceTree.size(); i++) {
@@ -176,6 +183,9 @@ public class NG {
      * If it doesn't find any Noun following the Phrase it 
      * assumes the Adjective is the object of the action and
      * creates a Noun Phrase of it.
+     * 
+     * @author Robert Krantz
+     * @since 2008-05-13
      */
     public void connectAdjectiveWithNoun() {
         for(int i = 0; i < sentenceTree.size(); i++) {
@@ -202,6 +212,10 @@ public class NG {
 //        }
 //        System.out.println("\n----------------------");
     }
+    /**
+     * @author Robert Krantz
+     * @since 2008-05-13
+     */
     public void connectAdverb() {
         for(int i = 0; i < sentenceTree.size(); i++) {
             Object o = sentenceTree.get(i);
