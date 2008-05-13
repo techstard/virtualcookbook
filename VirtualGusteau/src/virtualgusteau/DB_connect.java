@@ -18,6 +18,9 @@ public class DB_connect {
 	private Connection con = null;
         private LinkedList<Integer> recept = new LinkedList<Integer>();
 
+        /**
+        * Creates a connection to the database
+        */
 	public DB_connect() {
 		try{
 			// Create the connection
@@ -27,8 +30,15 @@ public class DB_connect {
 					"Gusteau", "gusteau");
 		} catch (Exception e){}
 	}
-	// This main method should be changed to a 
-	// constructor class or something in the future.
+        
+        
+        /**
+         * Querys the database
+         * 
+         * @param query The query for the database
+         * @return The results of the query as a ResultSet
+         * @since 2008-05-13
+         */
 	public ResultSet connect(String query) {
 		try {
 			// Create statement
@@ -53,6 +63,14 @@ public class DB_connect {
 		} 
 	}//End connect
         
+        /**
+         * Searches trough the wanted ingredients to find what possible recipes there is
+         * 
+         * @param iW An interator over the nouns
+         * @return A string with the possible recipes
+         * @since 2008-05-13
+         */
+        //TODO : ändra return
         public String searchRecipe(Iterator iW){
             /*
              * För flera ingredienser fyll ut med
@@ -106,10 +124,10 @@ public class DB_connect {
         }//End searchRecipe
         
         /**
-         * checkIfWantedRecipe
-         * takes away recipes including not wanted ingredients
-         * @param nwi not wanted ingredients as a linked list
-         * @return void
+         * removeNotWantedRecipes
+         * removes recipes that includes somthing that the user dont want
+         * @param nwi the ingredient that the user dont want in the dish.
+         * @since 2008-05-13
          */
         public void removeNotWantedRecipes(String nwi){
         /*SELECT rID FROM 
@@ -144,7 +162,7 @@ public class DB_connect {
          * addCategoryRecipes
          * adds all recipes containing ingredients from a category
          * @param category the category
-         * @return void
+         * @since 2008-05-13
          */
         public void addCategoryRecipes(String category){        
             String query = "SELECT DISTINCT(rID) FROM contains WHERE name IN" +
@@ -167,9 +185,9 @@ public class DB_connect {
         
         /**
          * removeCategoryRecipes
-         * adds all recipes containing ingredients from a category
+         * removes all recipes that has something from that category
          * @param category the category
-         * @return void
+         * @since 2008-05-13
          */
         public void removeCategoryRecipes(String category){        
             String query = "SELECT DISTINCT(rID) FROM contains WHERE name IN" +
@@ -195,6 +213,7 @@ public class DB_connect {
          * checks if word is a category
          * @param word to check
          * @return Boolean true if it is a category, false otherwise
+         * @since 2008-05-13
          */
         public boolean isCategory(String word){
             String q = "SELECT count(*) FROM category WHERE name = '" + word + "';";
@@ -218,6 +237,7 @@ public class DB_connect {
          * prints a string with a whole recipe based on the rID.
          * @param rID The chosen recipe to print
          * @return String with all information about the recipe 'rID'
+         * @since 2008-05-13
          */
         public String printRecipe(int rID){
         	// Make query in DB for 'rID' in fields: recipe, contains
@@ -279,8 +299,9 @@ public class DB_connect {
         /**
          * isAnIngredient
          * Checks if a given string is an existing ingredient in the recipe_db
-         * @param ing
-         * @return boolean
+         * @param ing ingredient to check
+         * @return boolean true if it is an ingredient, false otherwise
+         * @since 2008-05-13
          */
         public boolean isAnIngredient(String ing){
         	// Make query in DB and search for the string
@@ -304,7 +325,12 @@ public class DB_connect {
         		return false;
             } 
         }
-        
+
+         /**
+         * closeConnection
+         * closes the databaseconnection
+         * @since 2008-05-13
+         */
         public void closeConnection(){
             try {
                     if(con != null)
