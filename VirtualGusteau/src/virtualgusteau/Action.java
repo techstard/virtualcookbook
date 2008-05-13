@@ -4,6 +4,7 @@ public class Action {
     private boolean negation = false;
     private String name;
     private Target target;
+    private int numberOfPeople = 0;
 
     public Action(String name, Target target) {
         this.name = name;
@@ -41,6 +42,14 @@ public class Action {
 
     public void setTarget(Target target) {
         this.target = target;
+    }
+
+    public int getNumberOfPeople() {
+        return numberOfPeople;
+    }
+
+    public void setNumberOfPeople(int numberOfPeople) {
+        this.numberOfPeople = numberOfPeople;
     }
     
     
