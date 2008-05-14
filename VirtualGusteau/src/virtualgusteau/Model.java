@@ -151,7 +151,7 @@ public class Model extends Observable {
             NG ng = new NG();
             grammarResult = ng.parser(tags, words);
             NS ns = new NS();
-            ns.parser(grammarResult);
+            semanticsResult = ns.parser(grammarResult);
 
         } catch(KeyWordException key) {
             // Do something
