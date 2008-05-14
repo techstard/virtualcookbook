@@ -31,9 +31,10 @@ public class NS {
      * NP VP CC NP ...  <br>
      * NP VP CC NP VP ...  <br>
      * 
-     * @author Robert Krantz     * 
+     * @author Robert Krantz
      * @param sentenceTree The input sentence represented by various
      * grammatical objects forming a tree structure
+     * @return A LinkedList with logical representations of the input sentence
      * @since 2008-05-13
      * @throws Exception
      * @see #findNoun
@@ -42,7 +43,7 @@ public class NS {
      * @see #conjunctions
      * 
      */
-    public void parser(LinkedList sentenceTree) throws Exception {
+    public LinkedList parser(LinkedList sentenceTree) throws Exception {
         this.sentenceTree = sentenceTree;
         if(sentenceTree.size() == 1) {
             Object o = sentenceTree.getFirst();
@@ -88,6 +89,7 @@ public class NS {
             System.out.println("Number of People: "+((Action)logicSentences.get(i)).getNumberOfPeople());
             System.out.println("\n---------------------------");
         }
+        return logicSentences;
     }
     /**
      * @author Robert Krantz
