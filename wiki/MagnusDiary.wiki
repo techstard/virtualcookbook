@@ -60,3 +60,19 @@ Work Time: 6h
 Continued the work with the pragmatics.
 
 Work Time: 5h
+
+---
+
+=May 14=
+Found bug that objects don't seems to be added to kb. Trying to solve
+
+Work Time: 1h
+
+---
+
+=May 15=
+Fixed the bug that was found yesterday. Started working so that the input is correctly added and removed to and from the kb.
+I have also formed an idea (algorithm) for how to eliminate recipies.
+
+Work Time: 4h
+
