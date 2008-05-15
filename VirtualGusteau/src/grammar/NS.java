@@ -83,10 +83,17 @@ public class NS {
 //        System.out.println("\n---------------------------");
         
         for(int i = 0; i < logicSentences.size(); i++) {
-            System.out.println("Action: "+((Action)logicSentences.get(i)).getName());
-            System.out.println("Negation: "+((Action)logicSentences.get(i)).isNegation());
-            System.out.println("Target: "+((Action)logicSentences.get(i)).getTarget());
-            System.out.println("Number of People: "+((Action)logicSentences.get(i)).getNumberOfPeople());
+            Object o = logicSentences.get(i);
+            if(o instanceof Action) {
+                System.out.println("Action: "+((Action)logicSentences.get(i)).getName());
+                System.out.println("Negation: "+((Action)logicSentences.get(i)).isNegation());
+                System.out.println("Target: "+((Action)logicSentences.get(i)).getTarget());
+                System.out.println("Number of People: "+((Action)logicSentences.get(i)).getNumberOfPeople());
+            } else {
+                System.out.println("Target: "+((Target)logicSentences.get(i)).getName());
+                System.out.println("Negation: "+((Target)logicSentences.get(i)).isNegation());
+                System.out.println("Number of People: "+((Target)logicSentences.get(i)).getNumberOfPeople());
+            }            
             System.out.println("\n---------------------------");
         }
         return logicSentences;
@@ -134,12 +141,18 @@ public class NS {
             // No actionWord
         }
         if(objectName != null) {
-            ((Action)logicSentences.getLast()).setTarget(
+            if(actionWord == null) {
+                // no action
+                logicSentences.add(new Target(objectName));
+                ((Target)logicSentences.getLast()).setNegation(negation);
+            } else {
+                ((Action)logicSentences.getLast()).setTarget(
                     new Target(objectName));
+                ((Action)logicSentences.getLast()).setNegation(negation);
+            }            
         } else {
             // No objectName
-        }
-        ((Action)logicSentences.getLast()).setNegation(negation);
+        }        
         
         // Extract information from nounSpecifiers
         for(int i = 0; i < nounSpecifiers.size(); i++) {
@@ -151,12 +164,27 @@ public class NS {
                 findNoun((NounPhrase)pp.getRight());
                 Object o = object;
                 if(o instanceof Noun) {
-                    ((Action)logicSentences.getLast()).getTarget().setSubTarget(new Target(
-                        ((Noun)o).getNoun()));
+                    Object last = logicSentences.getLast();
+                    if(last instanceof Action) {
+                        ((Action)logicSentences.getLast()).getTarget().setSubTarget(new Target(
+                            ((Noun)o).getNoun()));
+                    } else {
+                        ((Target)logicSentences.getLast()).setSubTarget(new Target(
+                            ((Noun)o).getNoun()));
+                    }
                 } else if(o instanceof Digit) {
+                    Object last = logicSentences.getLast();
                     Object next = object;
-                    ((Action)logicSentences.getLast()).getTarget().setSubTarget(new Target(
-                        ((Noun)next).getNoun()));
+                    if(last instanceof Action) {
+                        ((Action)logicSentences.getLast()).getTarget().setSubTarget(new Target(
+                            ((Noun)next).getNoun()));
+                    } else {
+                        ((Target)logicSentences.getLast()).setSubTarget(new Target(
+                            ((Noun)next).getNoun()));
+                    }
+                    
+                    
+                    
                 }
                 
             } else if(p.getPreposition().toLowerCase().equals("for")) {
@@ -165,7 +193,12 @@ public class NS {
             } else {
             }
         }
-        ((Action)logicSentences.getLast()).setNumberOfPeople(numberOfPeople);
+        if(logicSentences.getLast() instanceof Action) {
+            ((Action)logicSentences.getLast()).setNumberOfPeople(numberOfPeople);
+        } else {
+            ((Target)logicSentences.getLast()).setNumberOfPeople(numberOfPeople);
+        }
+        
     }
     /**
      * Extracts the correct information from object and secondary object
