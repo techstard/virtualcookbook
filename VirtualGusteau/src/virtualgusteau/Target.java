@@ -12,6 +12,8 @@ package virtualgusteau;
 public class Target {
     private String name;
     private Target subTarget;
+    private int numberOfPeople;
+    private boolean negation;
 
     public Target(String name, Target subTarget) {
         this.name = name;
@@ -20,6 +22,22 @@ public class Target {
 
     public Target(String name) {
         this.name = name;
+    }
+
+    public int getNumberOfPeople() {
+        return numberOfPeople;
+    }
+
+    public boolean isNegation() {
+        return negation;
+    }
+
+    public void setNegation(boolean negation) {
+        this.negation = negation;
+    }
+
+    public void setNumberOfPeople(int numberOfPeople) {
+        this.numberOfPeople = numberOfPeople;
     }
 
     public String getName() {
