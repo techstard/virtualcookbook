@@ -15,14 +15,20 @@ import java.util.LinkedList;
 public class Pragmatic {
     
     private LinkedList<Object> semantics;
-    private KnowledgeBase kb = new KnowledgeBase();
-    private KBValidator kbv = new KBValidator(kb);
+
+    //private KnowledgeBase kb = new KnowledgeBase();
+    private KnowledgeBase kb;
+    private KBValidator kbv;
     private LinkedList<String> wantPhrases = new LinkedList<String>();
+    
+    private Object memory;
     
     
     public Pragmatic(KnowledgeBase kb, LinkedList<Object> sem) {
         semantics = sem;
         this.kb = kb;
+        memory = sem;
+        kbv = new KBValidator(kb);
         
         wantPhrases.add("want");
         wantPhrases.add("wants");
@@ -30,43 +36,112 @@ public class Pragmatic {
         wantPhrases.add("like");
         
     }
+
+    public KnowledgeBase getKb() {
+        return kb;
+    }
+
     
+    public Object getMemory() {
+        return memory;
+    }
+    
+    public void checkAnafora(Object obj) {
+        
+    }
+    
+    /**
+     * Will add an object to the kb and make sure that there won't be any ambiguety.
+     * @param obj which you want to add.
+     */
     public void checkObject(Object obj) {
+        
         if(obj instanceof Action) {
-            if(wantPhrases.contains(((Action)obj).getName()) && ((Action)obj).isNegation()) {
-                //This means that we don't want something.
-                kb.addIngredientNotWanted(new Noun(((Action)obj).getTarget().getName())); //Add to not want.
-                if(!kbv.ruleOne()) //if we have conflict.
-                    kb.removeIngredientWanted(new Noun(((Action)obj).getTarget().getName())); //remove so no conflict.
-            } else if(wantPhrases.contains(((Action)obj).getName())) {
-                //this means that we want something.
-                kb.addIngredientWanted(new Noun(((Action)obj).getTarget().getName())); //Add to want.
-                if(!kbv.ruleOne()) //if we have conflict.
-                     kb.removeIngreidentNotWanted(new Noun(((Action)obj).getTarget().getName())); //remove so no conflict.
+            System.out.println("T1");
+            if(isCategory(((Action)obj).getTarget())) {
+                System.out.println("T1.1");
+                if (((Action)obj).isNegation()) { //a category we don't want
+                    System.out.println("T1.1.1");
+                    kb.addCategoriesNotWanted(new Noun(((Action)obj).getName()));
+                    if(!kbv.ruleFour())
+                        kb.removeCategoriesWanted(new Noun(((Action)obj).getName()));
+                } else { //we want
+                    System.out.println("T1.1.2");
+                    kb.addCategoriesWanted(new Noun(((Action)obj).getName()));
+                    if(!kbv.ruleFour())
+                        kb.removeCategoriesNotWanted(new Noun(((Action)obj).getName()));
+                }
             } else {
-                //This means that the action isn't an want or an do not want.
+                //This means we handle none category objects
+                System.out.println("T1.2 :: Action: " + ((Action)obj).getName() + " negation: " + ((Action)obj).isNegation());
+                if(wantPhrases.contains(((Action)obj).getName()) && ((Action)obj).isNegation()) {
+                    System.out.println("T1.2.1");
+                    //This means that we don't want something
+                    kb.addIngredientNotWanted(new Noun(((Action)obj).getTarget().getName())); //Add to not want
+                    System.out.println("T1.2.1.1");
+                    if(!kbv.ruleOne()) { //if we have conflict
+                        System.out.println("T1.2.2 Target: " + ((Action)obj).getTarget().getName());
+                        if(kb.removeIngredientWanted(new Noun(((Action)obj).getTarget().getName()))) //remove from want
+                            System.out.println("RegExp: true\n" + ((Action)obj).getTarget().getName() + " was removed from kb.");
+                        else
+                            System.out.println("RegExp: false\n" + ((Action)obj).getTarget().getName() + " wasn't removed from kb.");
+                    }
+                } else if(wantPhrases.contains(((Action)obj).getName())) { //we just want
+                    kb.addIngredientWanted(new Noun(((Action)obj).getTarget().getName())); //Add to want
+                    if(!kbv.ruleOne()) { //we have conflict
+                        kb.removeIngreidentNotWanted(new Noun(((Action)obj).getTarget().getName()));
+                    }
+                }
             }
-            //WHAT DO WE WANT TO DO WITH THE TARGETS!!!
-            //check target
-            //check target has subtarget.
-            //if taget has subtarget make target class of recipe.
         } else if(obj instanceof Target) {
-            //one word seantance. porbably answer to a question.
-        }
-            
+            System.out.println("T2");
+            if(isCategory((Target)obj)) {
+                System.out.println("T2.1");
+                kb.addCategoriesWanted(new Noun(((Target)obj).getName()));
+            }
+            else {
+                System.out.println("T2.2");
+                if(wantPhrases.contains(((Target)obj).getName())) {
+                    System.out.println("T2.2.1");
+                    //this means that we want something.
+                    kb.addIngredientWanted(new Noun(((Target)obj).getName())); //Add to want.
+                    if(!kbv.ruleOne()) //if we have conflict.
+                        kb.removeIngreidentNotWanted(new Noun(((Target)obj).getName())); //remove so no conflict.
+                }
+            }
+        }            
     }
     
-    public int checkRecipies() {
-        //connect to db and get amount of recipies and return that amount.
-        return 0;
+    /**
+     * Check if a target is a category.
+     * @param tag to check if category.
+     * @return true if is category else false.
+     */
+    public boolean isCategory(Target tag) {
+        DB_connect db = new DB_connect();
+        if(db.isCategory(tag.getName())) {
+            db.closeConnection();
+            return true;
+        }
+        else {
+            db.closeConnection();
+            return false;
+        }
+        
     }
+    
     public String checkKB() {
-        if(kb.getIngredientsWanted().size() <= 0 && kb.getIngredientsNotWanted().size() <= 0 && kb.getNrOfPersons() <= 0 && kb.getDefects().size() <= 0)
-            return "Hi I'm sorry I may be stupid or you haven't specified anything of importance.";
+        if(kb.getIngredientsWanted().isEmpty() && kb.getIngredientsNotWanted().isEmpty() && kb.getNrOfPersons() == 0 && kb.getDefects().isEmpty())
+            return "The knowledgebase seems to be empty.";
         else
             return "OMG this is the shit LOLzErS!!"; //todo
             
     }
+
+    public void setSemantics(LinkedList<Object> semantics) {
+        this.semantics = semantics;
+    }
+    
     /**
      * if(he,she,it,they,you) {
      *      look at last sentance and get the last person or last noun
