@@ -353,4 +353,22 @@ public class Semantics {
         
         return semSentences;
     }
+    public Iterator senIterator() {
+                return new sentanceIterator();
+    }
+    private class sentanceIterator implements Iterator {
+        private int cnt = 0;
+        public boolean hasNext() {
+            return cnt < semSentences.size();
+        }
+        public Object next() {
+            return semSentences.get(cnt++);
+        }
+        public void remove(){
+            semSentences.remove(cnt);
+        }
+        public void reset(){
+            cnt = 0;
+        }
+    }
 }

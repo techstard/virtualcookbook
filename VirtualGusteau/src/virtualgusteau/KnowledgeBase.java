@@ -18,7 +18,9 @@ public class KnowledgeBase {
     private LinkedList<Noun> ingredientsWanted = new LinkedList<Noun>(); //all ingredientsWanted mentioned to Gusteau
     private LinkedList<Noun> ingredientsNotWanted = new LinkedList<Noun>(); //ingredientsWanted not wanted
     private LinkedList<Defect> defects = new LinkedList<Defect>(); //defects such as vegetarian
-    private int nrOfPersons; //how many people
+    private LinkedList<Noun> categoriesWanted = new LinkedList<Noun>();
+    private LinkedList<Noun> categoriesNotWanted = new LinkedList<Noun>();
+    private int nrOfPersons = 1; //how many people
 
     public KnowledgeBase() {
         //empty constructor
@@ -27,6 +29,30 @@ public class KnowledgeBase {
         return defects;
     }
 
+    public LinkedList<Noun> getCategoriesNotWanted() {
+        return categoriesNotWanted;
+    }
+
+    public LinkedList<Noun> getCategoriesWanted() {
+        return categoriesWanted;
+    }
+    
+    public void addCategoriesWanted(Noun n) {
+        categoriesWanted.add(n);
+    }
+
+    public void addCategoriesNotWanted(Noun n) {
+        categoriesNotWanted.add(n);
+    }
+    
+    public void removeCategoriesWanted(Noun n) {
+        categoriesWanted.remove(n);
+    }
+    
+    public void removeCategoriesNotWanted(Noun n) {
+        categoriesNotWanted.remove(n);
+    }
+    
     public LinkedList<Noun> getIngredientsNotWanted() {
         return ingredientsNotWanted;
     }
@@ -53,10 +79,21 @@ public class KnowledgeBase {
      * @return true or false depending on if the ingredient was succesfullt removed from the kb or not.
      */
     public boolean removeIngredientWanted(Noun ingredient) {
-        if(ingredientsWanted.remove(ingredient))
-            return true;
-        else
-            return false;
+        /*for(int i = 0; i < ingredientsWanted.size(); i++) {
+            if(ingredientsWanted.get(i).getNoun().equals(ingredient.getNoun())) {
+                if(ingredientsWanted.remove(i).getNoun().equals(ingredient.getNoun()))
+                    return true;
+            }
+        }
+        return false;
+        */
+        for(int i = 0; i < ingredientsWanted.size(); i++) {
+            if(ingredientsWanted.get(i).getNoun().matches("[a-z|' ']*" + ingredient.getNoun() + "[a-z |' ']*")) {
+                if(ingredientsWanted.remove(i).getNoun().matches("[a-z|' ']*" + ingredient.getNoun() + "[a-z|' ']*"))
+                    return true;
+            }
+        }
+        return false;
     }
     
         /**
@@ -77,10 +114,13 @@ public class KnowledgeBase {
      * @return true or false depending on if the ingredient was succesfullt removed from the kb or not.
      */
     public boolean removeIngreidentNotWanted(Noun ingredient) {
-        if(ingredientsNotWanted.remove(ingredient))
-            return true;
-        else
-            return false;
+        for(int i = 0; i < ingredientsNotWanted.size(); i++) {
+            if(ingredientsNotWanted.get(i).getNoun().equals(ingredient.getNoun())) {
+                if(ingredientsNotWanted.remove(i).getNoun().equals(ingredient.getNoun()))
+                    return true;
+            }
+        }
+        return false;
     }
     
     /**
@@ -101,16 +141,18 @@ public class KnowledgeBase {
      * @return a boolean if removeal is successfull ot not.
      */
     private boolean removeDefects(Defect defect) {
-        if(defects.remove(defect))
-            return true;
-        else
-            return false;
+        for(int i = 0; i < defects.size(); i++) {
+            if(defects.get(i).getName().equals(defect.getName())) {
+                if(defects.remove(i).getName().equals(defect.getName()))
+                    return true;
+            }
+        }
+        return false;
     }
     
     public boolean setNrOfPersons(int amount) {
         int tmp = nrOfPersons;
-        if(nrOfPersons != amount)
-        {
+        if(nrOfPersons != amount && amount != 0) {
             nrOfPersons = amount;
             if(tmp == nrOfPersons)
                 return false;
@@ -126,13 +168,13 @@ public class KnowledgeBase {
     
     
     public Iterator iWIterator() {
-                return new ingredientsWantedIterator();
+        return new ingredientsWantedIterator();
     }
     public Iterator iNWIterator() {
-                return new ingredientsNotWantedIterator();
+        return new ingredientsNotWantedIterator();
     }
     public Iterator dIterator() {
-                return new defectsIterator();
+        return new defectsIterator();
     }
     
     private class ingredientsWantedIterator implements Iterator {

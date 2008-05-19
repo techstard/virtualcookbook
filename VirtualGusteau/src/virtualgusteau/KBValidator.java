@@ -43,7 +43,8 @@ public class KBValidator {
         for(int i = 0; i < inw.size(); i++) {
             for(int j = 0; j < iw.size(); j++) {
                 //check if objects are equal
-                if(inw.get(i).getNoun().equals(iw.get(j).getNoun()))
+                System.out.println("ruleOne::" + inw.get(i).getNoun() + "?==?" + iw.get(j).getNoun());
+                if(inw.get(i).getNoun().toLowerCase().matches("[a-z|' ']*" + iw.get(j).getNoun() + "[a-z|' ']*"))
                     return false;
             }
         }
@@ -88,5 +89,23 @@ public class KBValidator {
             }
         }
         return true; //word may be in plural but greather chanse that no word was found in plural.
+    }
+    /**
+     * Check so there is no conflict between categoriesWanted and categoriesNotWanted.
+     * @return true if no conflict is detected false otherwise.
+     */
+    public boolean ruleFour() {
+
+        LinkedList<Noun> inw = kb.getCategoriesNotWanted();
+        LinkedList<Noun> iw = kb.getCategoriesWanted();
+        
+        for(int i = 0; i < inw.size(); i++) {
+            for(int j = 0; j < iw.size(); j++) {
+                //check if objects are equal
+                if(inw.get(i).getNoun().equals(iw.get(j).getNoun()))
+                    return false;
+            }
+        }
+        return true;
     }
 }

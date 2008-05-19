@@ -24,6 +24,7 @@ public class Model extends Observable {
     
     private Grammar grammar;
     private Semantics semantics;
+    private Pragmatic pragmatics;
     
     private LinkedList<Object> grammarResult;
     private LinkedList<Object> semanticsResult;
@@ -31,10 +32,12 @@ public class Model extends Observable {
     public Model() {
         //sentence = new LinkedList<Word>();
         //phraseList = new LinkedList<Phrase>();
-        kb = new KnowledgeBase();
+        kb = new KnowledgeBase(); //kb is created in pragmatics. uncomment in test purposes only!
         grammar = new Grammar();
         semantics = new Semantics();
         semanticsResult = new LinkedList<Object>();
+        pragmatics = new Pragmatic(kb, semanticsResult);
+        
     }
     
     /**
@@ -81,8 +84,7 @@ public class Model extends Observable {
             Noun ingredient3 = new Noun("chocolate");
             kb.addIngredientWanted(ingredient1);
             kb.addIngredientWanted(ingredient2);
-            //kb.addIngredientWanted(ingredient3);
-            
+            //kb.addIngredientWanted(ingredient3);            
             Iterator iW = kb.iWIterator();
             output = db.searchRecipe(iW);
             db.removeNotWantedRecipes("potato");
@@ -116,6 +118,25 @@ public class Model extends Observable {
                 System.out.println("ruleThree == true");
             else
                 System.out.println("ruleThree == false");
+        } else if(arg.equals("/prag")) {
+            Iterator semIT = semanticsResult.iterator();
+            while(semIT.hasNext()) //has no next
+            {
+                kb.addCategoriesWanted(new Noun(((Action)semIT.next()).getTarget().getName()));
+                //pragmatics.checkObject(semIT.next()); //since wantIT has no next nothing is added.
+            }
+            Iterator wantIT = kb.iWIterator();
+            output = "This is in kb: ";
+            while(wantIT.hasNext()) //has no next
+            {
+                String tmp = ((Action)wantIT.next()).toString();
+                System.out.println("KB: " + tmp);
+                output += tmp;
+            }
+            //output += "\t" + pragmatics.toString();
+            //output = "oops";
+            setChanged();
+            notifyObservers();
         }
         
         input = arg;
@@ -152,6 +173,34 @@ public class Model extends Observable {
             grammarResult = ng.parser(tags, words);
             NS ns = new NS();
             semanticsResult = ns.parser(grammarResult);
+            
+            Iterator semIT = semanticsResult.iterator();
+            while(semIT.hasNext())
+            {
+                pragmatics.checkObject(semIT.next());
+            }
+            
+            Iterator wantIT = kb.iWIterator(); //wtf gör denna!! den ställer till så inte sout efter skrivs ut!
+            System.out.print("This is in kb: ");
+            while(wantIT.hasNext())//has no next
+            {
+                Object tmp = wantIT.next();
+                System.out.print(((Noun)tmp).getNoun() + " ");
+            }
+            
+            Iterator wantNIT = kb.iNWIterator();
+            System.out.println("This is in nkb: ");
+            while(wantNIT.hasNext()) {
+                Object tmp = wantNIT.next();
+                System.out.print(((Noun)tmp).getNoun() + " ");
+            }
+            DB_connect db = new DB_connect();
+            output = db.searchRecipe(kb.iWIterator());
+            db.closeConnection();
+            
+            
+            //kb.setNrOfPersons(semantics.getNumberOfPeople());
+            //generateResponse();
 
         } catch(KeyWordException key) {
             // Do something
@@ -160,7 +209,6 @@ public class Model extends Observable {
         } catch (Exception exception) {
             System.out.println(exception.getMessage());
         }
-
         
 //        try {
 //            grammarResult = grammar.parser(words, tags);
@@ -208,7 +256,7 @@ public class Model extends Observable {
         		output += action.getName() + " " + action.getTarget();
         	name = action.getName();
         }
-        output += " for " + semantics.getNumberOfPeople() + " people";
+        output += " for " + kb.getNrOfPersons() + " people";
         output += "?";
     }
     
