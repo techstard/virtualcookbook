@@ -13,7 +13,7 @@ public class Model extends Observable {
     
     private String input;
     private String output;
-    private String nouns;
+    private String ingredients;
     private FastTag fastTag;
     //private LinkedList<Word> sentence;
     //private LinkedList<Phrase> phraseList;
@@ -28,6 +28,7 @@ public class Model extends Observable {
     
     private LinkedList<Object> grammarResult;
     private LinkedList<Object> semanticsResult;
+    private Response response;
     
     public Model() {
         //sentence = new LinkedList<Word>();
@@ -37,6 +38,7 @@ public class Model extends Observable {
         semantics = new Semantics();
         semanticsResult = new LinkedList<Object>();
         pragmatics = new Pragmatic(kb, semanticsResult);
+        response = new Response();
         
     }
     
@@ -66,8 +68,8 @@ public class Model extends Observable {
      * @return A String of all nouns in inputed sentence
      *         Separated by new line
      */
-    public String getNouns() {
-        return nouns;
+    public String getIngredients() {
+        return ingredients;
     }
     /**
      * The initial parsing of the users input
@@ -201,13 +203,14 @@ public class Model extends Observable {
             
             
             //kb.setNrOfPersons(semantics.getNumberOfPeople());
-            Response response = new Response(kb);
+            response.setKB(kb);
             output = response.generateResponse();
+            ingredients = response.getIngredients();
 
         } catch(KeyWordException key) {
             // Do something
             String keyWord = key.getKeyWord();
-            System.out.println(keyWord);
+            response.handleKeyWord(keyWord);
         } catch (Exception exception) {
             System.out.println(exception.getMessage());
         }

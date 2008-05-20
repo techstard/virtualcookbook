@@ -5,11 +5,18 @@ import grammar.*;
 
 public class Response {
     private KnowledgeBase kb;
-    public Response(KnowledgeBase kb) {
+    private String ingredients;
+    public Response() {      
+    }
+    public void setKB(KnowledgeBase kb) {
         this.kb = kb;
+    }
+    public String getIngredients() {
+        return ingredients;
     }
     
     public String generateResponse() {
+        ingredients = "";
         LinkedList<String> wanted = kb.getIngredientsWanted();
         LinkedList<String> notWanted = kb.getIngredientsNotWanted();
         LinkedList recipies;
@@ -21,6 +28,7 @@ public class Response {
                 
         response = "You want a recipe with ";
         for(int i = 0; i < wanted.size(); i++) {
+            ingredients += wanted.get(i)+"\n";
             if(i == 0) {
                 response += wanted.get(i);
             } else if(i == wanted.size()-1) {
@@ -29,6 +37,7 @@ public class Response {
                 response += ", "+wanted.get(i);
             }
         }
+        
         if(recipies.size() > 5) {
             response += ".\n"+
                     "There are many recipies matching your ingredients. Can you" +
@@ -37,6 +46,8 @@ public class Response {
             response += ".\n" +
                     "I have found this recipie matching your ingredients: \n";
             response += db.printRecipe((Integer)recipies.getFirst());
+            response += "\n" + 
+                    "Do you want to restart or quit?";
         } else if(recipies.isEmpty()) {
             response += ".\n" + 
                     "There is no recipies matching, please try again";                    
@@ -50,5 +61,10 @@ public class Response {
         
         db.closeConnection();
         return response;
+    }
+    public void handleKeyWord(String word) {
+        if(word.toLowerCase().equals("quit")) {
+            System.exit(0);
+        }
     }
 }
