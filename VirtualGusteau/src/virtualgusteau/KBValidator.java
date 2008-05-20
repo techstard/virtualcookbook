@@ -37,14 +37,14 @@ public class KBValidator {
      */
     public boolean ruleOne() {
 
-        LinkedList<Noun> inw = kb.getIngredientsNotWanted();
-        LinkedList<Noun> iw = kb.getIngredientsWanted();
+        LinkedList<String> inw = kb.getIngredientsNotWanted();
+        LinkedList<String> iw = kb.getIngredientsWanted();
         
         for(int i = 0; i < inw.size(); i++) {
             for(int j = 0; j < iw.size(); j++) {
                 //check if objects are equal
-                System.out.println("ruleOne::" + inw.get(i).getNoun() + "?==?" + iw.get(j).getNoun());
-                if(inw.get(i).getNoun().toLowerCase().matches("[a-z|' ']*" + iw.get(j).getNoun() + "[a-z|' ']*"))
+                System.out.println("ruleOne::" + inw.get(i) + "?==?" + iw.get(j));
+                if(inw.get(i).toLowerCase().matches("[a-z|' ']*" + iw.get(j) + "[a-z|' ']*"))
                     return false;
             }
         }
@@ -57,9 +57,9 @@ public class KBValidator {
      * @param item the item to search for
      * @return true if list is consistent otherwise false
      */
-    public boolean checkConsistency(LinkedList<Noun> list, String item) {
+    public boolean checkConsistency(LinkedList<String> list, String item) {
         for (int i = 0; i < list.size(); i++)
-            if(item.toLowerCase().matches(((Noun)list.get(i)).getNoun()))
+            if(item.toLowerCase().matches((list.get(i))))
                 return false;
         return true;
     }
@@ -69,8 +69,8 @@ public class KBValidator {
      */
     public boolean ruleTwo() {
         LinkedList<Defect> dfs = kb.getDefects();
-        LinkedList<Noun> iw = kb.getIngredientsWanted();
-        LinkedList<Noun> ings;
+        LinkedList<String> iw = kb.getIngredientsWanted();
+        LinkedList<String> ings;
         
         for(int i = 0; i < dfs.size(); i++) {
             ings = dfs.get(i).getIngredients();
@@ -87,7 +87,7 @@ public class KBValidator {
      * @return true if no word was found in plural.
      */
     public boolean ruleThree() {
-        LinkedList<Noun> iw = kb.getIngredientsWanted();
+        LinkedList<String> iw = kb.getIngredientsWanted();
         String tmp;
         for(int i = 0; i < iw.size(); i++) {
             tmp = iw.get(i).toString().toLowerCase();
@@ -108,13 +108,13 @@ public class KBValidator {
      */
     public boolean ruleFour() {
 
-        LinkedList<Noun> inw = kb.getCategoriesNotWanted();
-        LinkedList<Noun> iw = kb.getCategoriesWanted();
+        LinkedList<String> inw = kb.getCategoriesNotWanted();
+        LinkedList<String> iw = kb.getCategoriesWanted();
         
         for(int i = 0; i < inw.size(); i++) {
             for(int j = 0; j < iw.size(); j++) {
                 //check if objects are equal
-                if(inw.get(i).getNoun().equals(iw.get(j).getNoun()))
+                if(inw.get(i).equals(iw.get(j)))
                     return false;
             }
         }

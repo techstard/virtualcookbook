@@ -13,21 +13,21 @@ import grammar.*;
  */
 public class Defect {
     private String name;
-    private LinkedList<Noun> ingredients;
+    private LinkedList<String> ingredients;
     
     public Defect() {
         //empty
     }
-    public Defect(String name, Noun ing) {
+    public Defect(String name, String ing) {
         this.name = name;
         this.ingredients.add(ing);
     }
 
-    public LinkedList<Noun> getIngredients() {
+    public LinkedList<String> getIngredients() {
         return ingredients;
     }
 
-    private boolean addIngredient(Noun ingredient) {
+    private boolean addIngredient(String ingredient) {
         if(ingredients.add(ingredient))
             return true;
         else
