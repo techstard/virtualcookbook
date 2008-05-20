@@ -56,7 +56,7 @@ public class Pragmatic {
         Iterator iw = kb.iWIterator();
         
         if(!iw.hasNext())
-            return "I have nothing in my brain!";
+            return "OMG my brain is empty!";
         
         rID = db.searchRecipe(iw);
         //db.closeConnection();
@@ -161,48 +161,54 @@ public class Pragmatic {
         }
     }
     public void checkObject2(Object obj) {
+        String word;
         if(obj instanceof Action) {
             Action act = (Action)obj;
             if(isCategory(act.getTarget())) {
                 if(act.isNegation()) {
-                    if(kbv.checkConsistency(kb.getCategoriesWanted(), act.getName())) //true → add
-                        kb.addCategoriesNotWanted(act.getName());
+                    word = toSingular(act.getName());
+                    if(kbv.checkConsistency(kb.getCategoriesWanted(), word)) //true → add
+                        kb.addCategoriesNotWanted(word);
                     else {
-                        kb.removeCategoriesWanted(act.getName());
-                        kb.addCategoriesNotWanted(act.getName());
+                        kb.removeCategoriesWanted(word);
+                        kb.addCategoriesNotWanted(word);
                     }
                 } else {
+                    word = toSingular(act.getName());
                     //add to want category check for clash resolve clash
-                    if(kbv.checkConsistency(kb.getCategoriesNotWanted(), act.getName())) //true → add
-                        kb.addCategoriesWanted(act.getName());
+                    if(kbv.checkConsistency(kb.getCategoriesNotWanted(), word)) //true → add
+                        kb.addCategoriesWanted(word);
                     else {
-                        kb.removeCategoriesNotWanted(act.getName());
-                        kb.addCategoriesWanted(act.getName());
+                        kb.removeCategoriesNotWanted(word);
+                        kb.addCategoriesWanted(word);
                     }
                 }
             } else if(wantPhrases.contains(act.getName()) && act.isNegation()) {
+                word = toSingular(act.getTarget().getName());
                 //add to not want check if clash then reslove clash
-                if(kbv.checkConsistency(kb.getIngredientsWanted(), act.getTarget().getName())) //true → add
-                    kb.addIngredientNotWanted(act.getTarget().getName());
+                if(kbv.checkConsistency(kb.getIngredientsWanted(), word)) //true → add
+                    kb.addIngredientNotWanted(word);
                 else {
-                    kb.removeIngredientWanted(act.getTarget().getName());
-                    kb.addIngredientNotWanted(act.getTarget().getName());
+                    kb.removeIngredientWanted(word);
+                    kb.addIngredientNotWanted(word);
                 }
             } else if(wantPhrases.contains(act.getName())) {
                 if(act.getTarget().getSubTarget() != null) {
-                    if(kbv.checkConsistency(kb.getIngredientsNotWanted(), act.getTarget().getSubTarget().getName())) //true → add
-                        kb.addIngredientWanted(act.getTarget().getSubTarget().getName());
+                    word = toSingular(act.getTarget().getSubTarget().getName());
+                    if(kbv.checkConsistency(kb.getIngredientsNotWanted(), word)) //true → add
+                        kb.addIngredientWanted(word);
                     else {
-                        kb.removeIngredientNotWanted(act.getTarget().getSubTarget().getName());
-                        kb.addIngredientWanted(act.getTarget().getSubTarget().getName());
+                        kb.removeIngredientNotWanted(word);
+                        kb.addIngredientWanted(word);
                     }
                 } else if(act.getTarget().getSubTarget() == null) {
+                    word = toSingular(act.getTarget().getName());
                     //add to want check if clash then resolve clash
-                    if(kbv.checkConsistency(kb.getIngredientsNotWanted(), act.getTarget().getName()))
-                        kb.addIngredientWanted(act.getTarget().getName());
+                    if(kbv.checkConsistency(kb.getIngredientsNotWanted(), word))
+                        kb.addIngredientWanted(word);
                     else {
-                        kb.removeIngredientNotWanted(act.getTarget().getName());
-                        kb.addIngredientWanted(act.getTarget().getName());
+                        kb.removeIngredientNotWanted(word);
+                        kb.addIngredientWanted(word);
                     }
                 }
             }
@@ -225,20 +231,32 @@ public class Pragmatic {
                     }
                 }
             } else if(wantPhrases.contains(tag.getName())) {
+                word = toSingular(tag.getName());
                 //add to want check clash if clash resolve and add.
-                if(kbv.checkConsistency(kb.getIngredientsNotWanted(), tag.getName())) //true → add
-                    kb.addIngredientWanted(tag.getName());
+                if(kbv.checkConsistency(kb.getIngredientsNotWanted(), word)) //true → add
+                    kb.addIngredientWanted(word);
                 else {
-                    kb.removeIngredientNotWanted(tag.getName());
-                    kb.addIngredientWanted(tag.getName());
+                    kb.removeIngredientNotWanted(word);
+                    kb.addIngredientWanted(word);
                 }
                 
             } else { //is ingredient?!?!
-                if(kbv.checkConsistency(kb.getCategoriesNotWanted(), tag.getName()))
-                    kb.addIngredientWanted(tag.getName());
-                else {
-                    kb.removeIngredientNotWanted(tag.getName());
-                    kb.addIngredientWanted(tag.getName());
+                if(tag.isNegation()) {
+                    word = toSingular(tag.getName());
+                    if(kbv.checkConsistency(kb.getIngredientsWanted(), word)) //true → add
+                        kb.addIngredientNotWanted(word);
+                    else {
+                        kb.removeIngredientWanted(word);
+                        kb.addIngredientNotWanted(word);
+                    }
+                } else {
+                    word = toSingular(tag.getName());
+                    if(kbv.checkConsistency(kb.getIngredientsNotWanted(), word))
+                        kb.addIngredientWanted(word);
+                    else {
+                        kb.removeIngredientNotWanted(word);
+                        kb.addIngredientWanted(word);
+                    }
                 }
             }
         }
@@ -273,6 +291,17 @@ public class Pragmatic {
         this.semantics = semantics;
     }
     
+    public String toSingular(String word) {
+        if(word.matches("[a-z]*s$")) { //check if word ends with s
+                if(word.matches("[a-z]*ies$")) { //check if word ends with ies
+                    //replace ies with y
+                    return word.replaceAll("ies$","y"); //maybe use other function than replaceAll, spanggar
+                }
+                //remove s
+                return word.replaceAll("s$", "");
+            }
+        return word; //word may be in plural but greather chanse that no word was found in plural.
+    }
     /**
      * if(he,she,it,they,you) {
      *      look at last sentance and get the last person or last noun
