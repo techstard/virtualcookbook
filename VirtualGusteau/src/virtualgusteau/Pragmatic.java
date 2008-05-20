@@ -33,8 +33,7 @@ public class Pragmatic {
         wantPhrases.add("want");
         wantPhrases.add("wants");
         wantPhrases.add("love");
-        wantPhrases.add("like");
-        
+        wantPhrases.add("like");        
     }
 
     public KnowledgeBase getKb() {
@@ -239,7 +238,6 @@ public class Pragmatic {
                     kb.removeIngredientNotWanted(word);
                     kb.addIngredientWanted(word);
                 }
-                
             } else { //is ingredient?!?!
                 if(tag.isNegation()) {
                     word = toSingular(tag.getName());
@@ -277,14 +275,6 @@ public class Pragmatic {
             return false;
         }
         
-    }
-    
-    public String checkKB() {
-        if(kb.getIngredientsWanted().isEmpty() && kb.getIngredientsNotWanted().isEmpty() && kb.getNrOfPersons() == 0 && kb.getDefects().isEmpty())
-            return "The knowledgebase seems to be empty.";
-        else
-            return "OMG this is the shit LOLzErS!!"; //todo
-            
     }
 
     public void setSemantics(LinkedList<Object> semantics) {

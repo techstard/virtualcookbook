@@ -41,6 +41,8 @@ public class View extends JFrame implements Observer {
     private Date date;
     private Locale locale;
     
+    private JLabel label = new JLabel();
+    
     public View(Model model) {
         
         try {
@@ -111,7 +113,7 @@ public class View extends JFrame implements Observer {
         right.setLayout(null);
         
         ImageIcon icon = new ImageIcon("graphics/Gusteau_icon_200px.jpg");
-        JLabel label = new JLabel();
+        //JLabel label = new JLabel();
         label.setIcon(icon);
         
         pictureFrame.setLayout(null);
@@ -210,5 +212,11 @@ public class View extends JFrame implements Observer {
             recipeArea.setText("");
             recipeArea.setText(model.getIngredients());
         }
+    }
+    
+    public void setAvatar(String img) {
+        ImageIcon icon = new ImageIcon("graphics/" + img);
+        //JLabel label = new JLabel();
+        label.setIcon(icon);
     }
 }
