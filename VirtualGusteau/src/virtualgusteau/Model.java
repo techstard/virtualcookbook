@@ -79,9 +79,9 @@ public class Model extends Observable {
         if( arg.compareTo("/db") == 0) {
             DB_connect db = new DB_connect();
             KnowledgeBase kb = new KnowledgeBase();
-            Noun ingredient1 = new Noun("minced meat");
-            Noun ingredient2 = new Noun("onion");
-            Noun ingredient3 = new Noun("chocolate");
+            String ingredient1 = "minced meat";
+            String ingredient2 = "onion";
+            String ingredient3 = "chocolate";
             kb.addIngredientWanted(ingredient1);
             kb.addIngredientWanted(ingredient2);
             //kb.addIngredientWanted(ingredient3);            
@@ -112,7 +112,7 @@ public class Model extends Observable {
             return;
         } else if(arg.equals("/logic")) {
             KBValidator lg = new KBValidator(kb);
-            Noun ing = new Noun("APpLeS");
+            String ing = "APpLeS";
             kb.addIngredientWanted(ing);
             if(lg.ruleThree())
                 System.out.println("ruleThree == true");
@@ -122,7 +122,7 @@ public class Model extends Observable {
             Iterator semIT = semanticsResult.iterator();
             while(semIT.hasNext()) //has no next
             {
-                kb.addCategoriesWanted(new Noun(((Action)semIT.next()).getTarget().getName()));
+                kb.addCategoriesWanted(((Action)semIT.next()).getTarget().getName());
                 //pragmatics.checkObject(semIT.next()); //since wantIT has no next nothing is added.
             }
             Iterator wantIT = kb.iWIterator();
@@ -180,8 +180,8 @@ public class Model extends Observable {
                 pragmatics.checkObject(semIT.next());
                 output = pragmatics.rationalResponse();
                 
-                setChanged();
-                notifyObservers();
+//                setChanged();
+//                notifyObservers();
             }
             
             Iterator wantIT = kb.iWIterator(); //wtf gör denna!! den ställer till så inte sout efter skrivs ut!
@@ -201,7 +201,8 @@ public class Model extends Observable {
             
             
             //kb.setNrOfPersons(semantics.getNumberOfPeople());
-            //generateResponse();
+            Response response = new Response(kb);
+            output = response.generateResponse();
 
         } catch(KeyWordException key) {
             // Do something
@@ -234,32 +235,32 @@ public class Model extends Observable {
         notifyObservers();
     }
     
-    private void generateResponse() {
-        output += "So you ";
-        String name = "";
-        for(int i = 0; i < semanticsResult.size(); i++) {
-        	Action action = (Action)semanticsResult.get(i);
-        	if (i > 0) {
-        		if (name.equals(action.getName())) {
-        			if (action.isNegation())
-        				output += " but not ";
-        			else
-        				output += " and ";
-        			output += action.getTarget();
-        		} else {
-        			if (action.isNegation())
-        				output += " but you do not ";
-        			else
-        				output += " and you ";
-        			output += action.getName() + " " + action.getTarget();
-        		}
-        	} else
-        		output += action.getName() + " " + action.getTarget();
-        	name = action.getName();
-        }
-        output += " for " + kb.getNrOfPersons() + " people";
-        output += "?";
-    }
+//    private void generateResponse() {
+//        output += "So you ";
+//        String name = "";
+//        for(int i = 0; i < semanticsResult.size(); i++) {
+//        	Action action = (Action)semanticsResult.get(i);
+//        	if (i > 0) {
+//        		if (name.equals(action.getName())) {
+//        			if (action.isNegation())
+//        				output += " but not ";
+//        			else
+//        				output += " and ";
+//        			output += action.getTarget();
+//        		} else {
+//        			if (action.isNegation())
+//        				output += " but you do not ";
+//        			else
+//        				output += " and you ";
+//        			output += action.getName() + " " + action.getTarget();
+//        		}
+//        	} else
+//        		output += action.getName() + " " + action.getTarget();
+//        	name = action.getName();
+//        }
+//        output += " for " + kb.getNrOfPersons() + " people";
+//        output += "?";
+//    }
     
 //    public void phrases() {
 //        
