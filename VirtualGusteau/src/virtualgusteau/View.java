@@ -196,6 +196,7 @@ public class View extends JFrame implements Observer {
             model.setClearText();
             chatArea.setText("");
             textField.setText("");
+            recipeArea.setText("");
         } else {
             textField.setText("");
             

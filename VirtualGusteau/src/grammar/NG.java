@@ -85,11 +85,11 @@ public class NG {
             connectVerbPhrasesWithPrep();
         
         
-//            System.out.println("Word identification");
-//            for (int i = 0; i < sentenceTree.size(); i++) {
-//                System.out.print(sentenceTree.get(i).toString()+" ");
-//            }
-//            System.out.println("\n----------------------");
+            System.out.println("Word identification");
+            for (int i = 0; i < sentenceTree.size(); i++) {
+                System.out.print(sentenceTree.get(i).toString()+" ");
+            }
+            System.out.println("\n----------------------");
 
             return sentenceTree;
         }
