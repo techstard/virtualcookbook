@@ -26,6 +26,15 @@ public class KnowledgeBase {
     public KnowledgeBase() {
         //empty constructor
     }
+    public void reset() {
+        ingredientsWanted.clear();
+        ingredientsNotWanted.clear();
+        defects.clear();
+        categoriesWanted.clear();
+        categoriesNotWanted.clear();
+        recipeIDs.clear();
+        nrOfPersons = 1;
+    }
     public LinkedList<Defect> getDefects() {
         return defects;
     }
