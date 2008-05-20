@@ -15,11 +15,12 @@ import grammar.*;
  * @author magnus
  */
 public class KnowledgeBase {
-    private LinkedList<Noun> ingredientsWanted = new LinkedList<Noun>(); //all ingredientsWanted mentioned to Gusteau
-    private LinkedList<Noun> ingredientsNotWanted = new LinkedList<Noun>(); //ingredientsWanted not wanted
+    private LinkedList<String> ingredientsWanted = new LinkedList<String>(); //all ingredientsWanted mentioned to Gusteau
+    private LinkedList<String> ingredientsNotWanted = new LinkedList<String>(); //ingredientsWanted not wanted
     private LinkedList<Defect> defects = new LinkedList<Defect>(); //defects such as vegetarian
-    private LinkedList<Noun> categoriesWanted = new LinkedList<Noun>();
-    private LinkedList<Noun> categoriesNotWanted = new LinkedList<Noun>();
+    private LinkedList<String> categoriesWanted = new LinkedList<String>();
+    private LinkedList<String> categoriesNotWanted = new LinkedList<String>();
+    private LinkedList<Integer> recipeIDs = new LinkedList<Integer>();
     private int nrOfPersons = 1; //how many people
 
     public KnowledgeBase() {
@@ -29,19 +30,19 @@ public class KnowledgeBase {
         return defects;
     }
 
-    public LinkedList<Noun> getCategoriesNotWanted() {
+    public LinkedList<String> getCategoriesNotWanted() {
         return categoriesNotWanted;
     }
 
-    public LinkedList<Noun> getCategoriesWanted() {
+    public LinkedList<String> getCategoriesWanted() {
         return categoriesWanted;
     }
     
-    public void addCategoriesWanted(Noun n) {
+    public void addCategoriesWanted(String n) {
         categoriesWanted.add(n);
     }
 
-    public void addCategoriesNotWanted(Noun n) {
+    public void addCategoriesNotWanted(String n) {
         categoriesNotWanted.add(n);
     }
     
@@ -53,12 +54,20 @@ public class KnowledgeBase {
         categoriesNotWanted.remove(n);
     }
     
-    public LinkedList<Noun> getIngredientsNotWanted() {
+    public LinkedList<String> getIngredientsNotWanted() {
         return ingredientsNotWanted;
     }
 
-    public LinkedList<Noun> getIngredientsWanted() {
+    public LinkedList<String> getIngredientsWanted() {
         return ingredientsWanted;
+    }
+
+    public void setRecipeIDs(LinkedList<Integer> recipeIDs) {
+        this.recipeIDs = recipeIDs;
+    }
+    
+    public LinkedList<Integer> getRecipeIDs() {
+        return recipeIDs;
     }
     
     /**
@@ -66,7 +75,7 @@ public class KnowledgeBase {
      * @param ingredient is the ingredient which you want to add to the knowledge base.
      * @return true or false depending on if the ingredient was succesfully added to the kb or not.
      */
-    public boolean addIngredientWanted(Noun ingredient) {
+    public boolean addIngredientWanted(String ingredient) {
         if(ingredientsWanted.add(ingredient))
             return true;
         else
@@ -88,8 +97,8 @@ public class KnowledgeBase {
         return false;
         */
         for(int i = 0; i < ingredientsWanted.size(); i++) {
-            if(ingredientsWanted.get(i).getNoun().matches("[a-z|' ']*" + ingredient.getNoun() + "[a-z |' ']*")) {
-                if(ingredientsWanted.remove(i).getNoun().matches("[a-z|' ']*" + ingredient.getNoun() + "[a-z|' ']*"))
+            if(ingredientsWanted.get(i).matches("[a-z|' ']*" + ingredient.getNoun() + "[a-z |' ']*")) {
+                if(ingredientsWanted.remove(i).matches("[a-z|' ']*" + ingredient.getNoun() + "[a-z|' ']*"))
                     return true;
             }
         }
@@ -101,7 +110,7 @@ public class KnowledgeBase {
      * @param ingredient is the ingredient not wanted which you want to add to the knowledge base.
      * @return true or false depending on if the ingredient was succesfully added to the kb or not.
      */
-    public boolean addIngredientNotWanted(Noun ingredient) {
+    public boolean addIngredientNotWanted(String ingredient) {
         if(ingredientsNotWanted.add(ingredient))
             return true;
         else
@@ -115,8 +124,8 @@ public class KnowledgeBase {
      */
     public boolean removeIngredientNotWanted(Noun ingredient) {
         for(int i = 0; i < ingredientsNotWanted.size(); i++) {
-            if(ingredientsNotWanted.get(i).getNoun().equals(ingredient.getNoun())) {
-                if(ingredientsNotWanted.remove(i).getNoun().equals(ingredient.getNoun()))
+            if(ingredientsNotWanted.get(i).equals(ingredient.getNoun())) {
+                if(ingredientsNotWanted.remove(i).equals(ingredient.getNoun()))
                     return true;
             }
         }
@@ -182,7 +191,7 @@ public class KnowledgeBase {
         public boolean hasNext() {
             return cnt < ingredientsWanted.size();
         }
-        public Noun next() {
+        public String next() {
             return ingredientsWanted.get(cnt++);
         }
         public void remove() {
@@ -197,7 +206,7 @@ public class KnowledgeBase {
         public boolean hasNext() {
             return cnt < ingredientsNotWanted.size();
         }
-        public Noun next() {
+        public String next() {
             return ingredientsNotWanted.get(cnt++);
         }
         public void remove(){
