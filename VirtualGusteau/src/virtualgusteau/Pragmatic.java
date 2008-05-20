@@ -54,6 +54,10 @@ public class Pragmatic {
         LinkedList<String[]> ingredients = new LinkedList<String[]>();
         DB_connect db = new DB_connect();
         Iterator iw = kb.iWIterator();
+        
+        if(!iw.hasNext())
+            return "I have nothing in my brain!";
+        
         rID = db.searchRecipe(iw);
         //db.closeConnection();
         System.out.println("size: "+rID.size());
@@ -84,7 +88,7 @@ public class Pragmatic {
         System.out.println("size: "+basket.size());
         db.closeConnection();
                 
-        return "lol";
+        return "lol"; //TODO
     }
     /**
      * Will add an object to the kb and make sure that there won't be any ambiguety.
@@ -178,19 +182,28 @@ public class Pragmatic {
                 }
             } else if(wantPhrases.contains(act.getName()) && act.isNegation()) {
                 //add to not want check if clash then reslove clash
-                if(kbv.checkConsistency(kb.getIngredientsWanted(), act.getName())) //true → add
-                    kb.addIngredientNotWanted(act.getName());
+                if(kbv.checkConsistency(kb.getIngredientsWanted(), act.getTarget().getName())) //true → add
+                    kb.addIngredientNotWanted(act.getTarget().getName());
                 else {
-                    kb.removeIngredientWanted(act.getName());
-                    kb.addIngredientNotWanted(act.getName());
+                    kb.removeIngredientWanted(act.getTarget().getName());
+                    kb.addIngredientNotWanted(act.getTarget().getName());
                 }
             } else if(wantPhrases.contains(act.getName())) {
-                //add to want check if clash then resolve clash
-                if(kbv.checkConsistency(kb.getIngredientsNotWanted(), act.getName()))
-                    kb.addCategoriesWanted(act.getName());
-                else {
-                    kb.removeCategoriesNotWanted(act.getName());
-                    kb.addCategoriesWanted(act.getName());
+                if(act.getTarget().getSubTarget() != null) {
+                    if(kbv.checkConsistency(kb.getIngredientsNotWanted(), act.getTarget().getSubTarget().getName())) //true → add
+                        kb.addIngredientWanted(act.getTarget().getSubTarget().getName());
+                    else {
+                        kb.removeIngredientNotWanted(act.getTarget().getSubTarget().getName());
+                        kb.addIngredientWanted(act.getTarget().getSubTarget().getName());
+                    }
+                } else if(act.getTarget().getSubTarget() == null) {
+                    //add to want check if clash then resolve clash
+                    if(kbv.checkConsistency(kb.getIngredientsNotWanted(), act.getTarget().getName()))
+                        kb.addIngredientWanted(act.getTarget().getName());
+                    else {
+                        kb.removeIngredientNotWanted(act.getTarget().getName());
+                        kb.addIngredientWanted(act.getTarget().getName());
+                    }
                 }
             }
         } else if(obj instanceof Target) {
@@ -220,6 +233,13 @@ public class Pragmatic {
                     kb.addIngredientWanted(tag.getName());
                 }
                 
+            } else { //is ingredient?!?!
+                if(kbv.checkConsistency(kb.getCategoriesNotWanted(), tag.getName()))
+                    kb.addIngredientWanted(tag.getName());
+                else {
+                    kb.removeIngredientNotWanted(tag.getName());
+                    kb.addIngredientWanted(tag.getName());
+                }
             }
         }
     }
