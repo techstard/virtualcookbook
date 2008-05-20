@@ -113,7 +113,7 @@ public class KnowledgeBase {
      * @param ingredient is the ingredient not wanted which you want to remove from the knowledge base.
      * @return true or false depending on if the ingredient was succesfullt removed from the kb or not.
      */
-    public boolean removeIngreidentNotWanted(Noun ingredient) {
+    public boolean removeIngredientNotWanted(Noun ingredient) {
         for(int i = 0; i < ingredientsNotWanted.size(); i++) {
             if(ingredientsNotWanted.get(i).getNoun().equals(ingredient.getNoun())) {
                 if(ingredientsNotWanted.remove(i).getNoun().equals(ingredient.getNoun()))
@@ -185,10 +185,10 @@ public class KnowledgeBase {
         public Noun next() {
             return ingredientsWanted.get(cnt++);
         }
-        public void remove(){
+        public void remove() {
             defects.remove(cnt);
         }
-        public void reset(){
+        public void reset() {
             cnt = 0;
         }
     }
