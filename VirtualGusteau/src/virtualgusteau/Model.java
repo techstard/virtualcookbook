@@ -177,7 +177,7 @@ public class Model extends Observable {
             Iterator semIT = semanticsResult.iterator();
             while(semIT.hasNext())
             {
-                pragmatics.checkObject2(semIT.next());
+                pragmatics.checkObject(semIT.next());
                 output = pragmatics.rationalResponse();
                 
 //                setChanged();
@@ -189,14 +189,14 @@ public class Model extends Observable {
             while(wantIT.hasNext())//has no next
             {
                 Object tmp = wantIT.next();
-                System.out.print(((Noun)tmp).getNoun() + " ");
+                System.out.print((String)tmp + " ");
             }
             
             Iterator wantNIT = kb.iNWIterator();
             System.out.print("\nNot want (nkb): ");
             while(wantNIT.hasNext()) {
                 Object tmp = wantNIT.next();
-                System.out.print(((Noun)tmp).getNoun() + " ");
+                System.out.print((String)tmp + " ");
             }
             
             

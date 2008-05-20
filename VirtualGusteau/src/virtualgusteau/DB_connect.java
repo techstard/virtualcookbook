@@ -66,7 +66,7 @@ public class DB_connect {
         /**
          * Searches trough the wanted ingredients to find what possible recipes there is
          * 
-         * @param iW An interator over the nouns
+         * @param iW An interator over strings
          * @return A string with the possible recipes
          * @since 2008-05-13
          */
@@ -96,7 +96,7 @@ public class DB_connect {
                 }
                 i++;
                 //System.out.println("test");
-                wanted = wanted + "(SELECT * FROM contains WHERE name = \'" + ((Noun)iW.next()).getNoun() + "\') AS dt"+i;
+                wanted = wanted + "(SELECT * FROM contains WHERE name = \'" + (String)iW.next() + "\') AS dt"+i;
             }
             for(int k=0;k<i-1;k++){
                 if(k==0){
@@ -309,7 +309,7 @@ public class DB_connect {
             	// Unite all the parts
             	output = "\n" + part1of3 + part2of3 + "\n" + part3of3;
             	// test the output
-        		System.out.println(output);
+        		//System.out.println(output);
         		return output;
         	} 
         	catch(Exception e) {
