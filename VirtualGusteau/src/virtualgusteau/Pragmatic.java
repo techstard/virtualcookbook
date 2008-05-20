@@ -180,15 +180,46 @@ public class Pragmatic {
                 //add to not want check if clash then reslove clash
                 if(kbv.checkConsistency(kb.getIngredientsWanted(), act.getName())) //true → add
                     kb.addIngredientNotWanted(act.getName());
+                else {
+                    kb.removeIngredientWanted(act.getName());
+                    kb.addIngredientNotWanted(act.getName());
+                }
             } else if(wantPhrases.contains(act.getName())) {
                 //add to want check if clash then resolve clash
+                if(kbv.checkConsistency(kb.getIngredientsNotWanted(), act.getName()))
+                    kb.addCategoriesWanted(act.getName());
+                else {
+                    kb.removeCategoriesNotWanted(act.getName());
+                    kb.addCategoriesWanted(act.getName());
+                }
             }
         } else if(obj instanceof Target) {
             Target tag = (Target)obj;
             if(isCategory(tag)) {
-                //add to want
+                if(tag.isNegation()) {
+                    if(kbv.checkConsistency(kb.getCategoriesWanted(), tag.getName())) //true → add
+                        kb.addCategoriesNotWanted(tag.getName());
+                    else {
+                        kb.removeCategoriesWanted(tag.getName());
+                        kb.addCategoriesNotWanted(tag.getName());
+                    }
+                } else {
+                    if(kbv.checkConsistency(kb.getCategoriesNotWanted(), tag.getName()))
+                        kb.addCategoriesWanted(tag.getName());
+                    else {
+                        kb.removeCategoriesNotWanted(tag.getName());
+                        kb.addCategoriesWanted(tag.getName());
+                    }
+                }
             } else if(wantPhrases.contains(tag.getName())) {
                 //add to want check clash if clash resolve and add.
+                if(kbv.checkConsistency(kb.getIngredientsNotWanted(), tag.getName())) //true → add
+                    kb.addIngredientWanted(tag.getName());
+                else {
+                    kb.removeIngredientNotWanted(tag.getName());
+                    kb.addIngredientWanted(tag.getName());
+                }
+                
             }
         }
     }
