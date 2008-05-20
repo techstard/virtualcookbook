@@ -30,6 +30,8 @@ public class Model extends Observable {
     private LinkedList<Object> semanticsResult;
     private Response response;
     
+    private boolean clearText = false;
+    
     public Model() {
         //sentence = new LinkedList<Word>();
         //phraseList = new LinkedList<Phrase>();
@@ -38,10 +40,15 @@ public class Model extends Observable {
         semantics = new Semantics();
         semanticsResult = new LinkedList<Object>();
         pragmatics = new Pragmatic(kb, semanticsResult);
-        response = new Response();
+        response = new Response(this);
         
     }
-    
+    public void setClearText() {
+        clearText = !clearText;
+    }
+    public boolean getClearText() {
+        return clearText;
+    }
     /**
      * 
      * @param fastTag Sets the FastTag object of this class
@@ -200,6 +207,7 @@ public class Model extends Observable {
                 Object tmp = wantNIT.next();
                 System.out.print((String)tmp + " ");
             }
+            System.out.println("\n");
             
             
             //kb.setNrOfPersons(semantics.getNumberOfPeople());

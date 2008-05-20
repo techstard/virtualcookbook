@@ -21,7 +21,9 @@ public class Controller implements ActionListener {
                 break;
             case 2:
                 JTextField t = (JTextField)event.getSource();
-                model.parse(t.getText());
+                if(!(t.getText()).equals("")) {
+                    model.parse(t.getText());
+                }                
                 break;
             case 20:            // Preferences
                 OptionDialog o = new OptionDialog();

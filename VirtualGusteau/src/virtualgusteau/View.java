@@ -192,16 +192,22 @@ public class View extends JFrame implements Observer {
     }    
     public void update(Observable o, Object arg) {
         
-        textField.setText("");
-        
-        locale = Locale.getDefault();
-        date = new Date();
-        String s = DateFormat.getTimeInstance(DateFormat.MEDIUM,
-                    locale).format(date);
-        
-        chatArea.append("[" + s + "]<Linguini>: " + model.getInput() + "\n");
-        chatArea.append("[" + s + "]<Gusteau>: " + model.getOutput() + "\n");
-        recipeArea.setText("");
-        recipeArea.setText(model.getIngredients());
+        if(model.getClearText()) {
+            model.setClearText();
+            chatArea.setText("");
+            textField.setText("");
+        } else {
+            textField.setText("");
+            
+            locale = Locale.getDefault();
+            date = new Date();
+            String s = DateFormat.getTimeInstance(DateFormat.MEDIUM,
+                        locale).format(date);
+
+            chatArea.append("<Linguini>: " + model.getInput() + "\n\n");
+            chatArea.append("<Gusteau>: " + model.getOutput() + "\n\n");
+            recipeArea.setText("");
+            recipeArea.setText(model.getIngredients());
+        }
     }
 }
