@@ -81,7 +81,17 @@ public class KBValidator {
         }
         return true;
     }
-    
+    public boolean toSingular(String word) {
+        if(word.matches("[a-z]*s$")) { //check if word ends with s
+                if(word.matches("[a-z]*ies$")) { //check if word ends with ies
+                    //replace ies with y
+                    word = word.replaceAll("ies$","y"); //maybe use other function than replaceAll, spanggar
+                }
+                //remove s
+                word = word.replaceAll("s$", "");
+            }
+        return true; //word may be in plural but greather chanse that no word was found in plural.
+    }
     /**
      * Check so that no ingredient is in plural. If it finds an ingredients in plural it will change it to singular.
      * @return true if no word was found in plural.
