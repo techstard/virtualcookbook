@@ -46,11 +46,11 @@ public class KnowledgeBase {
         categoriesNotWanted.add(n);
     }
     
-    public void removeCategoriesWanted(Noun n) {
+    public void removeCategoriesWanted(String n) {
         categoriesWanted.remove(n);
     }
     
-    public void removeCategoriesNotWanted(Noun n) {
+    public void removeCategoriesNotWanted(String n) {
         categoriesNotWanted.remove(n);
     }
     
@@ -87,7 +87,7 @@ public class KnowledgeBase {
      * @param ingredient is the ingredient which you want to remove from the knowledge base.
      * @return true or false depending on if the ingredient was succesfullt removed from the kb or not.
      */
-    public boolean removeIngredientWanted(Noun ingredient) {
+    public boolean removeIngredientWanted(String ingredient) {
         /*for(int i = 0; i < ingredientsWanted.size(); i++) {
             if(ingredientsWanted.get(i).getNoun().equals(ingredient.getNoun())) {
                 if(ingredientsWanted.remove(i).getNoun().equals(ingredient.getNoun()))
@@ -97,8 +97,8 @@ public class KnowledgeBase {
         return false;
         */
         for(int i = 0; i < ingredientsWanted.size(); i++) {
-            if(ingredientsWanted.get(i).matches("[a-z|' ']*" + ingredient.getNoun() + "[a-z |' ']*")) {
-                if(ingredientsWanted.remove(i).matches("[a-z|' ']*" + ingredient.getNoun() + "[a-z|' ']*"))
+            if(ingredientsWanted.get(i).matches("[a-z|' ']*" + ingredient + "[a-z |' ']*")) {
+                if(ingredientsWanted.remove(i).matches("[a-z|' ']*" + ingredient + "[a-z|' ']*"))
                     return true;
             }
         }
@@ -122,10 +122,10 @@ public class KnowledgeBase {
      * @param ingredient is the ingredient not wanted which you want to remove from the knowledge base.
      * @return true or false depending on if the ingredient was succesfullt removed from the kb or not.
      */
-    public boolean removeIngredientNotWanted(Noun ingredient) {
+    public boolean removeIngredientNotWanted(String ingredient) {
         for(int i = 0; i < ingredientsNotWanted.size(); i++) {
-            if(ingredientsNotWanted.get(i).equals(ingredient.getNoun())) {
-                if(ingredientsNotWanted.remove(i).equals(ingredient.getNoun()))
+            if(ingredientsNotWanted.get(i).equals(ingredient)) {
+                if(ingredientsNotWanted.remove(i).equals(ingredient))
                     return true;
             }
         }

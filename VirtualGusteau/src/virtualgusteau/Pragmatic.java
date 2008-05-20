@@ -90,94 +90,96 @@ public class Pragmatic {
      * Will add an object to the kb and make sure that there won't be any ambiguety.
      * @param obj which you want to add.
      */
-    public void checkObject(Object obj) {
-        if(obj instanceof Action) {
-            System.out.println("T1");
-            if(isCategory(((Action)obj).getTarget())) {
-                System.out.println("T1.1");
-                if (((Action)obj).isNegation()) { //a category we don't want
-                    System.out.println("T1.1.1");
-                    kb.addCategoriesNotWanted(new Noun(((Action)obj).getName()));
-                    if(!kbv.ruleFour())
-                        kb.removeCategoriesWanted(new Noun(((Action)obj).getName()));
-                } else { //we want
-                    System.out.println("T1.1.2");
-                    kb.addCategoriesWanted(new Noun(((Action)obj).getName()));
-                    if(!kbv.ruleFour())
-                        kb.removeCategoriesNotWanted(new Noun(((Action)obj).getName()));
-                }
-            } else {
-                //This means we handle none category objects
-                System.out.println("T1.2 :: Action: " + ((Action)obj).getName() + " negation: " + ((Action)obj).isNegation());
-                if(wantPhrases.contains(((Action)obj).getName()) && ((Action)obj).isNegation()) {
-                    System.out.println("T1.2.1");
-                    //This means that we don't want something
-//                    kb.addIngredientNotWanted(new Noun(((Action)obj).getTarget().getName())); //Add to not want
-//                    System.out.println("T1.2.1.1");
-//                    if(!kbv.ruleOne()) { //if we have conflict
-//                        System.out.println("T1.2.2 Target: " + ((Action)obj).getTarget().getName());
-//                        if(kb.removeIngredientWanted(new Noun(((Action)obj).getTarget().getName()))) //remove from want
-//                            System.out.println("RegExp: true\n" + ((Action)obj).getTarget().getName() + " was removed from kb.");
-//                        else
-//                            System.out.println("RegExp: false\n" + ((Action)obj).getTarget().getName() + " wasn't removed from kb.");
+//    public void checkObject(Object obj) {
+//        if(obj instanceof Action) {
+//            System.out.println("T1");
+//            if(isCategory(((Action)obj).getTarget())) {
+//                System.out.println("T1.1");
+//                if (((Action)obj).isNegation()) { //a category we don't want
+//                    System.out.println("T1.1.1");
+//                    kb.addCategoriesNotWanted(new Noun(((Action)obj).getName()));
+//                    if(!kbv.ruleFour())
+//                        kb.removeCategoriesWanted(new Noun(((Action)obj).getName()));
+//                } else { //we want
+//                    System.out.println("T1.1.2");
+//                    kb.addCategoriesWanted(new Noun(((Action)obj).getName()));
+//                    if(!kbv.ruleFour())
+//                        kb.removeCategoriesNotWanted(new Noun(((Action)obj).getName()));
+//                }
+//            } else {
+//                //This means we handle none category objects
+//                System.out.println("T1.2 :: Action: " + ((Action)obj).getName() + " negation: " + ((Action)obj).isNegation());
+//                if(wantPhrases.contains(((Action)obj).getName()) && ((Action)obj).isNegation()) {
+//                    System.out.println("T1.2.1");
+//                    //This means that we don't want something
+////                    kb.addIngredientNotWanted(new Noun(((Action)obj).getTarget().getName())); //Add to not want
+////                    System.out.println("T1.2.1.1");
+////                    if(!kbv.ruleOne()) { //if we have conflict
+////                        System.out.println("T1.2.2 Target: " + ((Action)obj).getTarget().getName());
+////                        if(kb.removeIngredientWanted(new Noun(((Action)obj).getTarget().getName()))) //remove from want
+////                            System.out.println("RegExp: true\n" + ((Action)obj).getTarget().getName() + " was removed from kb.");
+////                        else
+////                            System.out.println("RegExp: false\n" + ((Action)obj).getTarget().getName() + " wasn't removed from kb.");
+////                    }
+//                    //This means that we don't want something
+//                    //true → not wanted is not in wanted → add to notwant
+//                    //false → not wanted is in wanted → remove from wanted add to notwanted
+//                    if(kbv.checkConsistency(kb.getIngredientsWanted(), ((Action)obj).getTarget().getName()))
+//                        kb.addIngredientNotWanted(new Noun(((Action)obj).getTarget().getName()));
+//                    else {
+//                        kb.removeIngredientWanted(new Noun(((Action)obj).getTarget().getName()));
+//                        kb.addIngredientNotWanted(new Noun(((Action)obj).getTarget().getName()));
 //                    }
-                    //This means that we don't want something
-                    //true → not wanted is not in wanted → add to notwant
-                    //false → not wanted is in wanted → remove from wanted add to notwanted
-                    if(kbv.checkConsistency(kb.getIngredientsWanted(), ((Action)obj).getTarget().getName()))
-                        kb.addIngredientNotWanted(new Noun(((Action)obj).getTarget().getName()));
-                    else {
-                        kb.removeIngredientWanted(new Noun(((Action)obj).getTarget().getName()));
-                        kb.addIngredientNotWanted(new Noun(((Action)obj).getTarget().getName()));
-                    }
-                    
-                    
-                } else if(wantPhrases.contains(((Action)obj).getName())) { //we just want
-                    kb.addIngredientWanted(new Noun(((Action)obj).getTarget().getName())); //Add to want
-                    if(!kbv.ruleOne()) { //we have conflict
-                        kb.removeIngredientNotWanted(new Noun(((Action)obj).getTarget().getName()));
-                    }
-                }
-            }
-        } else if(obj instanceof Target) {
-            System.out.println("T2");
-            if(isCategory((Target)obj)) {
-                System.out.println("T2.1");
-                kb.addCategoriesWanted(new Noun(((Target)obj).getName()));
-            } else {
-                System.out.println("T2.2");
-                if(wantPhrases.contains(((Target)obj).getName())) {
-                    System.out.println("T2.2.1");
-                    //this means that we want something.
-                    kb.addIngredientWanted(new Noun(((Target)obj).getName())); //Add to want.
-                    if(!kbv.ruleOne()) //if we have conflict.
-                        kb.removeIngredientNotWanted(new Noun(((Target)obj).getName())); //remove so no conflict.
-                }
-            }
-        }
-    }
+//                    
+//                    
+//                } else if(wantPhrases.contains(((Action)obj).getName())) { //we just want
+//                    kb.addIngredientWanted(new Noun(((Action)obj).getTarget().getName())); //Add to want
+//                    if(!kbv.ruleOne()) { //we have conflict
+//                        kb.removeIngredientNotWanted(new Noun(((Action)obj).getTarget().getName()));
+//                    }
+//                }
+//            }
+//        } else if(obj instanceof Target) {
+//            System.out.println("T2");
+//            if(isCategory((Target)obj)) {
+//                System.out.println("T2.1");
+//                kb.addCategoriesWanted(new Noun(((Target)obj).getName()));
+//            } else {
+//                System.out.println("T2.2");
+//                if(wantPhrases.contains(((Target)obj).getName())) {
+//                    System.out.println("T2.2.1");
+//                    //this means that we want something.
+//                    kb.addIngredientWanted(new Noun(((Target)obj).getName())); //Add to want.
+//                    if(!kbv.ruleOne()) //if we have conflict.
+//                        kb.removeIngredientNotWanted(new Noun(((Target)obj).getName())); //remove so no conflict.
+//                }
+//            }
+//        }
+//    }
     public void checkObject2(Object obj) {
         if(obj instanceof Action) {
             Action act = (Action)obj;
             if(isCategory(act.getTarget())) {
                 if(act.isNegation()) {
                     if(kbv.checkConsistency(kb.getCategoriesWanted(), act.getName())) //true → add
-                        kb.addCategoriesNotWanted(new Noun(act.getName()));
+                        kb.addCategoriesNotWanted(act.getName());
                     else {
-                        kb.removeCategoriesWanted(new Noun(act.getName()));
-                        kb.addCategoriesNotWanted(new Noun(act.getName()));
+                        kb.removeCategoriesWanted(act.getName());
+                        kb.addCategoriesNotWanted(act.getName());
                     }
                 } else {
                     //add to want category check for clash resolve clash
                     if(kbv.checkConsistency(kb.getCategoriesNotWanted(), act.getName())) //true → add
-                        kb.addCategoriesWanted(new Noun(act.getName()));
+                        kb.addCategoriesWanted(act.getName());
                     else {
-                        kb.removeCategoriesNotWanted(new Noun(act.getName()));
-                        kb.addCategoriesWanted(new Noun(act.getName()));
+                        kb.removeCategoriesNotWanted(act.getName());
+                        kb.addCategoriesWanted(act.getName());
                     }
                 }
             } else if(wantPhrases.contains(act.getName()) && act.isNegation()) {
                 //add to not want check if clash then reslove clash
+                if(kbv.checkConsistency(kb.getIngredientsWanted(), act.getName())) //true → add
+                    kb.addIngredientNotWanted(act.getName());
             } else if(wantPhrases.contains(act.getName())) {
                 //add to want check if clash then resolve clash
             }

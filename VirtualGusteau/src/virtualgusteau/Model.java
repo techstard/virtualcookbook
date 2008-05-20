@@ -177,7 +177,7 @@ public class Model extends Observable {
             Iterator semIT = semanticsResult.iterator();
             while(semIT.hasNext())
             {
-                pragmatics.checkObject(semIT.next());
+                pragmatics.checkObject2(semIT.next());
                 output = pragmatics.rationalResponse();
                 
 //                setChanged();
