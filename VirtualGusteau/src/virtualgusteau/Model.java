@@ -180,7 +180,7 @@ public class Model extends Observable {
             while(semIT.hasNext())
             {
                 pragmatics.checkObject(semIT.next());
-                output = pragmatics.rationalResponse();
+                //output = pragmatics.rationalResponse();
                 
 //                setChanged();
 //                notifyObservers();
