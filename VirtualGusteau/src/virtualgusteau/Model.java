@@ -185,7 +185,7 @@ public class Model extends Observable {
             }
             
             Iterator wantIT = kb.iWIterator(); //wtf gör denna!! den ställer till så inte sout efter skrivs ut!
-            System.out.print("This is in kb: ");
+            System.out.print("\nWant (kb): ");
             while(wantIT.hasNext())//has no next
             {
                 Object tmp = wantIT.next();
@@ -193,7 +193,7 @@ public class Model extends Observable {
             }
             
             Iterator wantNIT = kb.iNWIterator();
-            System.out.println("This is in nkb: ");
+            System.out.print("\nNot want (nkb): ");
             while(wantNIT.hasNext()) {
                 Object tmp = wantNIT.next();
                 System.out.print(((Noun)tmp).getNoun() + " ");
