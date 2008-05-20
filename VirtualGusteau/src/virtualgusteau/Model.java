@@ -86,7 +86,7 @@ public class Model extends Observable {
             kb.addIngredientWanted(ingredient2);
             //kb.addIngredientWanted(ingredient3);            
             Iterator iW = kb.iWIterator();
-            output = db.searchRecipe(iW);
+            //output = db.searchRecipe(iW);
             db.removeNotWantedRecipes("potato");
             //db.removeCategoryRecipes("meat");
             //output = db.printRecipe(1) +db.printRecipe(2) +db.printRecipe(3) +db.printRecipe(4) +db.printRecipe(5) +db.printRecipe(6) +db.printRecipe(7);
@@ -178,6 +178,10 @@ public class Model extends Observable {
             while(semIT.hasNext())
             {
                 pragmatics.checkObject(semIT.next());
+                output = pragmatics.rationalResponse();
+                
+                setChanged();
+                notifyObservers();
             }
             
             Iterator wantIT = kb.iWIterator(); //wtf gör denna!! den ställer till så inte sout efter skrivs ut!
@@ -194,9 +198,6 @@ public class Model extends Observable {
                 Object tmp = wantNIT.next();
                 System.out.print(((Noun)tmp).getNoun() + " ");
             }
-            DB_connect db = new DB_connect();
-            output = db.searchRecipe(kb.iWIterator());
-            db.closeConnection();
             
             
             //kb.setNrOfPersons(semantics.getNumberOfPeople());

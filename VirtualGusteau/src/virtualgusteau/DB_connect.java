@@ -71,7 +71,8 @@ public class DB_connect {
          * @since 2008-05-13
          */
         //TODO : ändra return
-        public String searchRecipe(Iterator iW){
+        public LinkedList searchRecipe(Iterator iW) {
+        //public String searchRecipe(Iterator iW){
             /*
              * För flera ingredienser fyll ut med
              * INNER JOIN (SELECT * FROM contains WHERE name = 'XXXXXXX') AS dtY
@@ -94,7 +95,7 @@ public class DB_connect {
                     wanted = wanted+" INNER JOIN ";
                 }
                 i++;
-                System.out.println("test");
+                //System.out.println("test");
                 wanted = wanted + "(SELECT * FROM contains WHERE name = \'" + ((Noun)iW.next()).getNoun() + "\') AS dt"+i;
             }
             for(int k=0;k<i-1;k++){
@@ -113,9 +114,10 @@ public class DB_connect {
                 String output = "Recipies : ";
                 while (rset.next()){
                     recept.add(rset.getInt(1));
-                    output = output + rset.getString(1) + "\n";
+                    //output = output + rset.getString(1) + "\n";
                 }
-                return output;
+                //return output;
+                return recept;
             } catch(Exception e) {
 			System.err.println("Exception in searchRecipe: " + e.getMessage());
 			System.err.println(e);
@@ -232,6 +234,26 @@ public class DB_connect {
             }
         }
         
+        public String[] getIngredients(int rID) {
+            try {
+                String q = "SELECT name FROM contains WHERE rID = '" + rID + "'";
+                LinkedList<String> ing = new LinkedList<String>();
+                ResultSet rSet = connect(q);
+                while(rSet.next()) {
+                    ing.add(rSet.getString(1));
+                }
+                Object[] a = ing.toArray();
+                String[] bla = new String[ing.size()];
+                for(int i = 0; i < ing.size(); i++) {
+                    bla[i] = (String)a[i];
+                }
+                return bla;
+            } catch(Exception e) {
+                System.err.println("Exception in printRecipe(): " + e.getMessage());
+                System.err.println(e);
+                return null;
+            }
+        }
         /**
          * printRecipe
          * prints a string with a whole recipe based on the rID.
