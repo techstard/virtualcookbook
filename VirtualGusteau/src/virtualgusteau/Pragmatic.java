@@ -156,7 +156,40 @@ public class Pragmatic {
             }
         }
     }
-    
+    public void checkObject2(Object obj) {
+        if(obj instanceof Action) {
+            Action act = (Action)obj;
+            if(isCategory(act.getTarget())) {
+                if(act.isNegation()) {
+                    if(kbv.checkConsistency(kb.getCategoriesWanted(), act.getName())) //true → add
+                        kb.addCategoriesNotWanted(new Noun(act.getName()));
+                    else {
+                        kb.removeCategoriesWanted(new Noun(act.getName()));
+                        kb.addCategoriesNotWanted(new Noun(act.getName()));
+                    }
+                } else {
+                    //add to want category check for clash resolve clash
+                    if(kbv.checkConsistency(kb.getCategoriesNotWanted(), act.getName())) //true → add
+                        kb.addCategoriesWanted(new Noun(act.getName()));
+                    else {
+                        kb.removeCategoriesNotWanted(new Noun(act.getName()));
+                        kb.addCategoriesWanted(new Noun(act.getName()));
+                    }
+                }
+            } else if(wantPhrases.contains(act.getName()) && act.isNegation()) {
+                //add to not want check if clash then reslove clash
+            } else if(wantPhrases.contains(act.getName())) {
+                //add to want check if clash then resolve clash
+            }
+        } else if(obj instanceof Target) {
+            Target tag = (Target)obj;
+            if(isCategory(tag)) {
+                //add to want
+            } else if(wantPhrases.contains(tag.getName())) {
+                //add to want check clash if clash resolve and add.
+            }
+        }
+    }
     /**
      * Check if a target is a category.
      * @param tag to check if category.
