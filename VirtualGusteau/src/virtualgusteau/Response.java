@@ -25,10 +25,12 @@ public class Response {
         ingredients = "";
         LinkedList<String> wanted = kb.getIngredientsWanted();
         LinkedList<String> notWanted = kb.getIngredientsNotWanted();
+        LinkedList<String> wantedCategories = kb.getCategoriesWanted();
+        LinkedList<String> notWantedCategories = kb.getCategoriesNotWanted();
         LinkedList recipies;
         String response;
         
-        if(wanted.isEmpty()) {
+        if(wanted.isEmpty() && wantedCategories.isEmpty()) {
             response = "You haven't told me what you want, I'm good but not that good...";
         } else {
             DB_connect db = new DB_connect();
@@ -44,7 +46,7 @@ public class Response {
                 response += "I have found this recipie matching your ingredients: \n";
                 response += db.printRecipe((Integer)recipies.getFirst());
                 response += "Do you want to restart or quit?";
-            } else if(recipies.isEmpty()) {
+            } else if(recipies.isEmpty() && wantedCategories.isEmpty()) {
                 response += "There is no recipies matching, please try again";                    
             } else {
                 response += "I have found "+recipies.size()+" recipies. Is there anything " +
