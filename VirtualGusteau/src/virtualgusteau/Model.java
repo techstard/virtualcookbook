@@ -215,10 +215,10 @@ public class Model extends Observable {
                 System.out.print((String)tmp + " ");
             }
             
-            LinkedList<String> wantCategory = kb.getCategoriesWanted();
+            Iterator wantCategory = kb.iWCIteragor();
             System.out.print("\nWanted category : ");
             while(wantCategory.hasNext()) {
-                Object tmp = wantNIT.next();
+                Object tmp = wantCategory.next();
                 System.out.print((String)tmp + " ");
             }
             System.out.println("\n");
