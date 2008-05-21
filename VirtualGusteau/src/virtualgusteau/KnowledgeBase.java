@@ -240,4 +240,19 @@ public class KnowledgeBase {
             cnt = 0;
         }
     }
+    private class WantedCategoryIterator implements Iterator {
+        private int cnt = 0;
+        public boolean hasNext() {
+            return cnt < defects.size();
+        }
+        public Defect next() {
+            return defects.get(cnt++);
+        }
+        public void remove(){
+            defects.remove(cnt);
+        }
+        public void reset(){
+            cnt = 0;
+        }
+    }
 }

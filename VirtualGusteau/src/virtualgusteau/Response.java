@@ -65,4 +65,8 @@ public class Response {
             
         }
     }
+    
+    public String handleNotIngredient(String word) {
+        return "I dont think that " + word + " is an ingredient.";
+    }
 }
