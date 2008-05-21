@@ -335,7 +335,7 @@ public class DB_connect {
          * @return String with all information about the recipe 'rID'
          * @since 2008-05-13
          */
-        public String printRecipe(int rID){
+        public String printRecipe(int rID, int nr){
         	// Make query in DB for 'rID' in fields: recipe, contains
         	// to obtain all visual information about the chosen recipe.
         	try{
@@ -346,7 +346,7 @@ public class DB_connect {
         		String part2of3 = "";
         		String part3of3 = "";
         		String output;
-        		int portions = 5;
+        		int portions = nr;
             	// first query, get recipe information.
         		ResultSet rset = connect(query);
         		rset.next();
