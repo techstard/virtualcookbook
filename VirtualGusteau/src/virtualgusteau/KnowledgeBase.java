@@ -186,19 +186,19 @@ public class KnowledgeBase {
     
     
     public Iterator iWIterator() {
-        return new ingredientsWantedIterator();
+        return new IngredientsWantedIterator();
     }
     public Iterator iNWIterator() {
-        return new ingredientsNotWantedIterator();
+        return new IngredientsNotWantedIterator();
     }
     public Iterator iWCIteragor() {
-        return new ingredientsWantedIterator();
+        return new CategoryWantedIterator();
     }
     public Iterator dIterator() {
-        return new defectsIterator();
+        return new DefectsIterator();
     }
     
-    private class ingredientsWantedIterator implements Iterator {
+    private class IngredientsWantedIterator implements Iterator {
         private int cnt = 0;
         public boolean hasNext() {
             return cnt < ingredientsWanted.size();
@@ -213,7 +213,7 @@ public class KnowledgeBase {
             cnt = 0;
         }
     }
-    private class ingredientsNotWantedIterator implements Iterator {
+    private class IngredientsNotWantedIterator implements Iterator {
         private int cnt = 0;
         public boolean hasNext() {
             return cnt < ingredientsNotWanted.size();
@@ -228,7 +228,7 @@ public class KnowledgeBase {
             cnt = 0;
         }
     }
-    private class defectsIterator implements Iterator {
+    private class DefectsIterator implements Iterator {
         private int cnt = 0;
         public boolean hasNext() {
             return cnt < defects.size();
@@ -243,7 +243,7 @@ public class KnowledgeBase {
             cnt = 0;
         }
     }
-    private class WantedCategoryIterator implements Iterator {
+    private class CategoryWantedIterator implements Iterator {
         private int cnt = 0;
         public boolean hasNext() {
             return cnt < categoriesWanted.size();
