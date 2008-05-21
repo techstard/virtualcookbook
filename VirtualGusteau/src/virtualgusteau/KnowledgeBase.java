@@ -191,6 +191,9 @@ public class KnowledgeBase {
     public Iterator iNWIterator() {
         return new ingredientsNotWantedIterator();
     }
+    public Iterator iWCIteragor() {
+        return new ingredientsWantedIterator();
+    }
     public Iterator dIterator() {
         return new defectsIterator();
     }
@@ -243,13 +246,13 @@ public class KnowledgeBase {
     private class WantedCategoryIterator implements Iterator {
         private int cnt = 0;
         public boolean hasNext() {
-            return cnt < defects.size();
+            return cnt < categoriesWanted.size();
         }
-        public Defect next() {
-            return defects.get(cnt++);
+        public String next() {
+            return categoriesWanted.get(cnt++);
         }
         public void remove(){
-            defects.remove(cnt);
+            categoriesWanted.remove(cnt);
         }
         public void reset(){
             cnt = 0;
