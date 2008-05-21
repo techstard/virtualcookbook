@@ -131,7 +131,11 @@ public class NG {
             } else if(tags[i].contains("NN")) {
                 sentenceTree.add(new Noun(words[i]));
             } else if(tags[i].contains("VB") && !tags[i].equals("VBG")) {
-                sentenceTree.add(new Verb(words[i]));
+                if(words[i].toLowerCase().equals("minced")) {
+                    sentenceTree.add(new Noun(words[i]));
+                } else {
+                    sentenceTree.add(new Verb(words[i]));
+                }
             } else if(tags[i].equals("VBG")) {
                 sentenceTree.add(new Gerund(words[i]));
             } else if(tags[i].equals("CD")) {
