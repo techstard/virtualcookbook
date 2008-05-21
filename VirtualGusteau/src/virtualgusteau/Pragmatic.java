@@ -160,23 +160,29 @@ public class Pragmatic {
         }
     }
     public void checkObject2(Object obj) throws Exception {
-        if(obj instanceof Action) {
+            if(obj instanceof Action) {
             Action action = (Action)obj;
             Target target = action.getTarget();
             if(!action.isNegation()) {
                 if(isCategory(target)) {
                     // The thing the user has specified is a category in the db
                     // Add category to wantCategory
-                    if(kb.getCategoriesWanted().contains(toSingular(target.getName()))) {
-                        // CategoriesWanted already contains this category
-                        // either do nothing or notify the user
-                    } else if(kb.getCategoriesNotWanted().contains(toSingular(target.getName()))) {
-                        // CategoriesNotWanted contains this category, 
-                        // remove it and add it to CategoriesWanted
-                        kb.removeCategoriesNotWanted(toSingular(target.getName()));
-                        kb.addCategoriesWanted(toSingular(target.getName()));
+                    if(target.getName().toLowerCase().equals("something") || 
+                            target.getName().toLowerCase().equals("dinner") || 
+                            target.getName().toLowerCase().equals("meal")) {
+                        
                     } else {
-                        kb.addCategoriesWanted(toSingular(target.getName()));
+                        if(kb.getCategoriesWanted().contains(toSingular(target.getName()))) {
+                            // CategoriesWanted already contains this category
+                            // either do nothing or notify the user
+                        } else if(kb.getCategoriesNotWanted().contains(toSingular(target.getName()))) {
+                            // CategoriesNotWanted contains this category, 
+                            // remove it and add it to CategoriesWanted
+                            kb.removeCategoriesNotWanted(toSingular(target.getName()));
+                            kb.addCategoriesWanted(toSingular(target.getName()));
+                        } else {
+                            kb.addCategoriesWanted(toSingular(target.getName()));
+                        }
                     }
                     if(target.getSubTarget() != null) {
                         // The category should contain a specific ingredient
@@ -204,7 +210,7 @@ public class Pragmatic {
                         // The user has only specified a category of recipes
                         // No reason to do anything
                     }
-                } else if(isIngredient(target)) {
+                } else if(isIngredient(new Target(toSingular(target.getName())))) {
                     // Ingredient exist in db
                     // add to IngredientsWanted
                     if(kb.getIngredientsWanted().contains(toSingular(target.getName()))) {
@@ -264,7 +270,7 @@ public class Pragmatic {
                         }
                     } else {
                         // No ingredient - category is wrong
-                        throw new CategoryException(target.getName());
+                        throw new IngredientException(target.getName());
                     }
                 }
             } else {
@@ -518,15 +524,20 @@ public class Pragmatic {
      * @return true if is category else false.
      */
     public boolean isCategory(Target tag) {
-        DB_connect db = new DB_connect();
-        if(db.isCategory(tag.getName())) {
-            db.closeConnection();
+        String name = tag.getName().toLowerCase();
+        if(name.equals("something") || name.equals("dinner") || name.equals("meal")) {
             return true;
-        }
-        else {
-            db.closeConnection();
-            return false;
-        }
+        } else {
+            DB_connect db = new DB_connect();
+            if(db.isCategory(tag.getName())) {
+                db.closeConnection();
+                return true;
+            }
+            else {
+                db.closeConnection();
+                return false;
+            }
+        }     
     }
     
     /**

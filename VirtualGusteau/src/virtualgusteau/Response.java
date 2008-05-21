@@ -7,6 +7,8 @@ public class Response {
     private KnowledgeBase kb;
     private String ingredients;
     private Model model;
+    LinkedList<String> wanted;
+    LinkedList<String> notWanted;
     public Response(Model model) {
         this.model = model;
     }
@@ -18,6 +20,8 @@ public class Response {
     }
     
     public String generateResponse() {
+        wanted = kb.getIngredientsWanted();
+        notWanted = kb.getIngredientsNotWanted();
         ingredients = "";
         LinkedList<String> wanted = kb.getIngredientsWanted();
         LinkedList<String> notWanted = kb.getIngredientsNotWanted();
@@ -72,7 +76,8 @@ public class Response {
             return "I found category \"" + words[0] + "\" but not an ingredient called \"" + words[1] + "\".";
         } else {
             return "Lawl";
-        }        
+        }
+        
     }
     public String handleCategoryException(String[] words) {
         if(words.length == 1) {
@@ -81,6 +86,6 @@ public class Response {
             return "Category \"" + words[0] + "\" does not appear in my database but an ingredient called \"" + words[1] + "\" does.";
         } else {
             return "Lawl";
-        }        
+        }
     }
 }
