@@ -82,8 +82,7 @@ public class NG {
             identifyAuxiliaries();
             connectModals();
             connectVerbPhrasesWithNounPhrases();
-            connectVerbPhrasesWithPrep();
-        
+            connectVerbPhrasesWithPrep();        
         
             System.out.println("Word identification");
             for (int i = 0; i < sentenceTree.size(); i++) {

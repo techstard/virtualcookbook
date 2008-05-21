@@ -81,21 +81,20 @@ public class NS {
 //            System.out.print(nounSpecifiers.get(i)+" ");
 //        }
 //        System.out.println("\n---------------------------");
-        
-//        for(int i = 0; i < logicSentences.size(); i++) {
-//            Object o = logicSentences.get(i);
-//            if(o instanceof Action) {
-//                System.out.println("Action: "+((Action)logicSentences.get(i)).getName());
-//                System.out.println("Negation: "+((Action)logicSentences.get(i)).isNegation());
-//                System.out.println("Target: "+((Action)logicSentences.get(i)).getTarget());
-//                System.out.println("Number of People: "+((Action)logicSentences.get(i)).getNumberOfPeople());
-//            } else {
-//                System.out.println("Target: "+((Target)logicSentences.get(i)).getName());
-//                System.out.println("Negation: "+((Target)logicSentences.get(i)).isNegation());
-//                System.out.println("Number of People: "+((Target)logicSentences.get(i)).getNumberOfPeople());
-//            }            
-//            System.out.println("\n---------------------------");
-//        }
+        for(int i = 0; i < logicSentences.size(); i++) {
+            Object o = logicSentences.get(i);
+            if(o instanceof Action) {
+                System.out.println("Action: "+((Action)logicSentences.get(i)).getName());
+                System.out.println("Negation: "+((Action)logicSentences.get(i)).isNegation());
+                System.out.println("Target: "+((Action)logicSentences.get(i)).getTarget());
+                System.out.println("Number of People: "+((Action)logicSentences.get(i)).getNumberOfPeople());
+            } else {
+                System.out.println("Target: "+((Target)logicSentences.get(i)).getName());
+                System.out.println("Negation: "+((Target)logicSentences.get(i)).isNegation());
+                System.out.println("Number of People: "+((Target)logicSentences.get(i)).getNumberOfPeople());
+            }            
+            System.out.println("\n---------------------------");
+        }
         return logicSentences;
     }
     /**
