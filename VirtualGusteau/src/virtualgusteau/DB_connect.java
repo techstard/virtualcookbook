@@ -233,7 +233,13 @@ public class DB_connect {
                 return false;
             }
         }
-        
+        /**
+         * getIngredients
+         * gets all the ingredients for a recipe
+         * @param rID The recipe to check
+         * @return String with all ingredients in a recipe
+         * @since 2008-05-13
+         */
         public String[] getIngredients(int rID) {
             try {
                 String q = "SELECT name FROM contains WHERE rID = '" + rID + "'";
