@@ -34,7 +34,7 @@ public class Model extends Observable {
     
     public Model() {
         //sentence = new LinkedList<Word>();
-        //phraseList = new LinkedList<Phrase>();
+        //phraseList = new LinkedLimodelst<Phrase>();
         kb = new KnowledgeBase(); //kb is created in pragmatics. uncomment in test purposes only!
         grammar = new Grammar();
         semantics = new Semantics();
@@ -44,6 +44,7 @@ public class Model extends Observable {
         
     }
     public void setClearText() {
+        ingredients = "";
         clearText = !clearText;
     }
     public boolean getClearText() {

@@ -275,7 +275,7 @@ public class Pragmatic {
      */
     public boolean isCategory(Target tag) {
         DB_connect db = new DB_connect();
-        if(db.isAnIngredient(tag.getName())) {
+        if(db.isCategory(tag.getName())) {
             db.closeConnection();
             return true;
         }
@@ -283,7 +283,6 @@ public class Pragmatic {
             db.closeConnection();
             return false;
         }
-        
     }
     
     /**
@@ -293,16 +292,16 @@ public class Pragmatic {
      */
     public boolean isIngredient(Target tag) {
         DB_connect db = new DB_connect();
-        if(db.isCategory(tag.getName())) {
+        if(db.isAnIngredient(tag.getName())) {
             db.closeConnection();
             return true;
         }
         else {
             db.closeConnection();
             return false;
-        }
-        
+        }   
     }
+    
 
     public void setSemantics(LinkedList<Object> semantics) {
         this.semantics = semantics;
