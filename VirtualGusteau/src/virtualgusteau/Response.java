@@ -66,7 +66,22 @@ public class Response {
         }
     }
     
-    public String handleNotIngredient(String word) {
-        return "I dont think that " + word + " is an ingredient.";
+    public String handleIngredientException(String[] words) {
+        if(words.length == 1) {
+            return "I dont think that \"" + words[0] + "\" is an ingredient.";
+        } else if(words.length == 2) {
+            return "I found category \"" + words[0] + "\" but not an ingredient called \"" + words[1] + "\".";
+        } else {
+            return "Lawl";
+        }        
+    }
+    public String handleCategoryException(String[] words) {
+        if(words.length == 1) {
+            return "\"" + words[0] + "\" is not a category.";
+        } else if(words.length == 2) {
+            return "Category \"" + words[0] + "\" does not appear in my database but an ingredient called \"" + words[1] + "\" does.";
+        } else {
+            return "Lawl";
+        }        
     }
 }
