@@ -162,6 +162,14 @@ public class Model extends Observable {
             NS ns = new NS();
             semanticsResult = ns.parser(grammarResult);
             
+            for(Object o : semanticsResult) {
+                if(o instanceof Action) {
+                    System.out.println(((Action)o).toString());
+                } else {
+                    System.out.println(((Target)o).toString());
+                }
+            }
+            
             Iterator semIT = semanticsResult.iterator();
             while(semIT.hasNext())
             {
@@ -192,8 +200,8 @@ public class Model extends Observable {
             }
             System.out.println("\n");
             
+            System.out.println("# People: "+kb.getNrOfPersons());
             
-            //kb.setNrOfPersons(semantics.getNumberOfPeople());
             response.setKB(kb);
             output = response.generateResponse();
             ingredients = response.getIngredients();

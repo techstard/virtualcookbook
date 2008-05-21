@@ -44,7 +44,7 @@ public class Response {
                         " be more specific.";
             } else if(recipies.size() == 1) {
                 response += "I have found this recipie matching your ingredients: \n";
-                response += db.printRecipe((Integer)recipies.getFirst());
+                response += db.printRecipe((Integer)recipies.getFirst(), kb.getNrOfPersons());
                 response += "Do you want to restart or quit?";
             } else if(recipies.isEmpty() && wantedCategories.isEmpty()) {
                 response += "There is no recipies matching, please try again";                    
