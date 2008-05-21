@@ -97,15 +97,19 @@ public class Model extends Observable {
             DB_connect db = new DB_connect();
             KnowledgeBase kb = new KnowledgeBase();
             String ingredient1 = "minced meat";
-            String ingredient2 = "onion";
+            String ingredient2 = "coffee";
             String ingredient3 = "chocolate";
-            kb.addIngredientWanted(ingredient1);
-            kb.addIngredientWanted(ingredient2);
+            String category1 = "meat";
+            //kb.addIngredientWanted(ingredient1);
+            kb.addIngredientWanted("oil");
+            //kb.addCategoriesWanted(category1);
+            //kb.addCategoriesNotWanted(category1);
             //kb.addIngredientWanted(ingredient3);            
-            Iterator iW = kb.iWIterator();
-            //output = db.searchRecipe(iW);
-            db.removeNotWantedRecipes("potato");
+            //Iterator iW = kb.iWIterator();
+            //db.searchRecipe(iW);
+            //db.removeNotWantedRecipes("potato");
             //db.removeCategoryRecipes("meat");
+            db.possibleRecipes(kb);
             //output = db.printRecipe(1) +db.printRecipe(2) +db.printRecipe(3) +db.printRecipe(4) +db.printRecipe(5) +db.printRecipe(6) +db.printRecipe(7);
             /*if (db.isCategory("meathej")){
                 output = "true";
@@ -216,7 +220,7 @@ public class Model extends Observable {
                 System.out.print((String)tmp + " ");
             }
             
-            Iterator wantCategory = kb.iWCIteragor();
+            Iterator wantCategory = kb.iWCIterator();
             System.out.print("\nWanted category : ");
             while(wantCategory.hasNext()) {
                 Object tmp = wantCategory.next();
