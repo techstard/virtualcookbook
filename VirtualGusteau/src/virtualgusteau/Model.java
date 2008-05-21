@@ -214,6 +214,13 @@ public class Model extends Observable {
                 Object tmp = wantNIT.next();
                 System.out.print((String)tmp + " ");
             }
+            
+            LinkedList<String> wantCategory = kb.getCategoriesWanted();
+            System.out.print("\nWanted category : ");
+            while(wantCategory.hasNext()) {
+                Object tmp = wantNIT.next();
+                System.out.print((String)tmp + " ");
+            }
             System.out.println("\n");
             
             
@@ -226,6 +233,12 @@ public class Model extends Observable {
             // Do something
             String keyWord = key.getKeyWord();
             response.handleKeyWord(keyWord);
+            
+        } catch(NotIngredientException key) {
+            // Do something
+            String notIngredient = key.toString();
+            System.out.println("Not an ingredient :" + notIngredient);
+            output = response.handleNotIngredient(key.toString());
         } catch (Exception exception) {
             System.out.println(exception.getMessage());
         }

@@ -159,13 +159,13 @@ public class Pragmatic {
             }
         }
     }
-    public void checkObject2(Object obj) {
+    public void checkObject2(Object obj) throws Exception{
         String word;
         if(obj instanceof Action) {
             Action act = (Action)obj;
             if(isCategory(act.getTarget())) {
                 if(act.isNegation()) {
-                    word = toSingular(act.getName());
+                    word = toSingular(act.getTarget().getSubTarget().getName());
                     if(kbv.checkConsistency(kb.getCategoriesWanted(), word)) //true → add
                         kb.addCategoriesNotWanted(word);
                     else {
@@ -173,7 +173,7 @@ public class Pragmatic {
                         kb.addCategoriesNotWanted(word);
                     }
                 } else {
-                    word = toSingular(act.getName());
+                    word = toSingular(act.getTarget().getSubTarget().getName());
                     //add to want category check for clash resolve clash
                     if(kbv.checkConsistency(kb.getCategoriesNotWanted(), word)) //true → add
                         kb.addCategoriesWanted(word);
@@ -182,34 +182,38 @@ public class Pragmatic {
                         kb.addCategoriesWanted(word);
                     }
                 }
-            } else if(wantPhrases.contains(act.getName()) && act.isNegation()) {
-                word = toSingular(act.getTarget().getName());
-                //add to not want check if clash then reslove clash
-                if(kbv.checkConsistency(kb.getIngredientsWanted(), word)) //true → add
-                    kb.addIngredientNotWanted(word);
-                else {
-                    kb.removeIngredientWanted(word);
-                    kb.addIngredientNotWanted(word);
-                }
-            } else if(wantPhrases.contains(act.getName())) {
-                if(act.getTarget().getSubTarget() != null) {
-                    word = toSingular(act.getTarget().getSubTarget().getName());
-                    if(kbv.checkConsistency(kb.getIngredientsNotWanted(), word)) //true → add
-                        kb.addIngredientWanted(word);
-                    else {
-                        kb.removeIngredientNotWanted(word);
-                        kb.addIngredientWanted(word);
-                    }
-                } else if(act.getTarget().getSubTarget() == null) {
+            } else if(isIngredient(act.getTarget())) {
+                    if(wantPhrases.contains(act.getName()) && act.isNegation()) {
                     word = toSingular(act.getTarget().getName());
-                    //add to want check if clash then resolve clash
-                    if(kbv.checkConsistency(kb.getIngredientsNotWanted(), word))
-                        kb.addIngredientWanted(word);
+                    //add to not want check if clash then reslove clash
+                    if(kbv.checkConsistency(kb.getIngredientsWanted(), word)) //true → add
+                        kb.addIngredientNotWanted(word);
                     else {
-                        kb.removeIngredientNotWanted(word);
-                        kb.addIngredientWanted(word);
+                        kb.removeIngredientWanted(word);
+                        kb.addIngredientNotWanted(word);
+                    }
+                } else if(wantPhrases.contains(act.getName())) {
+                    if(act.getTarget().getSubTarget() != null) {
+                        word = toSingular(act.getTarget().getSubTarget().getName());
+                        if(kbv.checkConsistency(kb.getIngredientsNotWanted(), word)) //true → add
+                            kb.addIngredientWanted(word);
+                        else {
+                            kb.removeIngredientNotWanted(word);
+                            kb.addIngredientWanted(word);
+                        }
+                    } else if(act.getTarget().getSubTarget() == null) {
+                        word = toSingular(act.getTarget().getName());
+                        //add to want check if clash then resolve clash
+                        if(kbv.checkConsistency(kb.getIngredientsNotWanted(), word))
+                            kb.addIngredientWanted(word);
+                        else {
+                            kb.removeIngredientNotWanted(word);
+                            kb.addIngredientWanted(word);
+                        }
                     }
                 }
+            } else {
+                throw new NotIngredientException(act.getTarget().getName());
             }
         } else if(obj instanceof Target) {
             Target tag = (Target)obj;
@@ -229,33 +233,38 @@ public class Pragmatic {
                         kb.addCategoriesWanted(tag.getName());
                     }
                 }
-            } else if(wantPhrases.contains(tag.getName())) {
-                word = toSingular(tag.getName());
-                //add to want check clash if clash resolve and add.
-                if(kbv.checkConsistency(kb.getIngredientsNotWanted(), word)) //true → add
-                    kb.addIngredientWanted(word);
-                else {
-                    kb.removeIngredientNotWanted(word);
-                    kb.addIngredientWanted(word);
-                }
-            } else { //is ingredient?!?!
-                if(tag.isNegation()) {
+            } else if(isIngredient(tag)) {
+                if(wantPhrases.contains(tag.getName())) {
+
                     word = toSingular(tag.getName());
-                    if(kbv.checkConsistency(kb.getIngredientsWanted(), word)) //true → add
-                        kb.addIngredientNotWanted(word);
-                    else {
-                        kb.removeIngredientWanted(word);
-                        kb.addIngredientNotWanted(word);
-                    }
-                } else {
-                    word = toSingular(tag.getName());
-                    if(kbv.checkConsistency(kb.getIngredientsNotWanted(), word))
+                    //add to want check clash if clash resolve and add.
+                    if(kbv.checkConsistency(kb.getIngredientsNotWanted(), word)) //true → add
                         kb.addIngredientWanted(word);
                     else {
                         kb.removeIngredientNotWanted(word);
                         kb.addIngredientWanted(word);
                     }
+                } else { 
+                    if(tag.isNegation()) {
+                        word = toSingular(tag.getName());
+                        if(kbv.checkConsistency(kb.getIngredientsWanted(), word)) //true → add
+                            kb.addIngredientNotWanted(word);
+                        else {
+                            kb.removeIngredientWanted(word);
+                            kb.addIngredientNotWanted(word);
+                        }
+                    } else {
+                        word = toSingular(tag.getName());
+                        if(kbv.checkConsistency(kb.getIngredientsNotWanted(), word))
+                            kb.addIngredientWanted(word);
+                        else {
+                            kb.removeIngredientNotWanted(word);
+                            kb.addIngredientWanted(word);
+                        }
+                    }
                 }
+            } else{
+                throw new NotIngredientException(tag.getName());
             }
         }
     }
@@ -265,6 +274,24 @@ public class Pragmatic {
      * @return true if is category else false.
      */
     public boolean isCategory(Target tag) {
+        DB_connect db = new DB_connect();
+        if(db.isAnIngredient(tag.getName())) {
+            db.closeConnection();
+            return true;
+        }
+        else {
+            db.closeConnection();
+            return false;
+        }
+        
+    }
+    
+    /**
+     * Check if a target is a category.
+     * @param tag to check if category.
+     * @return true if is category else false.
+     */
+    public boolean isIngredient(Target tag) {
         DB_connect db = new DB_connect();
         if(db.isCategory(tag.getName())) {
             db.closeConnection();
