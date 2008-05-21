@@ -17,6 +17,8 @@ import grammar.*;
 public class DB_connect {
 	private Connection con = null;
         private LinkedList<Integer> recept = new LinkedList<Integer>();
+        private LinkedList<Integer> categoryRecept = new LinkedList<Integer>();
+        private LinkedList<Integer> possibleRecept = new LinkedList<Integer>();
 
         /**
         * Creates a connection to the database
@@ -87,6 +89,9 @@ public class DB_connect {
             ON dt1.rID = dt2.rID AND dt1.rID = dt3.rID AND dt1.rID = dt4.rID
              */
             recept.clear(); //töm recept för att söka om på nytt efter recept.
+            if(!iW.hasNext()){
+                return recept;
+            }
             String query = "SELECT * FROM ";
             String wanted = "";
             int i = 0;
@@ -137,22 +142,22 @@ public class DB_connect {
         WHERE rpt.rID = 2 OR rpt.rID = 7                            this is the wanted recipes*/
             String query = "SELECT rID FROM (SELECT rID FROM contains WHERE name = '" + nwi + "') AS rpt ";
             query = query + "WHERE rpt.rID = ";
-            for(int i = 0; i < recept.size();i++){
-                query = query + recept.get(i);
-                if(i != recept.size() -1){
+            for(int i = 0; i < possibleRecept.size();i++){
+                query = query + possibleRecept.get(i);
+                if(i != possibleRecept.size() -1){
                     query = query + " OR rpt.rID = ";
                 }
             }
             System.out.println(query);
-            System.out.println("recept innan while "+recept.size());
+            System.out.println("recept innan while "+possibleRecept.size());
             try{
                 ResultSet rset = connect(query);
                 while(rset.next()){
-                    if(recept.indexOf(rset.getInt(1)) >= 0){
-                        recept.remove(recept.indexOf(rset.getInt(1)));
+                    if(possibleRecept.indexOf(rset.getInt(1)) >= 0){
+                        possibleRecept.remove(possibleRecept.indexOf(rset.getInt(1)));
                     }
                 }
-                System.out.println("recept efter while "+recept.size());
+                System.out.println("recept efter while "+possibleRecept.size());
             }
             catch(Exception e) {
                 System.err.println("Exception in removeNotWantedRecipes: " + e.getMessage());
@@ -169,15 +174,14 @@ public class DB_connect {
         public void addCategoryRecipes(String category){        
             String query = "SELECT DISTINCT(rID) FROM contains WHERE name IN" +
                     " ( SELECT ingredient FROM is_categorized_by WHERE category = '"+category + "')";
-            System.out.println("recept innan lägger till category "+recept.size());
+            System.out.println("recept innan lägger till category "+categoryRecept.size());
+            categoryRecept.clear();
             try{
                 ResultSet rset = connect(query);
                 while(rset.next()){
-                    if(!recept.contains(rset.getInt(1))){
-                        recept.add(rset.getInt(1));
-                    }
+                        categoryRecept.add(rset.getInt(1));
                 }
-            System.out.println("recept efter att ha lagt till category "+recept.size());    
+            System.out.println("recept efter att ha lagt till category "+categoryRecept.size());    
             }
             catch(Exception e) {
                 System.err.println("Exception in addCategoryRecipes: " + e.getMessage());
@@ -194,20 +198,82 @@ public class DB_connect {
         public void removeCategoryRecipes(String category){        
             String query = "SELECT DISTINCT(rID) FROM contains WHERE name IN" +
                     " ( SELECT ingredient FROM is_categorized_by WHERE category = '"+category + "')";
-            System.out.println("removeCategoryRecipes innan borttagning "+recept.size());
+            //System.out.println("removeCategoryRecipes innan borttagning "+categoryRecept.size());
             try{
                 ResultSet rset = connect(query);
                 while(rset.next()){
-                    if(recept.indexOf(rset.getInt(1)) >= 0){
-                        recept.remove(recept.indexOf(rset.getInt(1)));
+                    if(possibleRecept.indexOf(rset.getInt(1)) >= 0){
+                        possibleRecept.remove(possibleRecept.indexOf(rset.getInt(1)));
                     }
                 }
-            System.out.println("removeCategoryRecipes efter borttagning "+recept.size());    
+            //System.out.println("removeCategoryRecipes efter borttagning "+possibleRecept.size());    
             }
             catch(Exception e) {
                 System.err.println("Exception in removeCategoryRecipes: " + e.getMessage());
 		System.err.println(e);
             }
+        }
+        
+        /**
+         * possibleRecipes
+         * returns the possible recipes the user wants.
+         * @param 
+         * @return LinkedList<Noun> The list of all recipes
+         * @since 2008-05-21
+         */
+        public LinkedList<Integer> possibleRecipes(KnowledgeBase kb){//borde ta in knowledgebasen
+            possibleRecept.clear();
+            Iterator wantIT = kb.iWCIterator(); 
+            while(wantIT.hasNext()){
+                Object tmp = wantIT.next();
+                addCategoryRecipes((String)tmp);
+            }
+            
+            Iterator iW = kb.iWIterator();
+            searchRecipe(iW);
+            
+            if(categoryRecept.size() == 0 && recept.size() != 0){
+                possibleRecept = recept;
+            } else if(categoryRecept.size() == 0 && recept.size() == 0){
+                //gör inget
+            }else {
+                if(categoryRecept.size() >= recept.size()){
+                    for(int i = 0; i < recept.size();i++){
+                        for(int k = 0; k < categoryRecept.size();k++){
+                            if(recept.get(i) == categoryRecept.get(k)){
+                                possibleRecept.add(recept.get(i));
+                            }
+                        }
+                    }
+                } else {
+                    for(int i = 0; i < categoryRecept.size();i++){
+                        for(int k = 0; k < recept.size();k++){
+                            if(categoryRecept.get(i) == recept.get(k)){
+                                possibleRecept.add(categoryRecept.get(i));
+                            }
+                        }
+                    }
+                }
+            }
+            
+            Iterator notWantC = kb.iNWCIterator(); 
+            while(notWantC.hasNext()){
+                Object tmp = notWantC.next();
+                removeCategoryRecipes((String)tmp);
+            }
+            
+            Iterator notWantI = kb.iNWIterator(); 
+            while(notWantI.hasNext()){
+                Object tmp = notWantI.next();
+                removeNotWantedRecipes((String)tmp);
+            }
+            
+            for(int i = 0; i < possibleRecept.size(); i++){
+                System.out.println(possibleRecept.get(i));
+            }
+            
+            return possibleRecept;
+            
         }
         
         /**

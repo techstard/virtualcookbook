@@ -191,8 +191,13 @@ public class KnowledgeBase {
     public Iterator iNWIterator() {
         return new IngredientsNotWantedIterator();
     }
-    public Iterator iWCIteragor() {
+
+    public Iterator iWCIterator() {
         return new CategoryWantedIterator();
+
+    }
+    public Iterator iNWCIterator() {
+        return new NotWantedCategoryIterator();
     }
     public Iterator dIterator() {
         return new DefectsIterator();
@@ -253,6 +258,21 @@ public class KnowledgeBase {
         }
         public void remove(){
             categoriesWanted.remove(cnt);
+        }
+        public void reset(){
+            cnt = 0;
+        }
+    }
+    private class NotWantedCategoryIterator implements Iterator {
+        private int cnt = 0;
+        public boolean hasNext() {
+            return cnt < categoriesNotWanted.size();
+        }
+        public String next() {
+            return categoriesNotWanted.get(cnt++);
+        }
+        public void remove(){
+            categoriesNotWanted.remove(cnt);
         }
         public void reset(){
             cnt = 0;

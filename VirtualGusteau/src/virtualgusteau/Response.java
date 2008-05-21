@@ -28,8 +28,7 @@ public class Response {
             response = "You haven't told me what you want, I'm good but not that good...";
         } else {
             DB_connect db = new DB_connect();
-            Iterator iw = kb.iWIterator();
-            recipies = db.searchRecipe(iw);
+            recipies = db.possibleRecipes(kb);
             for (String in : wanted) {
                 ingredients += in+"\n";
             }
