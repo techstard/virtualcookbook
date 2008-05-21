@@ -174,14 +174,14 @@ public class DB_connect {
         public void addCategoryRecipes(String category){        
             String query = "SELECT DISTINCT(rID) FROM contains WHERE name IN" +
                     " ( SELECT ingredient FROM is_categorized_by WHERE category = '"+category + "')";
-            System.out.println("recept innan lägger till category "+categoryRecept.size());
+            //System.out.println("recept innan lägger till category "+categoryRecept.size());
             categoryRecept.clear();
             try{
                 ResultSet rset = connect(query);
                 while(rset.next()){
                         categoryRecept.add(rset.getInt(1));
                 }
-            System.out.println("recept efter att ha lagt till category "+categoryRecept.size());    
+            //System.out.println("recept efter att ha lagt till category "+categoryRecept.size());    
             }
             catch(Exception e) {
                 System.err.println("Exception in addCategoryRecipes: " + e.getMessage());
@@ -232,7 +232,9 @@ public class DB_connect {
             Iterator iW = kb.iWIterator();
             searchRecipe(iW);
             
-            if(categoryRecept.size() == 0 && recept.size() != 0){
+            if(categoryRecept.size() != 0 && recept.size() == 0){
+                possibleRecept = categoryRecept;
+            } else if(categoryRecept.size() == 0 && recept.size() != 0){
                 possibleRecept = recept;
             } else if(categoryRecept.size() == 0 && recept.size() == 0){
                 //gör inget
