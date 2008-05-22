@@ -12,7 +12,7 @@ public class Response {
     LinkedList recipes;
     String response;
     
-    private enum state {RECOMMEND,SUGGEST,NORMAL};
+    private enum state {INSULT,GREETING,RECOMMEND,SUGGEST,NORMAL};
     private state currentState = state.RECOMMEND;
     private String suggestedRecipe = "";
     
@@ -46,6 +46,37 @@ public class Response {
             //currentState = state.NORMAL;
             return response;
         }
+        
+        if(currentState == state.GREETING){
+            int i = (int)Math.random()*2;
+            switch (i){
+                case 0:     response = "Yes, well... greetings to you. Now what sort of recipe do you want?";
+                            break;
+                case 1:     response = "Well, hello! What sort of recipe do you want?";
+                            break;
+                case 2:     response = "Salutations! What sort of recipe do you want?";
+                            break;
+                default:    break;
+            }
+            currentState = state.NORMAL;
+            return response;
+        }
+        
+        if(currentState == state.INSULT){
+            int i = (int)Math.random()*2;
+            switch (i){
+                case 0:     response = "Sacre Bleu! Stop with those harsh words and tell me what recipe you want!";
+                            break;
+                case 1:     response = "Such language! Stop that nonsense and tell me what recipe you want!";
+                            break;
+                case 2:     response = "Stop! You are hurting my feelings... Please stop that and tell me what sort of recipe you want instead.";
+                            break;
+                default:    break;
+            }
+            currentState = state.NORMAL;
+            return response;
+        }
+                
         if(wanted.isEmpty() && wantedCategories.isEmpty()) {
             if(!kb.getUnknowns().isEmpty()) {
                 // what the user said was wrong
@@ -93,7 +124,7 @@ public class Response {
             model.setClearText();
             kb.reset();
             return "What do you want zis time?";
-        } else if(word.toLowerCase().equals("yes")) {
+        } else if(word.toLowerCase().matches("yes|ok")) {
             if (currentState == state.SUGGEST){
                 kb.addIngredientWanted(suggestedRecipe);
                 currentState = state.NORMAL;
@@ -103,7 +134,7 @@ public class Response {
                 String recipe = db.printRecipe(kb.getRecRec(), kb.getNrOfPersons());
                 db.closeConnection();
                 currentState = state.NORMAL;
-                return "Merveilleux! Here is the recipe.\n"+recipe+"Ok! Do you want to begin again or quit?";            
+                return "Merveilleux! Here is the recipe.\n"+recipe+"Ok! Do you want to restart or quit?";            
             } else {
                 return "So what is it zat you want?";
             }
@@ -112,6 +143,9 @@ public class Response {
                 kb.addIngredientNotWanted(suggestedRecipe);
                 currentState = state.NORMAL;
                 return generateResponse();
+            } else if (currentState == state.RECOMMEND){
+                currentState = state.NORMAL;
+                return "No? Well then, what sort of recipe do you want? Please tell me.";            
             } else{
                 // Assume this is only said when asked 
                 // "Is there anything else you want?"

@@ -96,6 +96,8 @@ public class View extends JFrame implements Observer {
         chatArea.setWrapStyleWord(true);
         chatArea.setBorder(BorderFactory.createEmptyBorder(8,8,8,8));
         chatArea.setText("<Gusteau>: Bienvenue, cher ami.\nWhat kind of magnifique recipe would you want today? I can prumise I will not disappoint you.\n\n");
+        
+        chatPane.setAutoscrolls(true);
         chatPane.getViewport().add(chatArea);
               
         JSeparator separator = new JSeparator();
