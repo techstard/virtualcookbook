@@ -12,7 +12,9 @@ public class Response {
     LinkedList recipes;
     String response;
     
-    private enum state {INSULT,GREETING,RECOMMEND,SUGGEST,NORMAL};
+    private boolean recommend = true;
+    
+    private enum state {RECOMMEND,SUGGEST,NORMAL};
     private state currentState = state.RECOMMEND;
     private String suggestedRecipe = "";
     
@@ -35,7 +37,7 @@ public class Response {
         LinkedList<String> wantedCategories = kb.getCategoriesWanted();
         LinkedList<String> notWantedCategories = kb.getCategoriesNotWanted();
         
-        if(currentState == state.RECOMMEND){
+        if(recommend){
             // Find a random recipe to recommend.
             DB_connect db = new DB_connect();
             int randomRecipeID = (int)(Math.random()*11+1);
@@ -43,40 +45,13 @@ public class Response {
             response = "I can recommend ze tasty " + db.findRecipeName(randomRecipeID) + ", do you want to see ze recipe?";
             //System.out.println(response);
             db.closeConnection();
-            //currentState = state.NORMAL;
+            recommend = false;
+            currentState = state.RECOMMEND;
             return response;
-        }
-        
-        if(currentState == state.GREETING){
-            int i = (int)Math.random()*2;
-            switch (i){
-                case 0:     response = "Yes, well... greetings to you. Now what sort of recipe do you want?";
-                            break;
-                case 1:     response = "Well, hello! What sort of recipe do you want?";
-                            break;
-                case 2:     response = "Salutations! What sort of recipe do you want?";
-                            break;
-                default:    break;
-            }
+        } else {
             currentState = state.NORMAL;
-            return response;
         }
-        
-        if(currentState == state.INSULT){
-            int i = (int)Math.random()*2;
-            switch (i){
-                case 0:     response = "Sacre Bleu! Stop with those harsh words and tell me what recipe you want!";
-                            break;
-                case 1:     response = "Such language! Stop that nonsense and tell me what recipe you want!";
-                            break;
-                case 2:     response = "Stop! You are hurting my feelings... Please stop that and tell me what sort of recipe you want instead.";
-                            break;
-                default:    break;
-            }
-            currentState = state.NORMAL;
-            return response;
-        }
-                
+                         
         if(wanted.isEmpty() && wantedCategories.isEmpty()) {
             if(!kb.getUnknowns().isEmpty()) {
                 // what the user said was wrong
@@ -118,12 +93,25 @@ public class Response {
         return response;
     }
     public String handleKeyWord(String word) {
-        if(word.toLowerCase().equals("quit")) {
+        if(word.toLowerCase().matches("quit|goodbye|bye")) {
             System.exit(0);
         } else if(word.toLowerCase().equals("restart")) {
             model.setClearText();
             kb.reset();
-            return "What do you want zis time?";
+            recommend = true;
+            return generateResponse();
+        } else if (word.toLowerCase().matches("hello|greetings|hi")){
+            int i = (int)(Math.random()*2);
+            switch (i){
+                case 0:     response = "Yes, well... greetings to you. Now what sort of recipe do you want?";
+                            break;
+                case 1:     response = "Well, hello! What sort of recipe do you want?";
+                            break;
+                case 2:     response = "Salutations! What sort of recipe do you want?";
+                            break;
+                default:    break;
+            }
+            return response;
         } else if(word.toLowerCase().matches("yes|ok")) {
             if (currentState == state.SUGGEST){
                 kb.addIngredientWanted(suggestedRecipe);
