@@ -55,13 +55,13 @@ public class KBValidator {
      * will check if the given list contains anything simuler to the given item
      * @param list that you want to travers and search for item
      * @param item the item to search for
-     * @return true if list is consistent otherwise false
+     * @return false if list is consistent otherwise true
      */
     public boolean checkConsistency(LinkedList<String> list, String item) {
         for (int i = 0; i < list.size(); i++)
             if(item.toLowerCase().matches((list.get(i))))
-                return false;
-        return true;
+                return true;
+        return false;
     }
     /**
      * Check so there is no conflict between ingredientsWanted and the listed defects (such as vegetarian).
