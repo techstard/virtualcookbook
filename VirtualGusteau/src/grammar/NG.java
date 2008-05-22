@@ -96,16 +96,8 @@ public class NG {
     public boolean identifyKeyWords(String[] tags, String[] words) {
         if(words.length == 1) {
             String word = words[0];
-            if(word.toLowerCase().equals("yes")) {
-                keyWord = word;
-                return true;
-            } else if(word.toLowerCase().equals("no")) {
-                keyWord = word;
-                return true;
-            } else if(word.toLowerCase().equals("quit")) {
-                keyWord = word;
-                return true;
-            } else if(word.toLowerCase().equals("restart")) {
+            //System.out.println("equal match: " + word.toLowerCase().matches("yes|no"));
+            if(word.toLowerCase().matches("yes|ok|no|quit|restart")) {
                 keyWord = word;
                 return true;
             }
