@@ -55,12 +55,27 @@ public class Response {
         if(wanted.isEmpty() && wantedCategories.isEmpty()) {
             if(!kb.getUnknowns().isEmpty()) {
                 // what the user said was wrong
-                response = "I'm sorry, but I have never heard of "+kb.getUnknowns().getFirst()+".";
-                kb.getUnknowns().clear();
+            	response = "I'm sorry, but I've never heard of ";
+            	while (!kb.getUnknowns().isEmpty()) {
+            		response += kb.getUnknowns().removeFirst();
+            		if (kb.getUnknowns().size() >= 1)
+            			response += " or ";
+            		else
+            			response += ".";
+            	}
             } else {
                 response = "You haven't told me what you want, I'm good but not that good...";
-                currentState = state.NORMAL;
             }
+            currentState = state.NORMAL;
+        } else if (!kb.getUnknowns().isEmpty()) {
+        	response = "I'm sorry, but I don't know what ";
+        	while (!kb.getUnknowns().isEmpty()) {
+        		response += kb.getUnknowns().removeFirst();
+        		if (kb.getUnknowns().size() > 1)
+        			response += " or ";
+        		else
+        			response += " is.";
+        	}
         } else {
             DB_connect db = new DB_connect();
             recipes = db.possibleRecipes(kb);
