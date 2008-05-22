@@ -230,7 +230,7 @@ public class Pragmatic {
                     } else {
                         // subTarget does not exist in db
                         // notify user
-                        throw new IngredientException(subTarget.getName());
+                        kb.addUnknowns(subTarget.getName());
                     }
                 }
             }                
@@ -429,11 +429,7 @@ public class Pragmatic {
                         kb.addIngredientWanted(toSingular(subTarget.getName()));
                     }
                 } else {
-                    /**
-                     * Throw a new IngredientException because the subIngredient
-                     * did not exist in DB
-                     */
-                    throw new IngredientException(subTarget.getName());
+                    kb.addUnknowns(subTarget.getName());
                 }
             }
         } else {
@@ -461,9 +457,7 @@ public class Pragmatic {
                         kb.addIngredientNotWanted(toSingular(subTarget.getName()));
                     }
                 } else {
-                    // subTarget does not exist in db
-                    // notify user
-                    throw new IngredientException(subTarget.getName());
+                    kb.addUnknowns(subTarget.getName());
                 }
             }
         }
@@ -493,13 +487,13 @@ public class Pragmatic {
                      * Throws a new CategoryException because the category
                      * specified is wrong but the Ingredient is not
                      */
-                    throw new CategoryException(target.getName(),subTarget.getName());
+                    kb.addUnknowns(target.getName());
                 } else {
-                    // TODO: throw CategoryIngredientException
+                    kb.addUnknowns(subTarget.getName());
                 }
             } else {
                 // Category does not exist
-                throw new CategoryException(target.getName());
+                kb.addUnknowns(target.getName());
             }
         } else {
             // What the user doesn't want is neither a category nor an ingredient
@@ -527,9 +521,9 @@ public class Pragmatic {
                      * Throws a new CategoryException because the category
                      * specified is wrong but the Ingredient is not
                      */
-                    throw new CategoryException(target.getName(),subTarget.getName());
+                    kb.addUnknowns(subTarget.getName());
                 } else {
-                    // TODO: throw CategoryIngredientException
+                    kb.addUnknowns(target.getName());
                 }
             }
         }
