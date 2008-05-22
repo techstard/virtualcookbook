@@ -211,7 +211,8 @@ public class Model extends Observable {
             ingredients = response.getIngredients();
             
         } catch (Exception exception) {
-            System.out.println(exception.getMessage());
+            //System.out.println(exception.getMessage());
+            output = "Uhm, I'm sorry? I didn't understand that.";
         }
         setChanged();
         notifyObservers();
