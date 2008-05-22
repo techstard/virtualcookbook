@@ -9,6 +9,8 @@ public class Response {
     private Model model;
     LinkedList<String> wanted;
     LinkedList<String> notWanted;
+    LinkedList recipes;
+    String response;
     public Response(Model model) {
         this.model = model;
     }
@@ -27,29 +29,27 @@ public class Response {
         LinkedList<String> notWanted = kb.getIngredientsNotWanted();
         LinkedList<String> wantedCategories = kb.getCategoriesWanted();
         LinkedList<String> notWantedCategories = kb.getCategoriesNotWanted();
-        LinkedList recipies;
-        String response;
         
         if(wanted.isEmpty() && wantedCategories.isEmpty()) {
             response = "You haven't told me what you want, I'm good but not that good...";
         } else {
             DB_connect db = new DB_connect();
-            recipies = db.possibleRecipes(kb);
+            recipes = db.possibleRecipes(kb);
             for (String in : wanted) {
                 ingredients += in+"\n";
             }
             response = "";
-            if(recipies.size() > 5) {
+            if(recipes.size() > 5) {
                 response += "There are many recipies matching your ingredients. Can you" +
                         " be more specific.";
-            } else if(recipies.size() == 1) {
+            } else if(recipes.size() == 1) {
                 response += "I have found this recipie matching your ingredients: \n";
-                response += db.printRecipe((Integer)recipies.getFirst(), kb.getNrOfPersons());
+                response += db.printRecipe((Integer)recipes.getFirst(), kb.getNrOfPersons());
                 response += "Do you want to restart or quit?";
-            } else if(recipies.isEmpty() && wantedCategories.isEmpty()) {
+            } else if(recipes.isEmpty() && wantedCategories.isEmpty()) {
                 response += "There is no recipies matching, please try again";                    
             } else {
-                response += "I have found "+recipies.size()+" recipies. Is there anything " +
+                response += "I have found "+recipes.size()+" recipies. Is there anything " +
                         "else you want?";
             }
             db.closeConnection();
@@ -58,17 +58,27 @@ public class Response {
 //                " matching your ingredients.";
         return response;
     }
-    public void handleKeyWord(String word) {
+    public String handleKeyWord(String word) {
         if(word.toLowerCase().equals("quit")) {
             System.exit(0);
         } else if(word.toLowerCase().equals("restart")) {
             model.setClearText();
             kb.reset();
+            return "What do you want this time?";
         } else if(word.toLowerCase().equals("yes")) {
-            
+            return "So what is it that you want?";
         } else if(word.toLowerCase().equals("no")) {
-            
+            // Assume this is only said when asked 
+            // "Is there anything else you want?"
+            // → list all recipes
+            DB_connect db = new DB_connect();
+            for(int i = 0; i < recipes.size(); i++) {
+                response += db.printRecipe((Integer)recipes.get(i), kb.getNrOfPersons());
+            }
+            db.closeConnection();
+            return response;
         }
+        return "";
     }
     
     public String handleIngredientException(String[] words) {
