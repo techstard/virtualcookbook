@@ -103,7 +103,7 @@ public class Model extends Observable {
             //db.searchRecipe(iW);
             //db.removeNotWantedRecipes("potato");
             //db.removeCategoryRecipes("meat");
-            db.possibleRecipes(kb);
+            db.findUniqueIngredients(kb);
             //output = db.printRecipe(1) +db.printRecipe(2) +db.printRecipe(3) +db.printRecipe(4) +db.printRecipe(5) +db.printRecipe(6) +db.printRecipe(7);
             /*if (db.isCategory("meathej")){
                 output = "true";
@@ -210,6 +210,7 @@ public class Model extends Observable {
             // Do something
             String keyWord = key.getKeyWord();
             output = response.handleKeyWord(keyWord);
+            ingredients = response.getIngredients();
             
         } catch(IngredientException key) {
             

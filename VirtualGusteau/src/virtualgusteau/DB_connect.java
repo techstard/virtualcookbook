@@ -421,7 +421,48 @@ public class DB_connect {
         		return false;
             } 
         }
+        /**
+         * findUniqueIngredients
+         * Find and returns the ingredients that only occurs once
+         * @param recipes the possible recipes
+         * @return LinkedList<String> with possible ingredients
+         * @since 2008-05-22
+         */
+        public LinkedList<String> findUniqueIngredients(KnowledgeBase kb){
+        	// Make query in DB and search for the string
+//                SELECT name FROM 
+//                (SELECT name, COUNT(name) AS cnt FROM contains WHERE (rID = 7 OR rID = 3) 
+//                GROUP BY name) AS t
+//                WHERE t.cnt = 1;
+        	LinkedList<String> ing = new LinkedList<String>();
+                LinkedList<Integer> recipes = possibleRecipes(kb);
+                String q = "SELECT name FROM (SELECT name, COUNT(name) AS cnt FROM contains WHERE (";
+                for(int i = 0; i < recipes.size();i++){
+                    q += "rID = " + recipes.get(i);
+                    if(i < recipes.size() -1 ){
+                        q += " OR ";
+                    }
+                }
+                q += ") GROUP BY name) AS t WHERE t.cnt = 1 AND name NOT IN (SELECT ingredient FROM is_categorized_by WHERE category = \"spice\");";
+                System.out.println(q);
+                try{
+                    // variables
 
+                    // connect with the query
+                    ResultSet rset = connect(q);
+                    while(rset.next()){
+                        System.out.println(rset.getString(1));
+                        ing.add(rset.getString(1));
+                    }
+                    return ing;	
+        	} 
+        	catch(Exception e) {
+        		System.err.println("Exception in isAnIngredient(): " + e.getMessage());
+        		System.err.println(e);
+        		return ing;
+                }
+        }
+        
          /**
          * closeConnection
          * closes the databaseconnection
