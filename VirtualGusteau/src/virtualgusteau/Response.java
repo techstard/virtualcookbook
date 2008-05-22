@@ -96,7 +96,7 @@ public class Response {
             if(recipes.size() >= 2) {
                 LinkedList<String> unique = db.findUniqueIngredients(kb);
                 suggestedRecipe = unique.get((int)(Math.random()*unique.size()));
-                response += "May i suggest something with " + suggestedRecipe + "?\n";
+                response += "I have found " +recipes.size() + " recipies, may i suggest something with " + suggestedRecipe + "?\n";
                 currentState = state.SUGGEST;
             } else if(recipes.size() == 1) { 
                 response += "Eureka! I have found this recipie matching your ingredients: \n";
