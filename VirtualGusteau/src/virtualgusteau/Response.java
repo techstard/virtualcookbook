@@ -36,8 +36,14 @@ public class Response {
         LinkedList<String> notWantedCategories = kb.getCategoriesNotWanted();
         
         if(wanted.isEmpty() && wantedCategories.isEmpty()) {
-            response = "You haven't told me what you want, I'm good but not that good...";
-            currentState = state.NORMAL;
+            if(!kb.getUnknowns().isEmpty()) {
+                // what the user said was wrong
+                response = "I don't know what "+kb.getUnknowns().getFirst()+" is.";
+                kb.getUnknowns().clear();
+            } else {
+                response = "You haven't told me what you want, I'm good but not that good...";
+                currentState = state.NORMAL;
+            }
         } else {
             DB_connect db = new DB_connect();
             recipes = db.possibleRecipes(kb);
