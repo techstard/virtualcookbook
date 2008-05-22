@@ -38,16 +38,18 @@ public class Response {
         if(currentState == state.RECOMMEND){
             // Find a random recipe to recommend.
             DB_connect db = new DB_connect();
-            response = "I can recommend ze tasty " + db.findRecipeName((int)(Math.random()*11+1)) + ", do you want to see ze recipe?\n";
+            int randomRecipeID = (int)(Math.random()*11+1);
+            kb.setRecRec(randomRecipeID);
+            response = "I can recommend ze tasty " + db.findRecipeName(randomRecipeID) + ", do you want to see ze recipe?";
             //System.out.println(response);
             db.closeConnection();
-            currentState = state.NORMAL;
+            //currentState = state.NORMAL;
             return response;
         }
         if(wanted.isEmpty() && wantedCategories.isEmpty()) {
             if(!kb.getUnknowns().isEmpty()) {
                 // what the user said was wrong
-                response = "I don't know what "+kb.getUnknowns().getFirst()+" is.";
+                response = "I'm sorry, but I have never heard of "+kb.getUnknowns().getFirst()+".";
                 kb.getUnknowns().clear();
             } else {
                 response = "You haven't told me what you want, I'm good but not that good...";
@@ -66,12 +68,12 @@ public class Response {
                 response += "May i suggest something with " + suggestedRecipe + "?\n";
                 currentState = state.SUGGEST;
             } else if(recipes.size() == 1) { 
-                response += "I have found this recipie matching your ingredients: \n";
+                response += "Eureka! I have found this recipie matching your ingredients: \n";
                 response += db.printRecipe((Integer)recipes.getFirst(), kb.getNrOfPersons());
                 response += "Do you want to restart or quit?";
                 currentState = state.NORMAL;
             } else if(recipes.isEmpty() && wantedCategories.isEmpty()) {
-                response += "There is no recipies matching, please try again";                    
+                response += "Im sorry, but there is no recipies matching. You can ask me for another recipe if you'd like.";                    
                 currentState = state.NORMAL;
             } else {
                 response += "I have found "+recipes.size()+" recipies. Is there anything " +
@@ -90,14 +92,20 @@ public class Response {
         } else if(word.toLowerCase().equals("restart")) {
             model.setClearText();
             kb.reset();
-            return "What do you want this time?";
+            return "What do you want zis time?";
         } else if(word.toLowerCase().equals("yes")) {
-            if(currentState == state.SUGGEST){
+            if (currentState == state.SUGGEST){
                 kb.addIngredientWanted(suggestedRecipe);
                 currentState = state.NORMAL;
                 return generateResponse();
-            } else{
-                return "So what is it that you want?";
+            } else if (currentState == state.RECOMMEND){
+                DB_connect db = new DB_connect();
+                String recipe = db.printRecipe(kb.getRecRec(), kb.getNrOfPersons());
+                db.closeConnection();
+                currentState = state.NORMAL;
+                return "Merveilleux! Here is the recipe.\n"+recipe+"Ok! Do you want to begin again or quit?";            
+            } else {
+                return "So what is it zat you want?";
             }
         } else if(word.toLowerCase().equals("no")) {
             if(currentState == state.SUGGEST){

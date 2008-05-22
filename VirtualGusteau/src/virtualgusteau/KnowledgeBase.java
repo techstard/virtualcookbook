@@ -22,6 +22,7 @@ public class KnowledgeBase {
     private LinkedList<String> categoriesNotWanted = new LinkedList<String>();
     private LinkedList<Integer> recipeIDs = new LinkedList<Integer>();
     private LinkedList<String> unknowns = new LinkedList<String>();
+    private int recommendedRecipe;
     private int nrOfPersons = 1; //how many people
 
     public KnowledgeBase() {
@@ -36,6 +37,15 @@ public class KnowledgeBase {
         recipeIDs.clear();
         nrOfPersons = 1;
     }
+    
+    public int getRecRec(){
+        return recommendedRecipe;
+    }
+    
+    public void setRecRec(int r){
+        recommendedRecipe = r;
+    }
+    
     public LinkedList<Defect> getDefects() {
         return defects;
     }
@@ -169,7 +179,7 @@ public class KnowledgeBase {
     
     /**
      * This function will try to remove defect from kb and returns boolean as result.
-     * @param defect is the defect you want to remove.
+     * @param defect is the defect you want to remove.KnowledgeBase
      * @return a boolean if removeal is successfull ot not.
      */
     private boolean removeDefects(Defect defect) {
