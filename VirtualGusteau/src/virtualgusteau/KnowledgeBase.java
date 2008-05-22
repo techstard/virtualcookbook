@@ -21,6 +21,7 @@ public class KnowledgeBase {
     private LinkedList<String> categoriesWanted = new LinkedList<String>();
     private LinkedList<String> categoriesNotWanted = new LinkedList<String>();
     private LinkedList<Integer> recipeIDs = new LinkedList<Integer>();
+    private LinkedList<String> unknowns = new LinkedList<String>();
     private int nrOfPersons = 1; //how many people
 
     public KnowledgeBase() {
@@ -78,6 +79,12 @@ public class KnowledgeBase {
     public LinkedList<Integer> getRecipeIDs() {
         return recipeIDs;
     }
+
+    public LinkedList<String> getUnknowns() {
+        return unknowns;
+    }
+    
+    
     
     /**
      * This function will try to add the ingredient to the kb and return a bool of its success.
@@ -112,6 +119,13 @@ public class KnowledgeBase {
             }
         }
         return false;
+    }
+    
+    public boolean addUnknowns(String ingredient) {
+        if(unknowns.add(ingredient))
+            return true;
+        else
+            return false;
     }
     
         /**
