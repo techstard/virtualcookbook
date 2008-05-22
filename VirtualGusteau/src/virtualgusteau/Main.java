@@ -17,9 +17,13 @@ public class Main {
         Model model = new Model();
         View view = new View(model);
         
+        
         SplashDialog sd = new SplashDialog("graphics/Gusteau.jpg",view.getFrames()[0],model);
         
         model.addObserver(view);
+        
         view.setVisible(true);
+        
+        model.initiate();
     }
 }

@@ -95,9 +95,9 @@ public class View extends JFrame implements Observer {
         chatArea.setLineWrap(true);
         chatArea.setWrapStyleWord(true);
         chatArea.setBorder(BorderFactory.createEmptyBorder(8,8,8,8));
-        
+        chatArea.setText("<Gusteau>: Bienvenue, cher ami.\nWhat kind of magnifique recipe would you want today? I can prumise I will not disappoint you.\n\n");
         chatPane.getViewport().add(chatArea);
-        
+              
         JSeparator separator = new JSeparator();
         separator.setForeground(Color.gray);
         
@@ -207,7 +207,8 @@ public class View extends JFrame implements Observer {
             String s = DateFormat.getTimeInstance(DateFormat.MEDIUM,
                         locale).format(date);
 
-            chatArea.append("<Linguini>: " + model.getInput() + "\n\n");
+            if (model.getInput() != null)
+            	chatArea.append("<Linguini>: " + model.getInput() + "\n\n");
             chatArea.append("<Gusteau>: " + model.getOutput() + "\n\n");
             recipeArea.setText("");
             recipeArea.setText(model.getIngredients());

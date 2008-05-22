@@ -34,8 +34,6 @@ public class Model extends Observable {
         kb = new KnowledgeBase();
         semanticsResult = new LinkedList<Object>();
         pragmatics = new Pragmatic(kb, semanticsResult);
-        response = new Response(this);
-        
     }
     public void setClearText() {
         ingredients = "";
@@ -217,5 +215,12 @@ public class Model extends Observable {
         }
         setChanged();
         notifyObservers();
+    }
+    public void initiate(){
+    	 response = new Response(this);
+         response.setKB(kb);
+         output = response.generateResponse();
+         setChanged();
+         notifyObservers();
     }
 }
