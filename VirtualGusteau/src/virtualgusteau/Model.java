@@ -173,7 +173,7 @@ public class Model extends Observable {
             Iterator semIT = semanticsResult.iterator();
             while(semIT.hasNext())
             {
-                pragmatics.checkObject2(semIT.next());
+                pragmatics.logicToKB(semIT.next());
                 //output = pragmatics.rationalResponse();
             }
             
@@ -209,7 +209,7 @@ public class Model extends Observable {
         } catch(KeyWordException key) {
             // Do something
             String keyWord = key.getKeyWord();
-            response.handleKeyWord(keyWord);
+            output = response.handleKeyWord(keyWord);
             
         } catch(IngredientException key) {
             

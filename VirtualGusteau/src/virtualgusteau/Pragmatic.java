@@ -21,6 +21,7 @@ public class Pragmatic {
     private KBValidator kbv;
     private LinkedList<String> wantPhrases = new LinkedList<String>();
     private LinkedList<String> amPhrases = new LinkedList<String>();
+    private LinkedList<String> negationPhrases = new LinkedList<String>();
     
     private Object memory;
     
@@ -35,9 +36,12 @@ public class Pragmatic {
         wantPhrases.add("wants");
         wantPhrases.add("love");
         wantPhrases.add("like");
+        wantPhrases.add("add");
         
         amPhrases.add("am");
         amPhrases.add("is");
+        
+        negationPhrases.add("remove");
     }
 
     public KnowledgeBase getKb() {
@@ -163,7 +167,16 @@ public class Pragmatic {
             }
         }
     }
-    public void checkObject2(Object obj) throws Exception {
+    /**
+     * Extracts ingredient and/or category from the inputed 
+     * object and puts it in the correct part of KB, depending 
+     * if the user wants the item or not
+     * 
+     * @param obj An object of the type Action or Target
+     * @throws java.lang.Exception
+     */
+    public void logicToKB(Object obj) throws Exception {
+        // If object is an action
         if(obj instanceof Action) {
             Action action = (Action)obj;
             if(wantPhrases.contains(action.getName())) {
@@ -173,60 +186,55 @@ public class Pragmatic {
                 }
                 Target target = action.getTarget();
                 if(!action.isNegation()) {
+                    // This Action is NOT negated
                     if(isCategory(target)) {
-                        // The thing the user has specified is a category in the db
-                        // Add category to wantCategory
+                        // User has specified a category
                         if(target.getName().toLowerCase().equals("something") || 
                                 target.getName().toLowerCase().equals("dinner") || 
                                 target.getName().toLowerCase().equals("meal")) {
-
+                            /* The category is not strictly a category of recipes but
+                             * rather a category of food...
+                             */
                         } else {
-                            if(kb.getCategoriesWanted().contains(toSingular(target.getName()))) {
-                                // CategoriesWanted already contains this category
-                                // either do nothing or notify the user
-                            } else if(kb.getCategoriesNotWanted().contains(toSingular(target.getName()))) {
-                                // CategoriesNotWanted contains this category, 
-                                // remove it and add it to CategoriesWanted
+                            if(kb.getCategoriesNotWanted().contains(toSingular(target.getName()))) {
+                                /* Category exist in CategoriesNotWanted →
+                                 * remove it and add to CategoriesWanted
+                                 */
                                 kb.removeCategoriesNotWanted(toSingular(target.getName()));
                                 kb.addCategoriesWanted(toSingular(target.getName()));
                             } else {
                                 kb.addCategoriesWanted(toSingular(target.getName()));
                             }
                         }
+                        /* TODO: What if the subTarget is a category
+                         * example: I want something with meat
+                         */
                         if(target.getSubTarget() != null) {
-                            // The category should contain a specific ingredient
+                            // The Category contains an ingredient
                             Target subTarget = target.getSubTarget();
                             if(isIngredient(subTarget)) {
                                 // Ingredient exist in the db
-                                // Add ingredient to to wantIngredients
-                                if(kb.getIngredientsWanted().contains(toSingular(subTarget.getName()))) {
-                                    // Ingredient already exist in IngredientWanted
-                                } else if(kb.getIngredientsNotWanted().contains(toSingular(subTarget.getName()))) {
-                                    // Ingredient exist in IngredientNotWanted
-                                    // remove it and add to IngredientsWanted
+                                if(kb.getIngredientsNotWanted().contains(toSingular(subTarget.getName()))) {
+                                    /* Ingredient exist in IngredientNotWanted →
+                                     * remove it and add it to IngredientWanted
+                                     */
                                     kb.removeIngredientNotWanted(toSingular(subTarget.getName()));
                                     kb.addIngredientWanted(toSingular(subTarget.getName()));
                                 } else {
                                     kb.addIngredientWanted(toSingular(subTarget.getName()));
                                 }
                             } else {
-                                // Ingredient does not exist in the db
-                                // notify user that there is a category with this name
-                                // but no ingredients
+                                /* Throws an Exception because Category is correct but ingredient is not
+                                 */ 
                                 throw new IngredientException(target.getName(),subTarget.getName());
                             }
-                        } else {
-                            // The user has only specified a category of recipes
-                            // No reason to do anything
                         }
                     } else if(isIngredient(new Target(toSingular(target.getName())))) {
-                        // Ingredient exist in db
-                        // add to IngredientsWanted
-                        if(kb.getIngredientsWanted().contains(toSingular(target.getName()))) {
-                                // Ingredient already exist in IngredientWanted
-                        } else if(kb.getIngredientsNotWanted().contains(toSingular(target.getName()))) {
-                            // Ingredient exist in IngredientNotWanted
-                            // remove it and add to IngredientsWanted
+                        // User has specified an Ingredient
+                        if(kb.getIngredientsNotWanted().contains(toSingular(target.getName()))) {
+                            /* Ingredient exists in IngredientsNotWanted →
+                             * remove it and add to IngredientsWanted
+                             */
                             kb.removeIngredientNotWanted(toSingular(target.getName()));
                             kb.addIngredientWanted(toSingular(target.getName()));
                         } else {
@@ -235,55 +243,59 @@ public class Pragmatic {
                         if(target.getSubTarget() != null) {
                             Target subTarget = target.getSubTarget();
                             if(isIngredient(subTarget)) {
-                                // subTarget exist in db
-                                // add to IngredientsWanted
-                                if(kb.getIngredientsWanted().contains(toSingular(subTarget.getName()))) {
-                                // Ingredient already exist in IngredientWanted
-                                } else if(kb.getIngredientsNotWanted().contains(toSingular(subTarget.getName()))) {
-                                    // Ingredient exist in IngredientNotWanted
-                                    // remove it and add to IngredientsWanted
+                                // The specified Ingredient has another Ingredient as subTarget
+                                if(kb.getIngredientsNotWanted().contains(toSingular(subTarget.getName()))) {
+                                    /* Ingredient exists in IngredientsNotWanted →
+                                     * remove it and add to IngredientsWanted
+                                     */
                                     kb.removeIngredientNotWanted(toSingular(subTarget.getName()));
                                     kb.addIngredientWanted(toSingular(subTarget.getName()));
                                 } else {
                                     kb.addIngredientWanted(toSingular(subTarget.getName()));
                                 }
                             } else {
-                                // subTarget does not exist in db
-                                // notify user
+                                /**
+                                 * Throw a new IngredientException because the subIngredient
+                                 * did not exist in DB
+                                 */
                                 throw new IngredientException(subTarget.getName());
                             }
-                        } else {
-                            // no subTarget, no need to do anything
                         }
                     } else {
-                        // What the user wants is not a category
+                        /* What the user has specified is not a Category, 
+                         * nor is it an Ingredient
+                         */
                         Target subTarget = target.getSubTarget();
                         if(subTarget != null) {
+                            /* Whatever it is, it has a subTarget
+                             * TODO: what if it's a category
+                             */
                             if(isIngredient(subTarget)) {
-                                // Ingredient exist in the db
-                                // Add ingredient to to wantIngredients
-                                if(kb.getIngredientsWanted().contains(toSingular(subTarget.getName()))) {
-                                    // Ingredient already exist in IngredientWanted
-                                } else if(kb.getIngredientsNotWanted().contains(toSingular(subTarget.getName()))) {
-                                    // Ingredient exist in IngredientNotWanted
-                                    // remove it and add to IngredientsWanted
+                                // SubTarget is an Ingredient
+                                if(kb.getIngredientsNotWanted().contains(toSingular(subTarget.getName()))) {
+                                    /* Ingredient exists in IngredientsNotWanted →
+                                     * remove it and add to IngredientsWanted
+                                     */
                                     kb.removeIngredientNotWanted(toSingular(subTarget.getName()));
                                     kb.addIngredientWanted(toSingular(subTarget.getName()));
                                 } else {
                                     kb.addIngredientWanted(toSingular(subTarget.getName()));
                                 }
-                                // The category is wrong but not the ingredient
+                                /**
+                                 * Throws a new CategoryException because the category
+                                 * specified is wrong but the Ingredient is not
+                                 */
                                 throw new CategoryException(target.getName(),subTarget.getName());
                             } else {
-                                // both category and ingredient is wrong
+                                // TODO: throw CategoryIngredientException
                             }
                         } else {
-                            // No ingredient - category is wrong
-                            throw new IngredientException(target.getName());
+                            // Category does not exist
+                            throw new CategoryException(target.getName());
                         }
                     }
                 } else {
-                    // User does not want this category
+                    // The Action is NEGATED
                     if(isCategory(target)) {
                         // The thing the user has specified is a category in the db
                         // Add category to notWantCategory
@@ -368,8 +380,33 @@ public class Pragmatic {
                 // e.g. lactose intollerant
                 // TODO: make a function
                 System.out.println(action.getTarget().getName());
-            }                        
+            } else if(negationPhrases.contains(action.getName())) {
+                Target target = action.getTarget();
+                if(kb.getIngredientsWanted().contains(toSingular(target.getName()))) {
+                    // Ingredient exist in IngredientsWanted
+                    // remove it and add to IngredientsNotWanted
+                    kb.removeIngredientWanted(toSingular(target.getName()));
+                }
+                if(target.getSubTarget() != null) {
+                    Target subTarget = target.getSubTarget();
+                    if(isIngredient(subTarget)) {
+                        // subTarget exist in db
+                        // add to IngredientsWanted
+                        if(kb.getIngredientsWanted().contains(toSingular(subTarget.getName()))) {
+                            // Ingredient exist in IngredientWanted
+                            // remove it and add to IngredientsNotWanted
+                            kb.removeIngredientWanted(toSingular(subTarget.getName()));
+                        }
+                    } else {
+                        // subTarget does not exist in db
+                        // notify user
+                    }
+                } else {
+                    // no subTarget, no need to do anything
+                }
+            }                    
         } else if(obj instanceof Target) {
+            // Object is a target
             Target target = (Target)obj;
             int n = target.getNumberOfPeople();
             if(n != 0) {
@@ -379,16 +416,22 @@ public class Pragmatic {
                 if(isCategory(target)) {
                     // The thing the user has specified is a category in the db
                     // Add category to wantCategory
-                    if(kb.getCategoriesWanted().contains(toSingular(target.getName()))) {
-                        // CategoriesWanted already contains this category
-                        // either do nothing or notify the user
-                    } else if(kb.getCategoriesNotWanted().contains(toSingular(target.getName()))) {
-                        // CategoriesNotWanted contains this category, 
-                        // remove it and add it to CategoriesWanted
-                        kb.removeCategoriesNotWanted(toSingular(target.getName()));
-                        kb.addCategoriesWanted(toSingular(target.getName()));
+                    if(target.getName().toLowerCase().equals("something") || 
+                            target.getName().toLowerCase().equals("dinner") || 
+                            target.getName().toLowerCase().equals("meal")) {
+
                     } else {
-                        kb.addCategoriesWanted(toSingular(target.getName()));
+                        if(kb.getCategoriesWanted().contains(toSingular(target.getName()))) {
+                            // CategoriesWanted already contains this category
+                            // either do nothing or notify the user
+                        } else if(kb.getCategoriesNotWanted().contains(toSingular(target.getName()))) {
+                            // CategoriesNotWanted contains this category, 
+                            // remove it and add it to CategoriesWanted
+                            kb.removeCategoriesNotWanted(toSingular(target.getName()));
+                            kb.addCategoriesWanted(toSingular(target.getName()));
+                        } else {
+                            kb.addCategoriesWanted(toSingular(target.getName()));
+                        }
                     }
                     if(target.getSubTarget() != null) {
                         // The category should contain a specific ingredient
