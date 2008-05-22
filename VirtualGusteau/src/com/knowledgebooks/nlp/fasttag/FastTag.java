@@ -34,7 +34,6 @@ public class FastTag {
         //System.out.println("Starting to load FastTag data...");
         try {
             //System.out.println("Starting kbs.fasttag.FastTag static initialization...");
-            //InputStream ins = FastTag.class.getClassLoader().getResourceAsStream("lexicon.txt");
             InputStream ins = FastTag.class.getResourceAsStream("lexicon.txt");
             if (ins == null) {
                 ins = null; //new FileInputStream("data/lexicon.txt");
@@ -43,13 +42,20 @@ public class FastTag {
                 System.out.println("Failed to open 'lexicon.txt'");
                 System.exit(1);
             } else {
-                Scanner scanner =
+            	Scanner scanner =
                         new Scanner(ins);
-                scanner.useDelimiter
-                        (System.getProperty("line.separator"));
+            	/*
+            	 * This made a bug when used on windows, but not on linux. 
+            	 * */
+                //scanner.useDelimiter
+                  //      (System.getProperty("line.separator"));
+                scanner.useDelimiter("\n");
+                //int counter = 0;
                 while (scanner.hasNext()) {
+                	//counter++;
                     parseLine(scanner.next());
                 }
+                //System.out.println("Amount of words read: " + counter);
                 //System.out.println(lexicon.size()); //added by rkrantz
                 scanner.close();
             }
