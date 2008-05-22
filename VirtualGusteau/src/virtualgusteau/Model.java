@@ -27,7 +27,7 @@ public class Model extends Observable {
     private Response response;
     
     private boolean clearText = false;
-    
+        
     public Model() {
         //sentence = new LinkedList<Word>();
         //phraseList = new LinkedLimodelst<Phrase>();
