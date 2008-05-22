@@ -41,6 +41,7 @@ public class Pragmatic {
         
         amPhrases.add("am");
         amPhrases.add("is");
+        amPhrases.add("are");
         
         negationPhrases.add("remove");
     }
@@ -139,6 +140,11 @@ public class Pragmatic {
                     }
                 }
             } else if(amPhrases.contains(action.getName())) {
+                if(action.getNumberOfPeople() != 0) {
+                    kb.setNrOfPersons(action.getNumberOfPeople());
+                } else if(action.getTarget().getName().toLowerCase().equals("legion")) {
+                    kb.setNrOfPersons(5200);
+                }
                 // a description of the user or someone else
                 // e.g. lactose intollerant
                 // TODO: make a function

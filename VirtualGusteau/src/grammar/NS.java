@@ -265,6 +265,7 @@ public class NS {
                  */
                 createLogic();
                 nounSpecifiers.clear();
+                secondaryObject = null;
             }
         }
         /* You need to call createLogic here as well, 
