@@ -12,8 +12,8 @@ public class Response {
     LinkedList recipes;
     String response;
     
-    private enum state {SUGGEST,NORMAL};
-    private state currentState = state.NORMAL;
+    private enum state {RECOMMEND,SUGGEST,NORMAL};
+    private state currentState = state.RECOMMEND;
     private String suggestedRecipe = "";
     
     public Response(Model model) {
@@ -35,6 +35,15 @@ public class Response {
         LinkedList<String> wantedCategories = kb.getCategoriesWanted();
         LinkedList<String> notWantedCategories = kb.getCategoriesNotWanted();
         
+        if(currentState == state.RECOMMEND){
+            // Find a random recipe to recommend.
+            DB_connect db = new DB_connect();
+            response = "I can recommend ze tasty " + db.findRecipeName((int)(Math.random()*11+1)) + ", do you want to see ze recipe?\n";
+            //System.out.println(response);
+            db.closeConnection();
+            currentState = state.NORMAL;
+            return response;
+        }
         if(wanted.isEmpty() && wantedCategories.isEmpty()) {
             if(!kb.getUnknowns().isEmpty()) {
                 // what the user said was wrong
@@ -116,5 +125,25 @@ public class Response {
             
         }
         return "";
+    }
+    
+    public String handleIngredientException(String[] words) {
+        if(words.length == 1) {
+            return "I dont think that \"" + words[0] + "\" is an ingredient.";
+        } else if(words.length == 2) {
+            return "I found category \"" + words[0] + "\" but not an ingredient called \"" + words[1] + "\".";
+        } else {
+            return "Lawl";
+        }
+        
+    }
+    public String handleCategoryException(String[] words) {
+        if(words.length == 1) {
+            return "\"" + words[0] + "\" is not a category.";
+        } else if(words.length == 2) {
+            return "Category \"" + words[0] + "\" does not appear in my database but an ingredient called \"" + words[1] + "\" does.";
+        } else {
+            return "Lawl";
+        }
     }
 }
