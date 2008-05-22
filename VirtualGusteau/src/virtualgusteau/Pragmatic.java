@@ -358,7 +358,7 @@ public class Pragmatic {
                 } else {
                     /* Throws an Exception because Category is correct but ingredient is not
                      */ 
-                    throw new IngredientException(target.getName(),subTarget.getName());
+                    kb.addUnknowns(subTarget.getName());
                 }
             }
         } else {
@@ -397,15 +397,8 @@ public class Pragmatic {
                         kb.addIngredientNotWanted(toSingular(subTarget.getName()));
                     }
                 } else {
-                    // Ingredient does not exist in the db
-                    // notify user that there is a category with this name
-                    // but no ingredients
-                    System.out.println("No such ingredient - negatedCategory");
-                    throw new IngredientException(target.getName(), subTarget.getName());
+                    kb.addUnknowns(subTarget.getName());
                 }
-            } else {
-                // The user has only specified a category of recipes
-                // No reason to do anything
             }
         }
     }
