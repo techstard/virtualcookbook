@@ -425,6 +425,27 @@ public class DB_connect {
         }
         
         /**
+         * findRecipeName
+         * Gives the name of the chosen rID.
+         * @param rID The chosen recipe to print
+         * @return String with titlename of recipe 'rID'
+         * @since 2008-05-13
+         */
+        public String findRecipeName(int rID){
+        	// Make query in DB for 'rID' for the name
+        	try{
+            	String query = "SELECT * FROM recipes WHERE rID = '" + rID + "'";
+            	ResultSet rset = connect(query);
+        		rset.next();
+        		return rset.getString(2);
+        	} 
+        	catch(Exception e) {
+        		System.err.println("Exception in getRecipeName(): " + e.getMessage());
+        		System.err.println(e);
+        		return null;
+            } 
+        }
+        /**
          * isAnIngredient
          * Checks if a given string is an existing ingredient in the recipe_db
          * @param ing ingredient to check
