@@ -22,7 +22,12 @@ public class KnowledgeBase {
     private LinkedList<String> categoriesNotWanted = new LinkedList<String>();
     private LinkedList<Integer> recipeIDs = new LinkedList<Integer>();
     private LinkedList<String> unknowns = new LinkedList<String>();
+
+    private LinkedList<String> dishesWanted = new LinkedList<String>();
+    private LinkedList<String> dishesNotWanted = new LinkedList<String>();
+
     private int recommendedRecipe;
+    
     private int nrOfPersons = 1; //how many people
 
     public KnowledgeBase() {
@@ -57,21 +62,35 @@ public class KnowledgeBase {
     public LinkedList<String> getCategoriesWanted() {
         return categoriesWanted;
     }
+
+    public LinkedList<String> getDishesWanted() {
+        return dishesWanted;
+    }
+    public LinkedList<String> getDishesNotWanted() {
+        return dishesNotWanted;
+    }
+    
+    public void addDishesWanted(String n) {
+        dishesWanted.add(n.toLowerCase());
+    }
+    public void addDishesNotWanted(String n) {
+        dishesNotWanted.add(n.toLowerCase());
+    }
     
     public void addCategoriesWanted(String n) {
-        categoriesWanted.add(n);
+        categoriesWanted.add(n.toLowerCase());
     }
 
     public void addCategoriesNotWanted(String n) {
-        categoriesNotWanted.add(n);
+        categoriesNotWanted.add(n.toLowerCase());
     }
     
     public void removeCategoriesWanted(String n) {
-        categoriesWanted.remove(n);
+        categoriesWanted.remove(n.toLowerCase());
     }
     
     public void removeCategoriesNotWanted(String n) {
-        categoriesNotWanted.remove(n);
+        categoriesNotWanted.remove(n.toLowerCase());
     }
     
     public LinkedList<String> getIngredientsNotWanted() {
@@ -102,7 +121,9 @@ public class KnowledgeBase {
      * @return true or false depending on if the ingredient was succesfully added to the kb or not.
      */
     public boolean addIngredientWanted(String ingredient) {
-        if(ingredientsWanted.add(ingredient))
+        if(ingredientsWanted.contains(ingredient.toLowerCase()))
+            return true;
+        if(ingredientsWanted.add(ingredient.toLowerCase()))
             return true;
         else
             return false;
@@ -122,6 +143,7 @@ public class KnowledgeBase {
         }
         return false;
         */
+        ingredient = ingredient.toLowerCase();
         for(int i = 0; i < ingredientsWanted.size(); i++) {
             if(ingredientsWanted.get(i).matches("[a-z|' ']*" + ingredient + "[a-z |' ']*")) {
                 if(ingredientsWanted.remove(i).matches("[a-z|' ']*" + ingredient + "[a-z|' ']*"))
@@ -132,7 +154,9 @@ public class KnowledgeBase {
     }
     
     public boolean addUnknowns(String ingredient) {
-        if(unknowns.add(ingredient))
+        if(unknowns.contains(ingredient.toLowerCase()))
+            return true;
+        if(unknowns.add(ingredient.toLowerCase()))
             return true;
         else
             return false;
@@ -144,7 +168,9 @@ public class KnowledgeBase {
      * @return true or false depending on if the ingredient was succesfully added to the kb or not.
      */
     public boolean addIngredientNotWanted(String ingredient) {
-        if(ingredientsNotWanted.add(ingredient))
+        if(ingredientsNotWanted.contains(ingredient.toLowerCase()))
+            return true;
+        if(ingredientsNotWanted.add(ingredient.toLowerCase()))
             return true;
         else
             return false;
@@ -156,6 +182,7 @@ public class KnowledgeBase {
      * @return true or false depending on if the ingredient was succesfullt removed from the kb or not.
      */
     public boolean removeIngredientNotWanted(String ingredient) {
+        ingredient = ingredient.toLowerCase();
         for(int i = 0; i < ingredientsNotWanted.size(); i++) {
             if(ingredientsNotWanted.get(i).equals(ingredient)) {
                 if(ingredientsNotWanted.remove(i).equals(ingredient))
@@ -164,7 +191,26 @@ public class KnowledgeBase {
         }
         return false;
     }
-    
+    public boolean removeDishesNotWanted(String dish) {
+        dish = dish.toLowerCase();
+        for (int i = 0; i < dishesNotWanted.size(); i++) {
+            if(dishesNotWanted.get(i).equals(dish)) {
+                if(dishesNotWanted.remove(i).equals(dish))
+                    return true;
+            }
+        }
+        return false;
+    }
+    public boolean removeDishesWanted(String dish) {
+        dish = dish.toLowerCase();
+        for (int i = 0; i < dishesWanted.size(); i++) {
+            if(dishesWanted.get(i).equals(dish)) {
+                if(dishesWanted.remove(i).equals(dish))
+                    return true;
+            }
+        }
+        return false;
+    }
     /**
      * This function will try to add a defect to the knowledge base and returns a boolean.
      * @param defect is the defect which you want to add to the kb.

@@ -57,7 +57,7 @@ public class AboutDialog extends JDialog {
         name.setAlignmentX(0.5f);
         add(name);
         
-        name = new JLabel("Magnus Spånggård");
+        name = new JLabel("Magnus Spanggard");
         name.setFont(new Font("Tahoma",Font.PLAIN,13));
         name.setAlignmentX(0.5f);
         add(name);
@@ -67,7 +67,7 @@ public class AboutDialog extends JDialog {
         name.setAlignmentX(0.5f);
         add(name);
         
-        name = new JLabel("Patrik Björkman");
+        name = new JLabel("Patrik Bjorkman");
         name.setFont(new Font("Tahoma",Font.PLAIN,13));
         name.setAlignmentX(0.5f);
         add(name);
