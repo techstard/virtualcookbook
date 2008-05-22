@@ -209,7 +209,6 @@ public class Model extends Observable {
             String keyWord = key.getKeyWord();
             output = response.handleKeyWord(keyWord);
             ingredients = response.getIngredients();
-            
         } catch (Exception exception) {
             //System.out.println(exception.getMessage());
             output = "Uhm, I'm sorry? I didn't understand that.";
