@@ -392,6 +392,38 @@ public class DB_connect {
         		return null;
             } 
         }
+       
+        /**
+         * isAnIngredient
+         * Checks if a given string is an existing ingredient in the recipe_db
+         * @param ing ingredient to check
+         * @return boolean true if it is an ingredient, false otherwise
+         * @since 2008-05-13
+         */
+        public boolean isDish(String dish){
+                // Make query in DB and search for the string
+                try{
+                        // variables
+                    //SELECT COUNT(name) FROM dish WHERE name = "pie"
+                String query = "SELECT COUNT(name) FROM dish WHERE name = '" + dish + "'";
+                        String output;
+                        // connect with the query
+                        ResultSet rset = connect(query);
+                        if (rset.first() == false){
+                                //System.out.println("It's NOT an ingredient!");
+                                return false;
+                        } else {
+                                //System.out.println("It IS an ingredient!");
+                                return true;
+                        }
+                } 
+                catch(Exception e) {
+                        System.err.println("Exception in isAnIngredient(): " + e.getMessage());
+                        System.err.println(e);
+                        return false;
+            }
+        }
+        
         /**
          * isAnIngredient
          * Checks if a given string is an existing ingredient in the recipe_db
