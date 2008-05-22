@@ -212,32 +212,6 @@ public class Model extends Observable {
             output = response.handleKeyWord(keyWord);
             ingredients = response.getIngredients();
             
-        } catch(IngredientException key) {
-            
-            if(key.getCategory() == null) {
-                String[] notIngredient = new String[1];
-                notIngredient[0] = key.getIngredient();
-                output = response.handleIngredientException(notIngredient);
-            } else {
-                String[] notIngredient = new String[2];
-                notIngredient[0] = key.getCategory();
-                notIngredient[1] = key.getIngredient();
-                output = response.handleIngredientException(notIngredient);
-            }
-            ingredients = response.getIngredients();
-        } catch(CategoryException key) {
-            
-            if(key.getIngredient() == null) {
-                String[] category = new String[1];
-                category[0] = key.getCategory();
-                output = response.handleCategoryException(category);
-            } else {
-                String[] notIngredient = new String[2];
-                notIngredient[0] = key.getCategory();
-                notIngredient[1] = key.getIngredient();
-                output = response.handleCategoryException(notIngredient);
-            }
-            ingredients = response.getIngredients();
         } catch (Exception exception) {
             System.out.println(exception.getMessage());
         }
