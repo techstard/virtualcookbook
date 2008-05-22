@@ -93,12 +93,18 @@ public class Response {
                 // Assume this is only said when asked 
                 // "Is there anything else you want?"
                 // → list all recipes
-                DB_connect db = new DB_connect();
-                for(int i = 0; i < recipes.size(); i++) {
-                    response += db.printRecipe((Integer)recipes.get(i), kb.getNrOfPersons());
+                
+                if(recipes != null && !recipes.isEmpty()){
+                    DB_connect db = new DB_connect();
+                    for(int i = 0; i < recipes.size(); i++) {
+                        response += db.printRecipe((Integer)recipes.get(i), kb.getNrOfPersons());
+                    }
+                    response += "Do you want to restart or quit?";
+                    db.closeConnection();
+                } else {
+                    response = "What?";
                 }
-                response += "Do you want to restart or quit?";
-                db.closeConnection();
+             
                 return response;
             }
             
