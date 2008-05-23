@@ -113,10 +113,10 @@ public class Pragmatic {
         // If object is an action
         if(obj instanceof Action) {
             Action action = (Action)obj;
-            if(action.getName().equals("allergic"))
-                kb.setCurrentState(Response.state.ALLERGIC);
-            else
-                kb.setCurrentState(Response.state.NORMAL);
+//            if(action.getName().equals("allergic"))
+//                kb.setCurrentState(Response.state.ALLERGIC);
+//            else
+//                kb.setCurrentState(Response.state.NORMAL);
             
             if(wantPhrases.contains(action.getName())) {
                 int n = action.getNumberOfPeople();
@@ -152,11 +152,11 @@ public class Pragmatic {
                     }
                 }
             } else if(amPhrases.contains(action.getName())) {
-                if(action.getTarget().getName().equals("allergic") && action.getTarget().getSubTarget() !=null) {
-                    handleSubTarget(action.getTarget().getSubTarget(), true);
-                } else if(action.getTarget().getName().equals("allergic")) {
-                    kb.setCurrentState(Response.state.ALLERGIC);
-                }
+//                if(action.getTarget().getName().equals("allergic") && action.getTarget().getSubTarget() !=null) {
+//                    handleSubTarget(action.getTarget().getSubTarget(), true);
+//                } else if(action.getTarget().getName().equals("allergic")) {
+//                    kb.setCurrentState(Response.state.ALLERGIC);
+//                }
                 if(action.getNumberOfPeople() != 0) {
                     kb.setNrOfPersons(action.getNumberOfPeople());
                 } else if(action.getTarget().getName().toLowerCase().equals("legion")) {
@@ -194,6 +194,13 @@ public class Pragmatic {
         } else if(obj instanceof Target) {
             // Object is a target
             Target target = (Target)obj;
+//            if(kb.getCurrentState() == Response.state.ALLERGIC) {
+//                target.getSubTarget().setNegation(true);
+//                handleSubTarget(target, true);
+//                kb.setCurrentState(Response.state.NORMAL);
+//                //return;
+//            }
+            
             int n = target.getNumberOfPeople();
             if(n != 0) {
                 kb.setNrOfPersons(n);
