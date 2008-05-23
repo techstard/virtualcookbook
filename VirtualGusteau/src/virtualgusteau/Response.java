@@ -14,7 +14,7 @@ public class Response {
     
     private boolean recommend = true;
     
-    private enum state {RECOMMEND,SUGGEST,NORMAL};
+    public enum state {RECOMMEND,SUGGEST,NORMAL};
     private state currentState = state.RECOMMEND;
     private String suggestedRecipe = "";
     
