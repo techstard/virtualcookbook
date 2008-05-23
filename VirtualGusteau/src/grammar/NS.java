@@ -189,7 +189,25 @@ public class NS {
             } else if(p.getPreposition().toLowerCase().equals("for")) {
                 findNoun((NounPhrase)pp.getRight());
                 extractObject();
-            } else {
+            } else if(p.getPreposition().toLowerCase().equals("to")) {
+                Object last = logicSentences.getLast();
+                Object o = pp.getRight();
+                if(o instanceof NounPhrase) {
+                    findNoun((NounPhrase)o);
+                    if(object instanceof Noun) {
+                        if(last instanceof Action) {
+                            ((Action)logicSentences.getLast()).getTarget().setSubTarget(new Target(
+                                ((Noun)object).getNoun()));
+                        } else {
+                            ((Target)logicSentences.getLast()).setSubTarget(new Target(
+                                ((Noun)object).getNoun()));
+                        }
+                    }
+                }
+            }
+            
+            
+            else {
             }
         }
         if(logicSentences.getLast() instanceof Action) {

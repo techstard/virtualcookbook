@@ -91,7 +91,7 @@ public class Response {
             } else if(recipes.size() == 1) { 
                 response += "Eureka! I have found this recipie matching your ingredients: \n";
                 response += db.printRecipe((Integer)recipes.getFirst(), kb.getNrOfPersons());
-                response += "Do you want to restart or quit?";
+                response += "Do you want to restart or leave?";
                 currentState = state.NORMAL;
             } else if(recipes.isEmpty() && wantedCategories.isEmpty()) {
                 response += "Im sorry, but there is no recipies matching. You can ask me for another recipe if you'd like.";                    
@@ -108,7 +108,7 @@ public class Response {
         return response;
     }
     public String handleKeyWord(String word) {
-        if(word.toLowerCase().matches("quit|goodbye|bye")) {
+        if(word.toLowerCase().matches("quit|goodbye|bye|leave|exit")) {
             System.exit(0);
         } else if(word.toLowerCase().equals("restart")) {
             model.setClearText();
