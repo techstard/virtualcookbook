@@ -113,6 +113,11 @@ public class Pragmatic {
         // If object is an action
         if(obj instanceof Action) {
             Action action = (Action)obj;
+            if(action.getName().equals("allergic"))
+                kb.setCurrentState(Response.state.ALLERGIC);
+            else
+                kb.setCurrentState(Response.state.NORMAL);
+            
             if(wantPhrases.contains(action.getName())) {
                 int n = action.getNumberOfPeople();
                 if(n != 0) {
@@ -131,19 +136,27 @@ public class Pragmatic {
                         handleUnknown(target, false);
                     }
                 } else {
+                    if(kb.getCurrentState() == Response.state.ALLERGIC) {
+                        if(target.getSubTarget() != null)
+                            handleSubTarget(target.getSubTarget(), true);
+                    }
                     // The Action is NEGATED
                     if(isCategory(target)) {
                         handleCategory(target,true);
                     } else if(isIngredient(target)) {
                         handleIngredient(target, true);
                     } else if(isDish(target)) {
-                        System.out.println("action neg: " + target.toString());
                         handleDish(target, true);
                     } else {
                         handleUnknown(target, true);
                     }
                 }
             } else if(amPhrases.contains(action.getName())) {
+                if(action.getTarget().getName().equals("allergic") && action.getTarget().getSubTarget() !=null) {
+                    handleSubTarget(action.getTarget().getSubTarget(), true);
+                } else if(action.getTarget().getName().equals("allergic")) {
+                    kb.setCurrentState(Response.state.ALLERGIC);
+                }
                 if(action.getNumberOfPeople() != 0) {
                     kb.setNrOfPersons(action.getNumberOfPeople());
                 } else if(action.getTarget().getName().toLowerCase().equals("legion")) {
