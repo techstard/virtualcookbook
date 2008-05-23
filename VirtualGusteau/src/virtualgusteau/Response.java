@@ -14,8 +14,7 @@ public class Response {
     
     private boolean recommend = true;
     
-    public enum state {RECOMMEND,SUGGEST,NORMAL};
-    private state currentState = state.RECOMMEND;
+    public enum state {RECOMMEND,SUGGEST,NORMAL, ALLERGIC};
     private String suggestedRecipe = "";
     
     public Response(Model model) {
@@ -46,12 +45,16 @@ public class Response {
             //System.out.println(response);
             db.closeConnection();
             recommend = false;
-            currentState = state.RECOMMEND;
+            kb.setCurrentState(state.RECOMMEND);
             return response;
         } else {
-            currentState = state.NORMAL;
+            kb.setCurrentState(state.NORMAL);
         }
-                         
+        
+        if (kb.getCurrentState() == state.ALLERGIC) {
+        	return "What are you allergic to?";
+        }
+        
         if(wanted.isEmpty() && wantedCategories.isEmpty()) {
             if(!kb.getUnknowns().isEmpty()) {
                 // what the user said was wrong
@@ -66,7 +69,7 @@ public class Response {
             } else {
                 response = "You haven't told me what you want, I'm good but not that good...";
             }
-            currentState = state.NORMAL;
+            kb.setCurrentState(state.NORMAL);
         } else if (!kb.getUnknowns().isEmpty()) {
         	response = "I'm sorry, but I don't know what ";
         	while (!kb.getUnknowns().isEmpty()) {
@@ -87,19 +90,19 @@ public class Response {
                 LinkedList<String> unique = db.findUniqueIngredients(kb);
                 suggestedRecipe = unique.get((int)(Math.random()*unique.size()));
                 response += "I have found " +recipes.size() + " recipies, may i suggest something with " + suggestedRecipe + "?\n";
-                currentState = state.SUGGEST;
+                kb.setCurrentState(state.SUGGEST);
             } else if(recipes.size() == 1) { 
                 response += "Eureka! I have found this recipie matching your ingredients: \n";
                 response += db.printRecipe((Integer)recipes.getFirst(), kb.getNrOfPersons());
                 response += "Do you want to restart or leave?";
-                currentState = state.NORMAL;
+                kb.setCurrentState(state.NORMAL);
             } else if(recipes.isEmpty() && wantedCategories.isEmpty()) {
                 response += "Im sorry, but there is no recipies matching. You can ask me for another recipe if you'd like.";                    
-                currentState = state.NORMAL;
+                kb.setCurrentState(state.NORMAL);
             } else {
                 response += "I have found "+recipes.size()+" recipies. Is there anything " +
                         "else you want?";
-                currentState = state.NORMAL;
+                kb.setCurrentState(state.NORMAL);
             }
             db.closeConnection();
         }
@@ -128,18 +131,18 @@ public class Response {
             }
             return response;
         } else if(word.toLowerCase().matches("yes|ok")) {
-            if (currentState == state.SUGGEST){
+            if (kb.getCurrentState() == state.SUGGEST){
                 kb.addIngredientWanted(suggestedRecipe);
-                currentState = state.NORMAL;
+                kb.setCurrentState(state.NORMAL);
                 return generateResponse();
-            } else if (currentState == state.RECOMMEND){
+            } else if (kb.getCurrentState() == state.RECOMMEND){
                 //add to kb
                 kb.addIngredientsFromRecipe(kb.getRecRec());
                 
                 DB_connect db = new DB_connect();
                 String recipe = db.printRecipe(kb.getRecRec(), kb.getNrOfPersons());
                 db.closeConnection();
-                currentState = state.NORMAL;
+                kb.setCurrentState(state.NORMAL);
                 
                 for (String in : kb.getIngredientsWanted()) {
                     ingredients += in+"\n";
@@ -149,12 +152,12 @@ public class Response {
                 return "So what is it zat you want?";
             }
         } else if(word.toLowerCase().equals("no")) {
-            if(currentState == state.SUGGEST){
+            if(kb.getCurrentState() == state.SUGGEST){
                 kb.addIngredientNotWanted(suggestedRecipe);
-                currentState = state.NORMAL;
+                kb.setCurrentState(state.NORMAL);
                 return generateResponse();
-            } else if (currentState == state.RECOMMEND){
-                currentState = state.NORMAL;
+            } else if (kb.getCurrentState() == state.RECOMMEND){
+                kb.setCurrentState(state.NORMAL);
                 return "No? Well then, what sort of recipe do you want? Please tell me.";            
             } else{
                 // Assume this is only said when asked 
