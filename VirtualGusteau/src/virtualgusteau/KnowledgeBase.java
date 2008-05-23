@@ -276,6 +276,10 @@ public class KnowledgeBase {
 
     }
     
+    public Iterator iWDIterator() {
+        return new WantedDishIterator();
+    }
+
     public Iterator iWIterator() {
         return new IngredientsWantedIterator();
     }
@@ -364,6 +368,21 @@ public class KnowledgeBase {
         }
         public void remove(){
             categoriesNotWanted.remove(cnt);
+        }
+        public void reset(){
+            cnt = 0;
+        }
+    }
+    private class WantedDishIterator implements Iterator {
+        private int cnt = 0;
+        public boolean hasNext() {
+            return cnt < dishesWanted.size();
+        }
+        public String next() {
+            return dishesWanted.get(cnt++);
+        }
+        public void remove(){
+            dishesWanted.remove(cnt);
         }
         public void reset(){
             cnt = 0;

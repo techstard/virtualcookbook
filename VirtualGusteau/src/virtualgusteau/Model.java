@@ -93,7 +93,8 @@ public class Model extends Observable {
             String ingredient3 = "chocolate";
             String category1 = "meat";
             //kb.addIngredientWanted(ingredient1);
-            kb.addIngredientWanted("oil");
+            //kb.addIngredientWanted("oil");
+            kb.addDishesWanted("main");
             //kb.addCategoriesWanted(category1);
             //kb.addCategoriesNotWanted(category1);
             //kb.addIngredientWanted(ingredient3);            
@@ -101,7 +102,8 @@ public class Model extends Observable {
             //db.searchRecipe(iW);
             //db.removeNotWantedRecipes("potato");
             //db.removeCategoryRecipes("meat");
-            db.findUniqueIngredients(kb);
+            //db.findUniqueIngredients(kb);
+            db.possibleRecipes(kb);
             //output = db.printRecipe(1) +db.printRecipe(2) +db.printRecipe(3) +db.printRecipe(4) +db.printRecipe(5) +db.printRecipe(6) +db.printRecipe(7);
             /*if (db.isCategory("meathej")){
                 output = "true";
@@ -194,6 +196,13 @@ public class Model extends Observable {
             System.out.print("\nWanted category : ");
             while(wantCategory.hasNext()) {
                 Object tmp = wantCategory.next();
+                System.out.print((String)tmp + " ");
+            }
+            
+            Iterator wantDish = kb.iWDIterator();
+            System.out.print("\nWanted dish : ");
+            while(wantDish.hasNext()) {
+                Object tmp = wantDish.next();
                 System.out.print((String)tmp + " ");
             }
             System.out.println("\n");
