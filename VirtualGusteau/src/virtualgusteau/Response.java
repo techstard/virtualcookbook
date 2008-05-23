@@ -7,10 +7,10 @@ public class Response {
     private KnowledgeBase kb;
     private String ingredients;
     private Model model;
-    LinkedList<String> wanted;
-    LinkedList<String> notWanted;
-    LinkedList recipes;
-    String response;
+    private LinkedList<String> wanted;
+    private LinkedList<String> notWanted;
+    private LinkedList recipes;
+    private String response;
     
     private boolean recommend = true;
     
@@ -32,8 +32,8 @@ public class Response {
         wanted = kb.getIngredientsWanted();
         notWanted = kb.getIngredientsNotWanted();
         ingredients = "";
-        LinkedList<String> wanted = kb.getIngredientsWanted();
-        LinkedList<String> notWanted = kb.getIngredientsNotWanted();
+        //LinkedList<String> wanted = kb.getIngredientsWanted(); //TODO
+        //LinkedList<String> notWanted = kb.getIngredientsNotWanted(); //TODO
         LinkedList<String> wantedCategories = kb.getCategoriesWanted();
         LinkedList<String> notWantedCategories = kb.getCategoriesNotWanted();
         
@@ -133,10 +133,17 @@ public class Response {
                 currentState = state.NORMAL;
                 return generateResponse();
             } else if (currentState == state.RECOMMEND){
+                //add to kb
+                kb.addIngredientsFromRecipe(kb.getRecRec());
+                
                 DB_connect db = new DB_connect();
                 String recipe = db.printRecipe(kb.getRecRec(), kb.getNrOfPersons());
                 db.closeConnection();
                 currentState = state.NORMAL;
+                
+                for (String in : kb.getIngredientsWanted()) {
+                    ingredients += in+"\n";
+                }
                 return "Merveilleux! Here is the recipe.\n"+recipe+"Ok! Do you want to restart or quit?";            
             } else {
                 return "So what is it zat you want?";

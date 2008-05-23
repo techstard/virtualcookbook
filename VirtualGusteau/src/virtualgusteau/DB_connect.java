@@ -409,7 +409,7 @@ public class DB_connect {
                         String output;
                         // connect with the query
                         ResultSet rset = connect(query);
-                        if (rset.first() == false){
+                        if (rset.getInt(1) == 0){
                                 //System.out.println("It's NOT an ingredient!");
                                 return false;
                         } else {
