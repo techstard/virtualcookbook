@@ -41,6 +41,8 @@ public class KnowledgeBase {
         categoriesNotWanted.clear();
         recipeIDs.clear();
         nrOfPersons = 1;
+        dishesNotWanted.clear();
+        dishesWanted.clear();
     }
     
     public int getRecRec(){
@@ -253,7 +255,15 @@ public class KnowledgeBase {
     public int getNrOfPersons() {
         return nrOfPersons;
     }
-    
+    public void addIngredientsFromRecipe(int recipeID) {
+        DB_connect db = new DB_connect();
+        String[] ings = db.getIngredients(recipeID);
+        for (int i = 0; i < ings.length; i++) {
+            ingredientsWanted.add(ings[i]);
+        }
+        db.closeConnection();
+
+    }
     
     public Iterator iWIterator() {
         return new IngredientsWantedIterator();

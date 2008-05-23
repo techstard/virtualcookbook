@@ -214,6 +214,7 @@ public class View extends JFrame implements Observer {
             chatArea.append("<Gusteau>: " + model.getOutput() + "\n\n");
             recipeArea.setText("");
             recipeArea.setText(model.getIngredients());
+            //recipeArea.append();
         }
     }
     

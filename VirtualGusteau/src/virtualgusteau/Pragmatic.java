@@ -38,6 +38,7 @@ public class Pragmatic {
         wantPhrases.add("like");
         wantPhrases.add("add");
         wantPhrases.add("contain");
+        wantPhrases.add("need");
         
         amPhrases.add("am");
         amPhrases.add("is");
@@ -135,6 +136,9 @@ public class Pragmatic {
                         handleCategory(target,true);
                     } else if(isIngredient(target)) {
                         handleIngredient(target, true);
+                    } else if(isDish(target)) {
+                        System.out.println("action neg: " + target.toString());
+                        handleDish(target, true);
                     } else {
                         handleUnknown(target, true);
                     }
@@ -415,6 +419,7 @@ public class Pragmatic {
         }
     }
     public void handleUnknown(Target target, boolean negation) {
+        
         Target subTarget = target.getSubTarget();
         kb.addUnknowns(target.getName());
         handleSubTarget(subTarget, negation);
@@ -430,13 +435,19 @@ public class Pragmatic {
             }
             handleSubTarget(tag.getSubTarget(), negation);
         } else { //we have negation!
-            if(tag.getSubTarget() != null) {
-                if(kbv.checkConsistency(kb.getDishesWanted(), toSingular(tag.getName()))) {
-                    kb.removeDishesWanted(toSingular(tag.getName()));
-                    kb.addDishesNotWanted(toSingular(tag.getName()));
-                } else {
-                    kb.addDishesNotWanted(toSingular(tag.getName()));
-                }
+//            if(tag.getSubTarget() != null) {
+//                if(kbv.checkConsistency(kb.getDishesWanted(), toSingular(tag.getName()))) {
+//                    kb.removeDishesWanted(toSingular(tag.getName()));
+//                    kb.addDishesNotWanted(toSingular(tag.getName()));
+//                } else {
+//                    kb.addDishesNotWanted(toSingular(tag.getName()));
+//                }
+//            }
+            if(kbv.checkConsistency(kb.getDishesWanted(), toSingular(tag.getName()))) {
+                kb.removeDishesWanted(tag.getName());
+                kb.addDishesNotWanted(tag.getName());
+            } else {
+                kb.addDishesNotWanted(tag.getName());
             }
             handleSubTarget(tag.getSubTarget(), negation);
         }
