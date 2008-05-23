@@ -97,7 +97,8 @@ public class NG {
         if(words.length == 1) {
             String word = words[0];
             //System.out.println("equal match: " + word.toLowerCase().matches("yes|no"));
-            if(word.toLowerCase().matches("yes|ok|sure|no|quit|restart|hello|greetings|hi|goodbye|bye")) {
+            if(word.toLowerCase().matches("yes|ok|sure|no|quit|restart|hello|greetings|hi|goodbye|bye|" +
+                    "leave|exit")) {
                 keyWord = word;
                 return true;
             }
