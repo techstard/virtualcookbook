@@ -8,6 +8,7 @@ package virtualgusteau;
 import java.util.LinkedList;
 import java.util.*;
 import grammar.*;
+import virtualgusteau.Response.state;
 
 
 /**
@@ -29,7 +30,9 @@ public class KnowledgeBase {
     private int recommendedRecipe;
     
     private int nrOfPersons = 1; //how many people
-
+    
+    private Response.state currentState;
+    
     public KnowledgeBase() {
         //empty constructor
     }
@@ -43,6 +46,14 @@ public class KnowledgeBase {
         nrOfPersons = 1;
         dishesNotWanted.clear();
         dishesWanted.clear();
+    }
+
+    public state getCurrentState() {
+        return currentState;
+    }
+
+    public void setCurrentState(state currentState) {
+        this.currentState = currentState;
     }
     
     public int getRecRec(){
