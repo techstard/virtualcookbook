@@ -18,6 +18,7 @@ public class DB_connect {
 	private Connection con = null;
         private LinkedList<Integer> recept = new LinkedList<Integer>();
         private LinkedList<Integer> categoryRecept = new LinkedList<Integer>();
+        private LinkedList<Integer> dishRecept = new LinkedList<Integer>();
         private LinkedList<Integer> possibleRecept = new LinkedList<Integer>();
 
         /**
@@ -165,6 +166,32 @@ public class DB_connect {
             }
         }
         
+        //TODO fixa att man tar hand om dishes med
+        //query = SELECT rID FROM are_a_kind_of WHERE dish = 'main';
+        /**
+         * addDishRecipes
+         * adds all recipes containing ingredients from a dish
+         * @param dish
+         * @since 2008-05-23
+         */
+        public void addDishRecipes(String dish){        
+            String query = "SELECT rID FROM are_a_kind_of WHERE dish = '" + dish + "'";
+            //System.out.println("recept innan lägger till category "+categoryRecept.size());
+            dishRecept.clear();
+            try{
+                ResultSet rset = connect(query);
+                while(rset.next()){
+                        dishRecept.add(rset.getInt(1));
+                }
+            //System.out.println("recept efter att ha lagt till category "+categoryRecept.size());    
+            }
+            catch(Exception e) {
+                System.err.println("Exception in addDishRecipes: " + e.getMessage());
+		System.err.println(e);
+            }
+        }
+        
+        
         /**
          * addCategoryRecipes
          * adds all recipes containing ingredients from a category
@@ -231,6 +258,12 @@ public class DB_connect {
             
             Iterator iW = kb.iWIterator();
             searchRecipe(iW);
+            
+            Iterator wantD = kb.iWDIterator(); 
+            while(wantD.hasNext()){
+                Object tmp = wantD.next();
+                addDishRecipes((String)tmp);
+            }
             
             if(categoryRecept.size() != 0 && recept.size() == 0){
                 possibleRecept = categoryRecept;
@@ -394,10 +427,10 @@ public class DB_connect {
         }
        
         /**
-         * isAnIngredient
-         * Checks if a given string is an existing ingredient in the recipe_db
-         * @param ing ingredient to check
-         * @return boolean true if it is an ingredient, false otherwise
+         * isDish
+         * Checks if a given word is an existing dish in the database
+         * @param dish is the word to check
+         * @return boolean true if it is an dish, false otherwise
          * @since 2008-05-13
          */
         public boolean isDish(String dish){

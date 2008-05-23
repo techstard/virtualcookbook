@@ -35,6 +35,7 @@ public class Response {
         //LinkedList<String> notWanted = kb.getIngredientsNotWanted(); //TODO
         LinkedList<String> wantedCategories = kb.getCategoriesWanted();
         LinkedList<String> notWantedCategories = kb.getCategoriesNotWanted();
+        LinkedList<String> wantedDishes = kb.getDishesWanted();
         
         if(recommend){
             // Find a random recipe to recommend.
@@ -55,7 +56,7 @@ public class Response {
         	return "What are you allergic to?";
         }
         
-        if(wanted.isEmpty() && wantedCategories.isEmpty()) {
+        if(wanted.isEmpty() && wantedCategories.isEmpty() && wantedDishes.isEmpty()) {
             if(!kb.getUnknowns().isEmpty()) {
                 // what the user said was wrong
             	response = "I'm sorry, but I've never heard of ";
