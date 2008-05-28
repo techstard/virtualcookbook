@@ -2,11 +2,7 @@
 
 _back to Project Home ->_ http://code.google.com/p/virtualcookbook/
 
-= Introduction =
-
-_Here is a skeleton description on the report._
-
-link?
+= Important =
 
 Things to think about when writing:
 
@@ -15,7 +11,7 @@ Things to think about when writing:
   * You have to give *references* on everything you write, like the fasttag parser. Look below on how to give proper references.
   * Write your chapter/s and *send them to Anders* so that he can manage them into the actual report.
 
-= Details =
+= Deadlines =
 
 Until the first deadline, chapter 1 and 2 should be written and done.
 
