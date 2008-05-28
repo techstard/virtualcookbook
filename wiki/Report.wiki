@@ -1,13 +1,26 @@
-#summary One-sentence summary of this page.
+#contains planning and information about the report.
 
 = Introduction =
 
-Add your content here.
+_Here is a skeleton description on the report._
 
+link?
+
+Things to think about when writing:
+
+  * Never write *"our"* and *"we"* when writing. Think of yourself as a neutral part trying to explain the project.
+  * If you find words that sounds hard to understand, enter them in the *wordlist*.
+  * You have to give references on everything you write, like the fasttag parser. Look below on how to give proper references.
+  * Write your chapter/s and send them to Anders so that he can manage them into the actual report.
 
 = Details =
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+_Here is the chapters and the writers responsibility._
+
+Until the first deadline, chapter 1 and 2 should be written and done.
+
+*DEADLINE 1:* Sunday the 1st of June
+
+Until the second deadline, chapter 3 and the appendix should be written and done.
+
+*DEADLINE 2:* Thursday the 5th of June
