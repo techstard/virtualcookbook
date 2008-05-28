@@ -32,14 +32,14 @@ Until the second deadline, chapter 3 and the appendix should be written and done
 || - || - || - ||
 || 2 || THE APPROACH || (Anders) ||
 || 2.1 || THE APPLICATION || (Anders) ||
-|| 2.1.1 || File Description || (?) ||
-|| 2.2 || THE DATABASE	|| (Anders and Tobias) ||
-|| 2.2.1 || The Knowledgebase || (Magnus and Patrik) ||
-|| 2.2.2 || The Grammar || (Robert) ||
-|| 2.2.3 || The Parser || (Robert) ||
-|| 2.2.4 || The Semantics || (Robert and Magnus) ||
-|| 2.2.5 || The Pragmatics || (?) ||
-|| 2.2.6 || The Response || (Olof) ||
+|| 2.2 || FILE DESCRIPTION || (?) ||
+|| 2.3 || THE GRAMMAR || (Robert) ||
+|| 2.4 || THE PARSER || (Robert) ||
+|| 2.5 || THE SEMANTICS || (Robert and Magnus) ||
+|| 2.6 || THE PRAGMATICS || (?) ||
+|| 2.7 || THE RESPONSE || (Olof) ||
+|| 2.8 || THE DATABASE	|| (Anders and Tobias) ||
+|| 2.9 || THE KNOWLEDGEBASE || (Magnus and Patrik) ||
 || - || - || - ||
 || 3 || DISCUSSION || (not yet decided) ||
 || 3.1 || LIMITATIONS || (?) ||
