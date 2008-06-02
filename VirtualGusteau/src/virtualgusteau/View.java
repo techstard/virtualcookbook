@@ -80,7 +80,7 @@ public class View extends JFrame implements Observer {
                 
         chatPane = new JScrollPane();
         chatArea = new JTextArea();
-        chatArea.setEditable(false);
+        chatArea.setEditable(true);
         chatArea.addFocusListener(new FocusListener() {
             public void focusGained(FocusEvent e) {
                 textField.requestFocusInWindow();
@@ -94,6 +94,8 @@ public class View extends JFrame implements Observer {
         chatArea.setWrapStyleWord(true);
         chatArea.setBorder(BorderFactory.createEmptyBorder(8,8,8,8));
         chatArea.setText("<Gusteau>: Bienvenue, cher ami.\nWhat kind of magnifique recipe would you want today? I can prumise I will not disappoint you.\n\n");
+        
+//        chatArea.setCaretPosition(chatArea.getDocument().getLength());
         
         chatPane.setAutoscrolls(true);
         chatPane.getViewport().add(chatArea);
@@ -210,6 +212,7 @@ public class View extends JFrame implements Observer {
             if (model.getInput() != null)
             	chatArea.append("<Linguini>: " + model.getInput() + "\n\n");
             chatArea.append("<Gusteau>: " + model.getOutput() + "\n\n");
+            chatArea.setCaretPosition(chatArea.getDocument().getLength());
             recipeArea.setText("");
             recipeArea.setText(model.getIngredients());
             //recipeArea.append();
