@@ -157,6 +157,7 @@ public class Model extends Observable {
     	 response = new Response(this);
          response.setKB(kb);
          systemOutput = response.generateResponse();
+         
          setChanged();
          notifyObservers();
     }
