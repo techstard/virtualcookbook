@@ -147,7 +147,7 @@ public class DB_connect {
                 query = query + possibleRecept.get(i);
                 if(i != possibleRecept.size() -1){
                     query = query + " OR rpt.rID = ";
-                }
+                } 
             }
             System.out.println(query);
             System.out.println("recept innan while "+possibleRecept.size());
@@ -259,12 +259,6 @@ public class DB_connect {
             Iterator iW = kb.iWIterator();
             searchRecipe(iW);
             
-            Iterator wantD = kb.iWDIterator(); 
-            while(wantD.hasNext()){
-                Object tmp = wantD.next();
-                addDishRecipes((String)tmp);
-            }
-            
             if(categoryRecept.size() != 0 && recept.size() == 0){
                 possibleRecept = categoryRecept;
             } else if(categoryRecept.size() == 0 && recept.size() != 0){
@@ -307,7 +301,39 @@ public class DB_connect {
                 System.out.println(possibleRecept.get(i));
             }
             
-            return possibleRecept;
+            Iterator wantD = kb.iWDIterator(); 
+            while(wantD.hasNext()){
+                Object tmp = wantD.next();
+                addDishRecipes((String)tmp);
+            }
+            
+            LinkedList<Integer> result = new LinkedList<Integer>();
+            
+            if(possibleRecept.size() == 0){
+                result = dishRecept;
+            } else if (!dishRecept.isEmpty()) {
+                if(possibleRecept.size() >= dishRecept.size()){
+                    for(int i = 0; i < dishRecept.size();i++){
+                        for(int k = 0; k < possibleRecept.size();k++){
+                            if(dishRecept.get(i) == possibleRecept.get(k)){
+                                result.add(dishRecept.get(i));
+                            }
+                        }
+                    }
+                } else {
+                    for(int i = 0; i < possibleRecept.size();i++){
+                        for(int k = 0; k < dishRecept.size();k++){
+                            if(possibleRecept.get(i) == dishRecept.get(k)){
+                                result.add(possibleRecept.get(i));
+                            }
+                        }
+                    }
+                }
+            } else {
+                result = possibleRecept;
+            }
+            
+            return result;
             
         }
         
@@ -439,9 +465,9 @@ public class DB_connect {
                         // variables
                     //SELECT COUNT(name) FROM dish WHERE name = "pie"
                 String query = "SELECT COUNT(name) FROM dish WHERE name = '" + dish + "'";
-                        String output;
                         // connect with the query
                         ResultSet rset = connect(query);
+                        rset.next();
                         if (rset.getInt(1) == 0){
                                 //System.out.println("It's NOT an ingredient!");
                                 return false;
@@ -451,7 +477,7 @@ public class DB_connect {
                         }
                 } 
                 catch(Exception e) {
-                        System.err.println("Exception in isAnIngredient(): " + e.getMessage());
+                        System.err.println("Exception in isDish(): " + e.getMessage());
                         System.err.println(e);
                         return false;
             }
@@ -489,11 +515,11 @@ public class DB_connect {
         	// Make query in DB and search for the string
         	try{
         		// variables
-            	String query = "SELECT * FROM ingredients WHERE name = '" + ing + "'";
-        		String output;
+            	String query = "SELECT count(*) FROM ingredients WHERE name = '" + ing + "'";
         		// connect with the query
         		ResultSet rset = connect(query);
-        		if (rset.first() == false){
+                        rset.next();
+        		if (rset.getInt(1) == 0){
         			//System.out.println("It's NOT an ingredient!");
         			return false;
         		} else {
