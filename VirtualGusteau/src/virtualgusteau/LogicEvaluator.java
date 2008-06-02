@@ -12,13 +12,12 @@ import java.util.*;
  *
  * @author magnus
  */
-public class Pragmatic {
+public class LogicEvaluator {
     
     private LinkedList<Object> semantics;
 
     //private KnowledgeBase kb = new KnowledgeBase();
     private KnowledgeBase kb;
-    private KBValidator kbv;
     private LinkedList<String> wantPhrases = new LinkedList<String>();
     private LinkedList<String> amPhrases = new LinkedList<String>();
     private LinkedList<String> negationPhrases = new LinkedList<String>();
@@ -26,11 +25,10 @@ public class Pragmatic {
     private Object memory;
     
     
-    public Pragmatic(KnowledgeBase kb, LinkedList<Object> sem) {
+    public LogicEvaluator(KnowledgeBase kb, LinkedList<Object> sem) {
         semantics = sem;
         this.kb = kb;
         memory = sem;
-        kbv = new KBValidator(kb);
         
         wantPhrases.add("want");
         wantPhrases.add("wants");
@@ -169,7 +167,7 @@ public class Pragmatic {
             } else if(negationPhrases.contains(action.getName())) {
                 Target target = action.getTarget();
                 //TODO : add so that it checks if it is category.
-                if(kbv.checkConsistency(kb.getIngredientsWanted(), toSingular(target.getName()))) {
+                if(checkConsistency(kb.getIngredientsWanted(), toSingular(target.getName()))) {
                     // Ingredient exist in IngredientsWanted
                     // remove it and add to IngredientsNotWanted
                     kb.removeIngredientWanted(toSingular(target.getName()));
@@ -179,7 +177,7 @@ public class Pragmatic {
                     if(isIngredient(subTarget)) {
                         // subTarget exist in db
                         // add to IngredientsWanted
-                        if(kbv.checkConsistency(kb.getIngredientsWanted(), toSingular(subTarget.getName()))) {
+                        if(checkConsistency(kb.getIngredientsWanted(), toSingular(subTarget.getName()))) {
                             // Ingredient exist in IngredientWanted
                             // remove it and add to IngredientsNotWanted
                             kb.removeIngredientWanted(toSingular(subTarget.getName()));
@@ -300,7 +298,7 @@ public class Pragmatic {
                  * rather a category of food...
                  */
             } else {
-                if(kbv.checkConsistency(kb.getCategoriesNotWanted(), toSingular(target.getName()))) {                                
+                if(checkConsistency(kb.getCategoriesNotWanted(), toSingular(target.getName()))) {                                
                      /* Category exist in CategoriesNotWanted →
                      * remove it and add to CategoriesWanted
                      */
@@ -344,7 +342,7 @@ public class Pragmatic {
                  * rather a category of food...
                  */
             } else {
-                if(kbv.checkConsistency(kb.getCategoriesWanted(), toSingular(target.getName()))) {
+                if(checkConsistency(kb.getCategoriesWanted(), toSingular(target.getName()))) {
                     /* The Category exists in CategoriesWanted →
                      * remove it and add to CategoriesNotWanted
                      */
@@ -380,7 +378,7 @@ public class Pragmatic {
     public void handleIngredient(Target target, boolean negation) {
         if(!negation) {
             // User has specified an Ingredient
-            if(kbv.checkConsistency(kb.getIngredientsNotWanted(), toSingular(target.getName()))) {
+            if(checkConsistency(kb.getIngredientsNotWanted(), toSingular(target.getName()))) {
                 /* Ingredient exists in IngredientsNotWanted →
                  * remove it and add to IngredientsWanted
                  */
@@ -410,7 +408,7 @@ public class Pragmatic {
         } else {
             // Ingredient exist in db
             // add to IngredientsWanted
-            if(kbv.checkConsistency(kb.getIngredientsWanted(), toSingular(target.getName()))) {
+            if(checkConsistency(kb.getIngredientsWanted(), toSingular(target.getName()))) {
                 // Ingredient exist in IngredientsWanted
                 // remove it and add to IngredientsNotWanted
                 kb.removeIngredientWanted(toSingular(target.getName()));
@@ -447,7 +445,7 @@ public class Pragmatic {
     public void handleDish(Target tag, boolean negation) {
         //not negated
         if(!negation) {
-            if(kbv.checkConsistency(kb.getDishesNotWanted(), toSingular(tag.getName()))) {
+            if(checkConsistency(kb.getDishesNotWanted(), toSingular(tag.getName()))) {
                 kb.removeDishesNotWanted(toSingular(tag.getName()));
                 kb.addDishesWanted(toSingular(tag.getName()));
             } else {
@@ -463,7 +461,7 @@ public class Pragmatic {
 //                    kb.addDishesNotWanted(toSingular(tag.getName()));
 //                }
 //            }
-            if(kbv.checkConsistency(kb.getDishesWanted(), toSingular(tag.getName()))) {
+            if(checkConsistency(kb.getDishesWanted(), toSingular(tag.getName()))) {
                 kb.removeDishesWanted(tag.getName());
                 kb.addDishesNotWanted(tag.getName());
             } else {
@@ -479,15 +477,27 @@ public class Pragmatic {
      */
     public void handleSubTarget(Target subTag, boolean negation) {
         if(subTag != null) {
-                if(isCategory(subTag)) {
-                    handleCategory(subTag, negation);
-                } else if(isIngredient(subTag)) {
-                    handleIngredient(subTag, negation);
-                } else if(isDish(subTag)) {
-                    handleDish(subTag, negation);
-                } else {
-                    handleUnknown(subTag, negation);
-                }
+            if(isCategory(subTag)) {
+                handleCategory(subTag, negation);
+            } else if(isIngredient(subTag)) {
+                handleIngredient(subTag, negation);
+            } else if(isDish(subTag)) {
+                handleDish(subTag, negation);
+            } else {
+                handleUnknown(subTag, negation);
             }
+        }
+    }
+    /**
+     * will check if the given list contains anything simuler to the given item
+     * @param list that you want to travers and search for item
+     * @param item the item to search for
+     * @return false if list is consistent otherwise true
+     */
+    public boolean checkConsistency(LinkedList<String> list, String item) {
+        for (int i = 0; i < list.size(); i++)
+            if(item.toLowerCase().matches((list.get(i))))
+                return true;
+        return false;
     }
 }

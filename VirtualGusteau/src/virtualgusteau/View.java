@@ -15,7 +15,6 @@ import java.util.Date;
 import java.util.Locale;
 
 import java.text.DateFormat;
-import javax.swing.plaf.DimensionUIResource;
 import grammar.*;
 
 
@@ -36,8 +35,7 @@ public class View extends JFrame implements Observer {
     private JPanel pictureFrame;
     private JTextArea recipeArea;
     private JScrollPane recipePane;
-    
-    private Calendar cal;
+ 
     private Date date;
     private Locale locale;
     
@@ -47,7 +45,7 @@ public class View extends JFrame implements Observer {
         
         try {
 	    // Set cross-platform Java L&F (also called "Metal")
-        UIManager.setLookAndFeel(
+            UIManager.setLookAndFeel(
             UIManager.getSystemLookAndFeelClassName());
         } 
         catch (UnsupportedLookAndFeelException e) {
@@ -67,7 +65,7 @@ public class View extends JFrame implements Observer {
         controller = new Controller(model);
         
         setTitle("Virtual Gusteau");
-        setIconImage(new ImageIcon("graphics/Gusteau_icon.jpg").getImage()); //Sets the icon of the JFrame.
+        setIconImage(new ImageIcon("graphics/Gusteau_icon.jpg").getImage());
         createMenu();
         
         left = new JPanel();

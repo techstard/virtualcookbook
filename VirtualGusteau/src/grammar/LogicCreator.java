@@ -3,7 +3,7 @@ import java.util.*;
 import virtualgusteau.*;
 
 
-public class NS {
+public class LogicCreator {
     private LinkedList sentenceTree;
     private LinkedList logicSentences;
     
@@ -18,7 +18,7 @@ public class NS {
     
     private LinkedList<PrepositionalPhrase> nounSpecifiers;
     
-    public NS() {
+    public LogicCreator() {
         logicSentences = new LinkedList();
         nounSpecifiers = new LinkedList<PrepositionalPhrase>();
     }

@@ -3,376 +3,641 @@ import java.util.*;
 
 public class Grammar {
     
-    private LinkedList<Object> S;
+    private LinkedList sentenceTree;
+    private String keyWord;
     
     public Grammar() {
-        S = new LinkedList<Object>();
+        sentenceTree = new LinkedList();
     }
-    
     /**
-     * NP → Pronoun         I
-     *    | Noun            dog
-     *    | Article Noun    the + dog
-     *    | Article NP      the + dog on the log
-     *    | Adjective Noun  yellow + submarine
-     *    | Digit           4
-     *    | NP PP           the dog + on the log
-     *    | Modal NP        can + the dog
+     * NP → Pronoun <br>
+     *    | Noun<br>
+     *    | Digit<br>
+     *    | Gerund<br>
+     *    | Modal Pronoun<br>
+     *    | Article NP<br>
+     *    | AP NP<br>
+     *    | NP PP<br>
+     *    | Gerund Noun<br>
+     * <br>
+     * VP → Verb<br>
+     *    | Verb VP<br>
+     *    | negation Verb<br>
+     *    | AdvP Verb<br>
+     *    | VP NP<br>
+     *    | VP AP<br>
+     *    | Modal VP<br>
+     *    | Modal PP<br>
+     * <br>
+     * PP → Preposition NP<br>
+     * <br>
+     * AP → Adjective<br>
+     *    | Adverb Adjective<br>
+     *    | AP PP<br>
+     *    | AP to VP<br>
+     *    | AP to NP<br>
+     * <br>
+     * AdvP → Adverb<br>
+     *      | Adverb AdvP<br>
      * 
-     * 
-     * VP → Verb            stinks
-     *    | VP NP           feel + a breeze
-     *    | VP Adjective    is + smelly
-     *    | VP PP           turn + to the east
-     *    | VP Adverb       go + ahead
-     *    | VP Gerund       want a pie + containing
-     *    | Modal PP        would + like
-     * 
-     * 
-     * 
-     * @param words
+     * @author Robert Krantz
      * @param tags
-     * @return
-     * @throws java.lang.Exception
+     * @param words
+     * @return A LinkedList with grammatical objects forming a tree structure
+     * @throws Exception
+     * @since 2008-05-13
+     * @see #convert
+     * @see #identifyAdverbPhrases
+     * @see #connectAdverb
+     * @see #identifyAdjectivePhrases
+     * @see #connectAdjectiveWithNoun
+     * @see #identifyCompoundNouns
+     * @see #identifyNounPhrases
+     * @see #identifyInfinitiveForm
+     * @see #identifyPrepositionalPhrases
+     * @see #connectPrepPhraseWithNounPhrase
+     * @see #identifyVerbPhrases
+     * @see #identifyAuxiliaries
+     * @see #connectModals
+     * @see #connectVerbPhrasesWithNounPhrases
+     * @see #connectVerbPhrasesWithPrep
      */
-    
-    public LinkedList<Object> parser(String[] words, String[] tags) throws Exception {
-        S.clear();
-        for(int i = 0; i < tags.length; i++) {
-            if(tags[i].equals("PRP")) {
-                if(S.isEmpty()) {
-                    // The Pronoun is first in the sentence, add it
-                    S.add(new NounPhrase(new Pronoun(words[i])));
-                } else if(S.getLast()instanceof VerbPhrase) {
-                    // Pronoun preceded by a Verb Phrase
-                    //  » VerbPhrase → VerbPhrase NounPhrase
-                    VerbPhrase tmp = (VerbPhrase)S.getLast();
-                    S.removeLast();
-                    S.add(new VerbPhrase(tmp,new NounPhrase(new Pronoun(words[i]))));
-                } else if(S.getLast()instanceof Conjunction) {
-                    // Second part of sentence preceded by a Conjunction, i.e. and/but/or
-                    // The Pronoun is first in second part, add it
-                    S.add(new NounPhrase(new Pronoun(words[i])));
-                } else if(S.getLast()instanceof Preposition) {
-                    // Word before was a preposition, make a PrepositionalPhrase of it
-                    Preposition tmp = (Preposition)S.getLast();
-                    S.removeLast();
-                    S.add(new PrepositionalPhrase(tmp,new NounPhrase(new Pronoun(words[i]))));
-                } else if(S.getLast() instanceof Modal) {
-                    Modal m = (Modal)S.getLast();
-                    S.removeLast();
-                    S.add(new NounPhrase(m, new NounPhrase(new Pronoun(words[i]))));
-                } else if(S.getLast()instanceof Article) {
-                    throw new Exception("Possible Illegal Sentence Structure - Article before Pronoun");
-                } else {
-                    throw new Exception("Illegal Sentence Structure - Pronoun in the wrong place");
-                }
-            } else if(tags[i].equals("DT")) {
-                S.add(new Article(words[i]));
+    public LinkedList parser(String[] tags, String[] words) throws Exception {
+        if(identifyKeyWords(tags, words)) {
+            throw new KeyWordException(keyWord);
+        } else {
+            convert(tags,words);
+            identifyCompoundNouns();
+            identifyAdverbPhrases();
+            connectAdverb();
+            identifyAdjectivePhrases();
+            connectAdjectiveWithNoun();            
+            identifyNounPhrases();
+            identifyInfinitiveForm();
+            identifyPrepositionalPhrases();
+            connectPrepPhraseWithNounPhrase();
+            identifyVerbPhrases();
+            identifyAuxiliaries();
+            connectModals();
+            connectVerbPhrasesWithNounPhrases();
+            connectVerbPhrasesWithPrep();        
+        
+            System.out.println("Word identification");
+            for (int i = 0; i < sentenceTree.size(); i++) {
+                System.out.print(sentenceTree.get(i).toString()+" ");
+            }
+            System.out.println("\n----------------------");
+
+            return sentenceTree;
+        }
+    }
+    /**
+     * Checks if the sentence inputed by the user consists of one word and 
+     * if so if the word is a keyword
+     * 
+     * @author Robert Krantz
+     * @param tags
+     * @param words
+     * @return true if the sentence is a keyword
+     *         false if not
+     */
+    public boolean identifyKeyWords(String[] tags, String[] words) {
+        if(words.length == 1) {
+            String word = words[0];
+            if(word.toLowerCase().matches("yes|ok|sure|no|quit|restart|hello|greetings|hi|goodbye|bye|" +
+                    "leave|exit")) {
+                keyWord = word;
+                return true;
+            }
+        }
+        return false;
+    }
+    /**
+     * Goes through the input sentence and converts the words
+     * into their respective class instances. They are stored in a 
+     * globally know variable, sentenceTree.
+     * 
+     * @author Robert Krantz
+     * @param tags The input sentence represented as a series of
+     * grammatical tags
+     * @param words The input sentence
+     * @since 2008-05-13
+     * 
+     */
+    public void convert(String[] tags, String[] words) {        
+        for (int i = 0; i < words.length; i++) {
+            if(tags[i].contains("PRP")) {
+                sentenceTree.add(new Pronoun(words[i]));
             } else if(tags[i].contains("NN")) {
-                if(S.isEmpty()) {
-                    S.add(new NounPhrase(new Noun(words[i])));
-                } else if(S.getLast()instanceof Article) {
-                    Article tmp = (Article)S.getLast();
-                    S.removeLast();
-                    S.add(new NounPhrase(tmp,new Noun(words[i])));
-                } else if(S.getLast()instanceof VerbPhrase) {
-                    VerbPhrase tmp = (VerbPhrase)S.getLast();
-                    S.removeLast();
-                    S.add(new VerbPhrase(tmp,new NounPhrase(new Noun(words[i]))));
-                } else if(S.getLast()instanceof Preposition) {
-                    // Word before was a preposition, make a PrepositionalPhrase of it
-                    Preposition tmp = (Preposition)S.getLast();
-                    S.removeLast();
-                    S.add(new PrepositionalPhrase(tmp,new NounPhrase(new Noun(words[i]))));
-                } else if(S.getLast()instanceof Conjunction) {
-                    // Second part of sentence preceded by a Conjunction, i.e. and/but/or
-                    // The Pronoun is first in second part, add it
-                    S.add(new NounPhrase(new Noun(words[i])));
-                } else if(S.getLast()instanceof Adjective) {
-                    // Adjective Noun
-                    Adjective j_tmp = (Adjective)S.getLast();
-                    S.removeLast();
-                   // S.add(new NounPhrase(j_tmp, new Noun(words[i])));
-                } else if(S.getLast() instanceof Modal) {
-                    Modal m = (Modal)S.getLast();
-                    S.removeLast();
-                    S.add(new NounPhrase(m, new NounPhrase(new Noun(words[i]))));
+                sentenceTree.add(new Noun(words[i]));
+            } else if(tags[i].contains("VB") && !tags[i].equals("VBG")) {
+                if(words[i].toLowerCase().equals("minced")) {
+                    sentenceTree.add(new Noun(words[i]));
                 } else {
-                    throw new Exception("Illegal Sentence Structure - Noun in the wrong place");
+                    sentenceTree.add(new Verb(words[i]));
                 }
-            } else if(tags[i].equals("IN")) {
-                if(words[i].toLowerCase().equals("that") && S.getLast() instanceof NounPhrase) {
-                    // The beginning of a relClause following a NounPhrase
-                    S.add(new Preposition(words[i]));
-                } else {
-                    if(S.getLast() instanceof NounPhrase) {
-                    // NounPhrase preceding the preposition → correct
-                    S.add(new Preposition(words[i]));
-                    } else if(S.getLast()instanceof VerbPhrase) {
-                        // VerbPhrase preceding the preposition → correct
-                        S.add(new Preposition(words[i]));
-                    } else if(S.getLast() instanceof Modal) {
-                        S.add(new Preposition(words[i]));
-                    } else {
-                        throw new Exception("Illegal Sentence Structure - Preposition in the wrong place");
-                    }                
-                }
-            } else if(tags[i].equals("MD")) {
-                /**
-                 * A modal verb explains the mood of a verb, the folloing verbs
-                 * are modals:
-                 * CAN / COULD / MAY / MIGHT / MUST / SHALL / SHOULD / OUGHT TO / WILL / WOULD 
-                 * 
-                 * The modal always preceeds a Noun Phrase or Verb Phrase
-                 */
-                S.add(new Modal(words[i]));
-            } else if(tags[i].contains("VB")) {
-                if(S.isEmpty()) {
-                    throw new Exception("Illegal Sentence Structure - Verb cannot be first in sentence");
-                } else if(words[i].toLowerCase().equals("do")) {
-                    /**
-                     * The word 'do' will appear in the context of "I do not want".
-                     * This parser cannot handle auxiliary verbs at the moment and 
-                     * the sentence is therefor illegal. Article solution to this is to 
-                     * remove 'do' and switch place of 'not' and 'want', forming 
-                     * the sentence "I want not" which is, according to this parser, 
-                     * correct.
-                     */
-                    String wtmp = words[i+1];
-                    String ttmp = tags[i+1];
-                    words[i+1] = words[i+2];
-                    tags[i+1] = tags[i+2];
-                    words[i+2] = wtmp;
-                    tags[i+2] = ttmp;
-                                        
-                } else if(S.getLast()instanceof NounPhrase) {
-                    S.add(new VerbPhrase(new Verb(words[i])));
-                } else if(S.getLast()instanceof Preposition && ((Preposition)S.getLast()).getPreposition().equals("that")) {
-                    S.add(new VerbPhrase(new Verb(words[i])));
-                } else if(S.getLast() instanceof VerbPhrase && !(((VerbPhrase)S.getLast()).getRight() instanceof Adverb)) {
-                    if(tags[i].equals("VBG")) {
-                        /**
-                         * A Gerund following a Verb, Verb Phrase without adverb,
-                         * Preposition or adjective
-                         */
-                        VerbPhrase tmp = (VerbPhrase)S.getLast();
-                        S.removeLast();
-                        S.add(new VerbPhrase(tmp, new Gerund(words[i])));
-                    }
-                } else if(S.getLast() instanceof Modal) {
-                    Modal m = (Modal)S.getLast();
-                    S.removeLast();
-                    S.add(new VerbPhrase(m, new VerbPhrase(new Verb(words[i]))));
-                } else {
-                    throw new Exception("Illegal Sentence Structure - Verb in the wrong place");
-                }
-            } else if(tags[i].contains("JJ")) {
-                if(S.isEmpty()) {
-                    throw new Exception("Illegal Sentence Structure - Adjective cannot be first in sentence");
-                } else if(S.getLast()instanceof NounPhrase) {
-                    throw new Exception("Illegal Sentence Structure - Adjective cannot follow NP");
-                } else if(S.getLast()instanceof VerbPhrase) {
-                    VerbPhrase tmp = (VerbPhrase)S.getLast();
-                    S.removeLast();
-                    S.add(new VerbPhrase(tmp, new Adjective(words[i])));
-                } else if(S.getLast()instanceof Article) {
-                    // Article Adjective (Noun)
-                    S.add(new Adjective(words[i]));
-                } else {
-                    throw new Exception("Illegal Sentence Structure - Adjective in the wrong place");
-                }
-            } else if(tags[i].equals("CC")) {
-                if(S.getLast()instanceof NounPhrase) {
-                    // Sentence ends in NounPhrase → not correct, further checks needed
-                    if(S.size() > 2) {
-                        // More than two Phrases in sentence
-                        if(S.get(S.size()-2)instanceof VerbPhrase) {
-                            // If the second last Phrase is VerbPhrase and last is NounPhrase, create a VerbPhrase of them
-                            NounPhrase np_tmp = (NounPhrase)S.getLast();
-                            VerbPhrase vp_tmp = (VerbPhrase)S.get(S.size()-2);
-                            S.removeLast(); S.removeLast();
-                            S.add(new VerbPhrase(vp_tmp, np_tmp));
-                        } else if(S.get(S.size()-2)instanceof Preposition) {
-                            NounPhrase np_tmp = (NounPhrase)S.getLast();
-                            Preposition p_tmp = (Preposition)S.get(S.size()-2);
-                            S.removeLast(); S.removeLast();
-                            S.add(new PrepositionalPhrase(p_tmp, np_tmp));
-                        }
-                    }
-                } else if(S.getLast() instanceof PrepositionalPhrase) {
-                    if(S.size() > 2) {
-                        if(S.get(S.size()-2)instanceof NounPhrase) {
-                            PrepositionalPhrase pp_tmp = (PrepositionalPhrase)S.getLast();
-                            NounPhrase np_tmp = (NounPhrase)S.get(S.size()-2);
-                            S.removeLast(); S.removeLast();
-                            S.add(new NounPhrase(np_tmp, pp_tmp));
-                        } else if(S.get(S.size()-2)instanceof VerbPhrase) {
-                            PrepositionalPhrase pp_tmp = (PrepositionalPhrase)S.getLast();
-                            VerbPhrase vp_tmp = (VerbPhrase)S.get(S.size()-2);
-                            S.removeLast(); S.removeLast();
-                            S.add(new VerbPhrase(vp_tmp, pp_tmp));
-                        } else if(S.get(S.size()-2)instanceof Modal) {
-                            
-                            PrepositionalPhrase pp_tmp = (PrepositionalPhrase)S.getLast();
-                            
-                            Modal m_tmp = (Modal)S.get(S.size()-2);
-                            
-                            S.removeLast(); S.removeLast();
-                            S.add(new NounPhrase(m_tmp, pp_tmp));
-                        }
-                    }
-                }
-                if(S.isEmpty()) {
-                    throw new Exception("Illegal Sentence Structure - Conjunction cannot be first in sentence");
-                } else if(S.getLast()instanceof VerbPhrase && S.get(S.size()-2) instanceof NounPhrase) {
-                    S.add(new Conjunction(words[i]));
-                } else if(S.getLast() instanceof NounPhrase) {
-                    S.add(new Conjunction(words[i]));
-                } else {
-                    throw new Exception("Illegal Sentence Structure - CC");
-                }
-            } else if(tags[i].equals("RB")) {
-                if(S.isEmpty()) {
-                    throw new Exception("Illegal Sentence Structure - Adverb cannot be first in sentence");
-                } else if(S.getLast()instanceof NounPhrase) {
-                    throw new Exception("Illegal Sentence Structure - Adverb cannot follow Noun Phrase");
-                } else if(S.getLast()instanceof VerbPhrase) {
-                    VerbPhrase tmp = (VerbPhrase)S.getLast();
-                    S.removeLast();
-                    S.add(new VerbPhrase(tmp, new Adverb(words[i])));
-                } else {
-                    throw new Exception("Illegal Sentence Structure - RB");
-                }
+            } else if(tags[i].equals("VBG")) {
+                sentenceTree.add(new Gerund(words[i]));
             } else if(tags[i].equals("CD")) {
-                // Word is a number - treat as NounPhrase
-                if(S.isEmpty()) {
-                    /**
-                     * Could be an answer 
-                     */
-                    S.add(new NounPhrase(new Digit(words[i])));
-                } else if(S.getLast()instanceof NounPhrase) {
-                    throw new Exception("Illegal Sentence Structure - Digit cannot follow NP");
-                } else if(S.getLast()instanceof VerbPhrase) {
-                    VerbPhrase tmp = (VerbPhrase)S.getLast();
-                    S.removeLast();
-                    S.add(new VerbPhrase(tmp, new NounPhrase(new Digit(words[i]))));
-                } else if(S.getLast()instanceof Preposition) {
-                    Preposition tmp = (Preposition)S.getLast();
-                    S.removeLast();
-                    S.add(new PrepositionalPhrase(tmp, new NounPhrase(new Digit(words[i]))));
+                sentenceTree.add(new Digit(words[i]));
+            } else if(tags[i].equals("JJ")) {
+                sentenceTree.add(new Adjective(words[i]));
+            } else if(tags[i].equals("RB")) {
+                sentenceTree.add(new Adverb(words[i]));
+            } else if(tags[i].equals("MD")) {
+                sentenceTree.add(new Modal(words[i]));
+            } else if(tags[i].equals("IN")) {
+                sentenceTree.add(new Preposition(words[i]));
+            } else if(tags[i].equals("DT")) {
+                sentenceTree.add(new Article(words[i]));
+            } else if(tags[i].equals("CC")) {
+                sentenceTree.add(new Conjunction(words[i]));
+            } else if(tags[i].equals("TO")) {
+                if(i < tags.length-1) {
+                    if(tags[i+1].contains("NN")) {
+                        sentenceTree.add(new Preposition(words[i]));
+                    } else {
+                        sentenceTree.add(new To(words[i]));
+                    }
                 } else {
-                    throw new Exception("Illegal Sentence Structure - CD");
-                }
+                    sentenceTree.add(new To(words[i]));
+                }                
+            } else if(tags[i].equals("UH")) {
+                sentenceTree.add(new Noun(words[i]));
             }
-            if(S.getLast()instanceof NounPhrase) {
-                // Sentence ends in NounPhrase → not correct, further checks needed
-                if(S.size() > 2) {
-                    // More than two Phrases in sentence
-                    if(S.get(S.size()-2)instanceof VerbPhrase) {
-                        // If the second last Phrase is VerbPhrase and last is NounPhrase, create a VerbPhrase of them
-                        NounPhrase np_tmp = (NounPhrase)S.getLast();
-                        VerbPhrase vp_tmp = (VerbPhrase)S.get(S.size()-2);
-                        S.removeLast(); S.removeLast();
-                        S.add(new VerbPhrase(vp_tmp, np_tmp));
-                    } else if(S.get(S.size()-2)instanceof Preposition) {
-                        NounPhrase np_tmp = (NounPhrase)S.getLast();
-                        Preposition p_tmp = (Preposition)S.get(S.size()-2);
-                        S.removeLast(); S.removeLast();
-                        S.add(new PrepositionalPhrase(p_tmp, np_tmp));
-                    } else if(S.get(S.size()-2)instanceof Article) {
-                        NounPhrase np_tmp = (NounPhrase)S.getLast();
-                        Article a_tmp = (Article)S.get(S.size()-2);
-                        S.removeLast(); S.removeLast();
-                        S.add(new NounPhrase(a_tmp, np_tmp));
-                    } else if(S.get(S.size()-2)instanceof Modal) {
-                        NounPhrase np_tmp = (NounPhrase)S.getLast();
-
-                        Modal m_tmp = (Modal)S.get(S.size()-2);
-
-                        S.removeLast(); S.removeLast();
-                        S.add(new NounPhrase(m_tmp, np_tmp));
+        }
+//        System.out.println("Word identification");
+//        for (int i = 0; i < sentenceTree.size(); i++) {
+//            System.out.print(sentenceTree.get(i).toString()+" ");
+//        }
+//        System.out.println("\n----------------------");
+    }
+    /**
+     * Searches through a sentence to check for any compound 
+     * Nouns, i.e. words comprised of two words.
+     * 
+     * Example: Apple Pie, Strawberry Souflé ...
+     * 
+     * @author Robert Krantz
+     * @since 2008-05-13
+     * 
+     */
+    public void identifyCompoundNouns() {
+        for(int i = 0; i < sentenceTree.size(); i++) {
+            Object o = sentenceTree.get(i);
+            if(o instanceof Noun) {
+                if(i < sentenceTree.size()-1) {
+                    Object next = sentenceTree.get(i+1);
+                    if(next instanceof Noun) {
+                        sentenceTree.remove(i);
+                        sentenceTree.remove(i);
+                        Noun n = (Noun)o;
+                        n.makeCompoun(((Noun)next).getNoun());
+                        sentenceTree.add(i,n);
                     }
                 }
-            } if(S.getLast()instanceof PrepositionalPhrase) {
-                // Sentence ends in PrepositionalPhrase → not correct, further checks needed
-                if(S.size() > 2) {
-                    if(S.get(S.size()-2)instanceof NounPhrase) {
-                        PrepositionalPhrase pp_tmp = (PrepositionalPhrase)S.getLast();
-                        NounPhrase np_tmp = (NounPhrase)S.get(S.size()-2);
-                        S.removeLast(); S.removeLast();
-                        S.add(new NounPhrase(np_tmp, pp_tmp));
-                    } else if(S.get(S.size()-2)instanceof VerbPhrase) {
-                        PrepositionalPhrase pp_tmp = (PrepositionalPhrase)S.getLast();
-                        VerbPhrase vp_tmp = (VerbPhrase)S.get(S.size()-2);
-                        S.removeLast(); S.removeLast();
-                        S.add(new VerbPhrase(vp_tmp, pp_tmp));
-                    } else if(S.get(S.size()-2)instanceof Modal) {
-                        
-                        PrepositionalPhrase pp_tmp = (PrepositionalPhrase)S.getLast();
-
-                        Modal m_tmp = (Modal)S.get(S.size()-2);
-
-                        
-                        
-                        /**
-                         * If there is a Noun Phrase before the modal the 
-                         * modal itself cannot belong to a Noun Phrase but must 
-                         * be part of a Verb Phrase
-                         */
-                        if(S.get(S.size()-3)instanceof NounPhrase) {
-                            S.removeLast(); S.removeLast();
-                            S.add(new VerbPhrase(m_tmp, pp_tmp));
-                        } else {
-                            S.removeLast(); S.removeLast();
-                            S.add(new NounPhrase(m_tmp, pp_tmp));
+            }
+        }
+//        System.out.println("identifyCompoundNouns");
+//        for (int i = 0; i < sentenceTree.size(); i++) {
+//            System.out.print(sentenceTree.get(i).toString()+" ");
+//        }
+//        System.out.println("\n----------------------");
+    }
+    /**
+     * Searches through a sentence and if it finds an 
+     * Adjective Phrase tries to connect it with a following Noun.
+     * If it doesn't find any Noun following the Phrase it 
+     * assumes the Adjective is the object of the action and
+     * creates a Noun Phrase of it.
+     * 
+     * @author Robert Krantz
+     * @since 2008-05-13
+     */
+    public void connectAdjectiveWithNoun() {
+        for(int i = 0; i < sentenceTree.size(); i++) {
+            Object o = sentenceTree.get(i);
+            
+            if(o instanceof AdjectivePhrase) {
+                if(i < sentenceTree.size()-1) {
+                    Object next = sentenceTree.get(i+1);
+                    if(next instanceof Noun) {
+                        sentenceTree.remove(i);
+                        sentenceTree.set(i, new NounPhrase((AdjectivePhrase)o, 
+                                (Noun)next));
+                    } else {
+                        sentenceTree.set(i, new NounPhrase((AdjectivePhrase)o));
+                    }
+                } else {
+                    sentenceTree.set(i, new NounPhrase((AdjectivePhrase)o));
+                }
+            }
+        }
+//        System.out.println("connectAdjectiveWithNoun");
+//        for (int i = 0; i < sentenceTree.size(); i++) {
+//            System.out.print(sentenceTree.get(i).toString()+" ");
+//        }
+//        System.out.println("\n----------------------");
+    }
+    /**
+     * Connects an AdverbPhrase with a Verb forming
+     * a VerbPhrase
+     * 
+     * @author Robert Krantz
+     * @since 2008-05-13
+     */
+    public void connectAdverb() {
+        for(int i = 0; i < sentenceTree.size(); i++) {
+            Object o = sentenceTree.get(i);
+            if(o instanceof AdverbPhrase) {
+                if(i < sentenceTree.size()-1) {
+                    Object next = sentenceTree.get(i+1);
+                    if(next instanceof Verb) {
+                        sentenceTree.remove(i);
+                        sentenceTree.set(i, new VerbPhrase((AdverbPhrase)o,
+                                (Verb)next));
+                    }
+                }
+            }
+        }
+//        System.out.println("connectAdverb");
+//        for (int i = 0; i < sentenceTree.size(); i++) {
+//            System.out.print(sentenceTree.get(i).toString()+" ");
+//        }
+//        System.out.println("\n----------------------");
+    }
+    /**
+     * Connects NounPhrase with PrepositionalPhrase forming
+     * a NounPhrase
+     * 
+     * @author Robert Krantz
+     * @since 2008-05-13
+     */
+    public void connectPrepPhraseWithNounPhrase() {
+        for(int i = 0; i < sentenceTree.size(); i++) {
+            Object o = sentenceTree.get(i);
+            if(o instanceof NounPhrase) {
+                if(i < sentenceTree.size()-1) {
+                    Object next = sentenceTree.get(i+1);
+                    if(next instanceof PrepositionalPhrase) {
+                        sentenceTree.remove(i);
+                        sentenceTree.remove(i);
+                        sentenceTree.add(i,new NounPhrase((NounPhrase)o, (PrepositionalPhrase)next));
+                    }
+                }
+            }
+        }
+//        System.out.println("connectPrepPhraseWithNounPhrase");
+//        for (int i = 0; i < sentenceTree.size(); i++) {
+//            System.out.print(sentenceTree.get(i).toString()+" ");
+//        }
+//        System.out.println("\n----------------------");
+    }
+    /**
+     * @author Robert Krantz
+     * @throws java.lang.Exception
+     * @since 2008-05-13
+     */
+    public void identifyInfinitiveForm() throws Exception {
+        for(int i = 0; i < sentenceTree.size(); i++) {
+            Object o = sentenceTree.get(i);
+            if(o instanceof To) {
+                if(i < sentenceTree.size()-1) {
+                    Object next = sentenceTree.get(i+1);
+                    if(next instanceof Verb) {
+                        sentenceTree.remove(i);
+                        sentenceTree.set(i, new VerbPhrase((To)o, (Verb)next));
+                    } else {
+                        throw new Exception("Incorrect placement of infinitive marker");
+                    }
+                }
+            }
+        }
+//        System.out.println("identifyInfinitiveForm");
+//        for (int i = 0; i < sentenceTree.size(); i++) {
+//            System.out.print(sentenceTree.get(i).toString()+" ");
+//        }
+//        System.out.println("\n----------------------");
+    }
+    public void connectModals() throws Exception {
+        for(int i = 0; i < sentenceTree.size(); i++) {
+            Object o = sentenceTree.get(i);
+            if(o instanceof Modal) {
+                if(i < sentenceTree.size()-1) {
+                    Object next = sentenceTree.get(i+1);
+                    if(next instanceof VerbPhrase) {
+                        sentenceTree.remove(i);
+                        sentenceTree.set(i, new VerbPhrase((Modal)o, (VerbPhrase)next));
+                    } else if(next instanceof PrepositionalPhrase) {
+                        sentenceTree.remove(i);
+                        sentenceTree.set(i, new VerbPhrase((Modal)o, (PrepositionalPhrase)next));
+                    } else {
+                        throw new Exception("Incorrect placement of Modal");
+                    }
+                } else {
+                    throw new Exception("Incorrect placement of Modal");
+                }
+            }
+        }
+//        System.out.println("connectModals");
+//        for (int i = 0; i < sentenceTree.size(); i++) {
+//            System.out.print(sentenceTree.get(i).toString()+" ");
+//        }
+//        System.out.println("\n----------------------");
+    }
+    public void connectVerbPhrasesWithNounPhrases() {
+        for(int i = 0; i < sentenceTree.size(); i++) {
+            Object o = sentenceTree.get(i);
+            if(o instanceof VerbPhrase) {
+                if(i < sentenceTree.size()-1) {
+                    Object next = sentenceTree.get(i+1);
+                    if(next instanceof NounPhrase) {
+                        sentenceTree.remove(i);
+                        sentenceTree.set(i, new VerbPhrase(
+                                (VerbPhrase)o,(NounPhrase)next));
+                    }
+                }
+            }
+        }
+//        System.out.println("connectVerbPhrases");
+//        for (int i = 0; i < sentenceTree.size(); i++) {
+//            System.out.print(sentenceTree.get(i).toString()+" ");
+//        }
+//        System.out.println("\n----------------------");
+    }
+    public void connectVerbPhrasesWithPrep() {
+        for(int i = 0; i < sentenceTree.size(); i++) {
+            Object o = sentenceTree.get(i);
+            if(o instanceof VerbPhrase) {
+                if(i < sentenceTree.size()-1) {
+                    Object next = sentenceTree.get(i+1);
+                    if(next instanceof PrepositionalPhrase) {
+                        sentenceTree.remove(i);
+                        sentenceTree.set(i, new VerbPhrase(
+                                (VerbPhrase)o,(PrepositionalPhrase)next));
+                    }
+                }
+            } else if(o instanceof PrepositionalPhrase) {
+                if(i > 0) {
+                    Object previous = sentenceTree.get(i-1);
+                    if(previous instanceof VerbPhrase) {
+                        sentenceTree.remove(i-1);
+                        sentenceTree.set(i-1, new VerbPhrase(
+                                (VerbPhrase)previous,(PrepositionalPhrase)o));
+                    }
+                }
+            }
+        }
+//        System.out.println("connectVerbPhrasesWithPrep");
+//        for (int i = 0; i < sentenceTree.size(); i++) {
+//            System.out.print(sentenceTree.get(i).toString()+" ");
+//        }
+//        System.out.println("\n----------------------");
+    }
+    public void identifyNounPhrases() throws Exception {        
+        for (int i = 0; i < sentenceTree.size(); i++) {
+            Object o = sentenceTree.get(i);
+            if(o instanceof Noun) {
+                if(i > 0) {
+                    Object previous = sentenceTree.get(i-1);
+                    /**
+                     * Article Noun
+                     */
+                    if(previous instanceof AdjectivePhrase) {
+                        sentenceTree.remove(i-1);
+                        sentenceTree.set(i-1,new NounPhrase((AdjectivePhrase)previous, (Noun)o));                       
+                    } else if(previous instanceof Article) {
+                        sentenceTree.remove(i-1);
+                         sentenceTree.set(i-1,new NounPhrase((Article)previous, (Noun)o));
+                    } else if(previous instanceof Preposition) {
+                        sentenceTree.set(i,new NounPhrase((Noun)o));
+                    } else if(previous instanceof Verb) {
+                        sentenceTree.set(i, new NounPhrase((Noun)o));
+                    } else if(previous instanceof VerbPhrase) {
+                        sentenceTree.set(i, new NounPhrase((Noun)o));
+                    } else if(previous instanceof Conjunction) {
+                        sentenceTree.set(i, new NounPhrase((Noun)o));
+                    } else if(previous instanceof Preposition) {
+                        sentenceTree.set(i, new NounPhrase((Noun)o));
+                    }
+                } else {
+                    /**
+                     * First word in sentence is a noun, 
+                     * can be an answer
+                     */
+                    sentenceTree.set(i, new NounPhrase((Noun)o));
+                }
+            } else if(o instanceof Pronoun) {
+                if(i < sentenceTree.size()-1) {
+                    Object next = sentenceTree.get(i+1);
+                    if(next instanceof Verb || next instanceof Modal ||
+                            next instanceof Preposition ||
+                            next instanceof Adverb) {
+                        sentenceTree.set(i,new  NounPhrase((Pronoun)o));
+                    }
+                } else {
+                    /**
+                     * Last word in sentence, object is Pronoun
+                     */
+                    sentenceTree.set(i,new  NounPhrase((Pronoun)o));
+                }
+            } else if(o instanceof Modal) {
+                if(i < sentenceTree.size()-1) {
+                    Object next = sentenceTree.get(i+1);
+                    if(next instanceof Pronoun) {
+                        sentenceTree.remove(i);
+                        sentenceTree.remove(i);
+                        sentenceTree.add(i,new NounPhrase((Modal)o, new NounPhrase((Pronoun)next)));
+                    }
+                }
+            } else if(o instanceof Article) {
+                if(i < sentenceTree.size()-1) {
+                    Object next = sentenceTree.get(i+1);
+                    if(next instanceof NounPhrase) {
+                        sentenceTree.remove(i);
+                        sentenceTree.remove(i);
+                        sentenceTree.add(i, new NounPhrase((Article)o, (NounPhrase)next));
+                    } else if(next instanceof AdjectivePhrase) {
+                        sentenceTree.remove(i);
+                        sentenceTree.remove(i);
+                        sentenceTree.add(i, new NounPhrase((Article)o, 
+                                new NounPhrase((AdjectivePhrase)next)));
+                    }
+                }
+            } else if(o instanceof Digit) {
+                if(i < sentenceTree.size()-1) {
+                    Object next = sentenceTree.get(i+1);
+                    if(next instanceof Noun) {
+                        sentenceTree.remove(i);
+                        sentenceTree.set(i,new NounPhrase((Digit)o,(Noun)next));
+                    } else {
+                        sentenceTree.set(i,new NounPhrase((Digit)o));
+                    }
+                } else {
+                    sentenceTree.set(i,new NounPhrase((Digit)o));
+                }
+            } else if(o instanceof NounPhrase) {
+                if(i < sentenceTree.size()-1) {
+                    Object next = sentenceTree.get(i+1);
+                    if(next instanceof PrepositionalPhrase) {
+                        sentenceTree.remove(i);
+                        sentenceTree.set(i,new NounPhrase((NounPhrase)o, (PrepositionalPhrase)next));
+                    }
+                }
+            } else if(o instanceof Gerund) {
+                if(i < sentenceTree.size()-1) {
+                    Object next = sentenceTree.get(i+1);
+                    if(next instanceof Noun) {
+                        sentenceTree.remove(i);
+                        sentenceTree.set(i, new NounPhrase((Gerund)o, (Noun)next));                        
+                    }
+                } else {
+                    sentenceTree.set(i, new NounPhrase((Gerund)o));
+                }
+            }
+        }
+//        System.out.println("IdentifyNounPhrase");
+//        for (int i = 0; i < sentenceTree.size(); i++) {
+//            System.out.print(sentenceTree.get(i).toString()+" ");
+//        }
+//        System.out.println("\n----------------------");
+    }    
+    public void identifyVerbPhrases() {
+        for(int i = 0; i < sentenceTree.size(); i++) {
+            Object o = sentenceTree.get(i);
+            if(o instanceof AdverbPhrase) {
+                if(i < sentenceTree.size()-1) {
+                    Object next = sentenceTree.get(i+1);
+                    if(next instanceof Verb) {
+                        sentenceTree.remove(i);
+                        sentenceTree.remove(i);
+                        sentenceTree.add(i,new VerbPhrase((AdverbPhrase)o, (Verb)next));
+                    }
+                }
+            } else if(o instanceof Verb) {
+                if(i < sentenceTree.size()-1) {
+                    Object next = sentenceTree.get(i+1);
+                    if(next instanceof NounPhrase) {
+                        sentenceTree.remove(i);
+                        sentenceTree.set(i,new VerbPhrase(new VerbPhrase((Verb)o),
+                                (NounPhrase)next));
+                    } else if(next instanceof AdjectivePhrase) {
+                        sentenceTree.remove(i);
+                        sentenceTree.set(i,new VerbPhrase(new VerbPhrase((Verb)o),
+                                (AdjectivePhrase)next));
+                    } else if(next instanceof AdverbPhrase) {
+                        sentenceTree.remove(i);
+                        sentenceTree.set(i, new VerbPhrase((Verb)o,
+                                (AdverbPhrase)next));
+                    }
+                } else if(i > 0) {
+                    Object previous = sentenceTree.get(i-1);
+                    if(previous instanceof NounPhrase) {
+                        sentenceTree.set(i, new VerbPhrase((Verb)o));
+                    }
+                }
+            }
+        }
+//        System.out.println("IdentifyVerbPhrase");
+//        for (int i = 0; i < sentenceTree.size(); i++) {
+//            System.out.print(sentenceTree.get(i).toString()+" ");
+//        }
+//        System.out.println("\n----------------------");
+    }
+    public void identifyAuxiliaries() {
+        for(int i = 0; i < sentenceTree.size(); i++) {
+            Object o = sentenceTree.get(i);
+            if(o instanceof Verb) {
+                if(i < sentenceTree.size()-1) {
+                    Object next = sentenceTree.get(i+1);
+                    if(next instanceof VerbPhrase) {
+                        sentenceTree.remove(i);
+                        sentenceTree.set(i,new VerbPhrase((Verb)o,
+                                (VerbPhrase)next));
+                    }
+                }
+            }
+        }
+//        System.out.println("identifyAuxiliaries");
+//        for (int i = 0; i < sentenceTree.size(); i++) {
+//            System.out.print(sentenceTree.get(i).toString()+" ");
+//        }
+//        System.out.println("\n----------------------");
+    }
+    public void identifyPrepositionalPhrases() {
+        for(int i = 0; i < sentenceTree.size(); i++) {
+            Object o = sentenceTree.get(i);
+            if(o instanceof Preposition) {
+                if(i < sentenceTree.size()-1) {
+                    Object next = sentenceTree.get(i+1);
+                    if(next instanceof NounPhrase) {
+                        sentenceTree.remove(i);
+                        sentenceTree.set(i,new PrepositionalPhrase((Preposition)o, 
+                                (NounPhrase)next));
+                    } else if(next instanceof VerbPhrase) {
+                        Object left = ((VerbPhrase)next).getLeft();
+                        if(left instanceof To) {
+                            sentenceTree.remove(i);
+                            sentenceTree.set(i, new PrepositionalPhrase((Preposition)o, 
+                                    (VerbPhrase)next));
                         }
                     }
                 }
-            } 
+            }
         }
-        if(S.getLast()instanceof NounPhrase) {
-            // Sentence ends in NounPhrase → not correct, further checks needed
-            if(S.size() > 2) {
-                // More than two Phrases in sentence
-                if(S.get(S.size()-2)instanceof VerbPhrase) {
-                    // If the second last Phrase is VerbPhrase and last is NounPhrase, create a VerbPhrase of them
-                    NounPhrase np_tmp = (NounPhrase)S.getLast();
-                    VerbPhrase vp_tmp = (VerbPhrase)S.get(S.size()-2);
-                    S.removeLast(); S.removeLast();
-                    S.add(new VerbPhrase(vp_tmp, np_tmp));
-                } else if(S.get(S.size()-2)instanceof Preposition) {
-                    NounPhrase np_tmp = (NounPhrase)S.getLast();
-                    Preposition p_tmp = (Preposition)S.get(S.size()-2);
-                    S.removeLast(); S.removeLast();
-                    S.add(new PrepositionalPhrase(p_tmp, np_tmp));
+//        System.out.println("IdentifyPrep");
+//        for (int i = 0; i < sentenceTree.size(); i++) {
+//            System.out.print(sentenceTree.get(i).toString()+" ");
+//        }
+//        System.out.println("\n----------------------");
+    }
+    public void identifyAdverbPhrases() {
+        for(int i = 0; i < sentenceTree.size(); i++) {
+            Object o = sentenceTree.get(i);
+            if(o instanceof Adverb) {
+                if(i > 0) {
+                    Object tmp = sentenceTree.get(i-1);
+                    if(tmp instanceof AdverbPhrase) {
+                        sentenceTree.remove(i-1);
+                        sentenceTree.remove(i-1);
+                        sentenceTree.add(i-1, new AdverbPhrase((AdverbPhrase)tmp, (Adverb)o));
+                    } else {
+                        sentenceTree.remove(i);
+                        sentenceTree.add(i, new AdverbPhrase((Adverb)o));
+                    }
+                } else {
+                    sentenceTree.remove(i);
+                    sentenceTree.add(i, new AdverbPhrase((Adverb)o));
+                }                
+            }
+        }
+//        System.out.println("IdentifyAdverb");
+//        for (int i = 0; i < sentenceTree.size(); i++) {
+//            System.out.print(sentenceTree.get(i).toString()+" ");
+//        }
+//        System.out.println("\n----------------------");
+    }
+    public void identifyAdjectivePhrases() {
+        for(int i = 0; i < sentenceTree.size(); i++) {
+            Object o = sentenceTree.get(i);
+            if(o instanceof Adjective) {
+                sentenceTree.remove(i);
+                sentenceTree.add(i, new AdjectivePhrase((Adjective)o));
+            } else if(o instanceof AdverbPhrase) {
+                if(i < sentenceTree.size()-1) {
+                    Object tmp = sentenceTree.get(i+1);
+                    if(tmp instanceof Adjective) {
+                        sentenceTree.remove(i);
+                        sentenceTree.remove(i);
+                        sentenceTree.add(i,new AdjectivePhrase((AdverbPhrase)o, (Adjective)tmp));
+                    }
                 }
             }
-        } else if(S.getLast()instanceof PrepositionalPhrase) {
-            if(S.size() >= 2) {
-                if(S.get(S.size()-2)instanceof NounPhrase) {
-                    PrepositionalPhrase pp_tmp = (PrepositionalPhrase)S.getLast();
-                    NounPhrase np_tmp = (NounPhrase)S.get(S.size()-2);
-                    S.removeLast(); S.removeLast();
-                    S.add(new NounPhrase(np_tmp, pp_tmp));
-                } else if(S.get(S.size()-2)instanceof VerbPhrase) {
-                    PrepositionalPhrase pp_tmp = (PrepositionalPhrase)S.getLast();
-                    VerbPhrase vp_tmp = (VerbPhrase)S.get(S.size()-2);
-                    S.removeLast(); S.removeLast();
-                    S.add(new VerbPhrase(vp_tmp, pp_tmp));
-                }
-            }
-        } else if(S.getLast()instanceof VerbPhrase && S.get(S.size()-2)instanceof Preposition) {
-            VerbPhrase vp_tmp = (VerbPhrase)S.getLast();            
-            S.removeLast();
-            Preposition p_tmp = (Preposition)S.getLast();
-            S.removeLast();
-            S.add(new RelClause(p_tmp, vp_tmp));
         }
-        for (int i = 0; i < S.size(); i++) {
-            System.out.println(S.get(i));
-        }
-
-        return S;
+//        System.out.println("IdentifyAdjective");
+//        for (int i = 0; i < sentenceTree.size(); i++) {
+//            System.out.print(sentenceTree.get(i).toString()+" ");
+//        }
+//        System.out.println("\n----------------------");
     }
 }
