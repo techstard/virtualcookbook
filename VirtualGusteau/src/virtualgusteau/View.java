@@ -199,10 +199,4 @@ public class View extends JFrame implements Observer {
             recipeArea.setText(model.getIngredients());
         }
     }
-    
-    public void setAvatar(String img) {
-        ImageIcon icon = new ImageIcon("graphics/" + img);
-        //JLabel label = new JLabel();
-        label.setIcon(icon);
-    }
 }
