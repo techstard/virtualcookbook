@@ -7,16 +7,12 @@ import javax.swing.*;
 import java.util.*;
 import javax.swing.border.*;
 import javax.swing.ImageIcon;
-import java.awt.image.*;
-import java.io.*;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
 import java.text.DateFormat;
-import grammar.*;
-
+import java.net.URL;
 
 /**
  * @author Robert Krantz
@@ -65,7 +61,8 @@ public class View extends JFrame implements Observer {
         controller = new Controller(model);
         
         setTitle("Virtual Gusteau");
-        setIconImage(new ImageIcon("graphics/Gusteau_icon.jpg").getImage());
+        Image gusteau_icon = Toolkit.getDefaultToolkit().getImage("Gusteau_icon.jpg");
+        setIconImage(gusteau_icon);        
         createMenu();
         
         left = new JPanel();
@@ -114,8 +111,8 @@ public class View extends JFrame implements Observer {
         right.setBorder(BorderFactory.createEtchedBorder());
         right.setLayout(null);
         
-        ImageIcon icon = new ImageIcon("graphics/Gusteau_icon_200px.jpg");
-        //JLabel label = new JLabel();
+        Image gusteau_large = Toolkit.getDefaultToolkit().getImage("Gusteau_icon_200px.jpg");
+        ImageIcon icon = new ImageIcon(gusteau_large);
         label.setIcon(icon);
         
         pictureFrame.setLayout(null);
@@ -155,38 +152,23 @@ public class View extends JFrame implements Observer {
         tools.setMnemonic(KeyEvent.VK_T);
 
         JMenuItem fileClose = new JMenuItem("Close");
-        ImageIcon close_icon = new ImageIcon("graphics/close-16x16.png");
+        Image close_image = Toolkit.getDefaultToolkit().getImage("close-16x16.png");
+        ImageIcon close_icon = new ImageIcon(close_image);
         fileClose.setIcon(close_icon);
         fileClose.setMnemonic(KeyEvent.VK_C);
         fileClose.setActionCommand("10");
         fileClose.addActionListener(controller);
 
         JMenuItem about = new JMenuItem("About");
-        ImageIcon about_icon = new ImageIcon("graphics/info-about-16x16.png");
+        Image about_image = Toolkit.getDefaultToolkit().getImage("info-about-16x16.png");
+        ImageIcon about_icon = new ImageIcon(about_image);
         about.setIcon(about_icon);
         about.setMnemonic(KeyEvent.VK_A);
         about.setActionCommand("30");
         about.addActionListener(controller);
-        
-        JMenuItem pref = new JMenuItem("Preferences");
-        pref.setMnemonic(KeyEvent.VK_P);
-        
-        ImageIcon pref_icon = new ImageIcon("graphics/preferences-16x16.png");
-        pref.setIcon(pref_icon);
-        pref.setActionCommand("20");        
-        pref.addActionListener(controller);
-        
-        tools.add(pref);
-        
-        JMenuItem helpMe = new JMenuItem("Help Topics");
-        ImageIcon help_icon = new ImageIcon("graphics/help-16x16.png");
-        helpMe.setIcon(help_icon);
-        helpMe.setMnemonic(KeyEvent.VK_E);
-        helpMe.addActionListener(controller);
 
         file.add(fileClose);
         help.add(about);
-        help.add(helpMe);
 
         menubar.add(file);
         menubar.add(tools);
@@ -215,7 +197,6 @@ public class View extends JFrame implements Observer {
             chatArea.setCaretPosition(chatArea.getDocument().getLength());
             recipeArea.setText("");
             recipeArea.setText(model.getIngredients());
-            //recipeArea.append();
         }
     }
     

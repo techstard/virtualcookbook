@@ -1,12 +1,9 @@
 
 package virtualgusteau;
 
-import java.io.*;
-import java.util.*;
-
 /**
  *
- * @author rkrantz
+ * @author Robert Krantz
  */
 public class Main {
 
@@ -15,15 +12,10 @@ public class Main {
      */
     public static void main(String[] args) {
         Model model = new Model();
-        View view = new View(model);
-        
-        
-        SplashDialog sd = new SplashDialog("graphics/Gusteau.jpg",view.getFrames()[0],model);
-        
-        model.addObserver(view);
-        
-        view.setVisible(true);
-        
+        View view = new View(model);        
+        SplashDialog sd = new SplashDialog(view.getFrames()[0],model);        
+        model.addObserver(view);        
+        view.setVisible(true);        
         model.initiate();
     }
 }

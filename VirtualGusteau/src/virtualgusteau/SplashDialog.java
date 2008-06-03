@@ -2,15 +2,15 @@ package virtualgusteau;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import com.knowledgebooks.nlp.fasttag.FastTag;
 
 class SplashDialog extends JWindow 
 {    
-    public SplashDialog(String filename, Frame f, Model model)
+    public SplashDialog(Frame f, Model model)
     {
         super(f);
-        JLabel l = new JLabel(new ImageIcon(filename));
+        Image splash_image = Toolkit.getDefaultToolkit().getImage("Gusteau.jpg");
+        JLabel l = new JLabel(new ImageIcon(splash_image));
         JLabel label = new JLabel("Hashing Lexicon...");
         getContentPane().add(l, BorderLayout.CENTER);
         getContentPane().add(label, BorderLayout.SOUTH);
