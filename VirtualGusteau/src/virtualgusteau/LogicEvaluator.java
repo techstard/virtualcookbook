@@ -96,7 +96,7 @@ public class LogicEvaluator {
                     }
                 }
             } else if(amPhrases.contains(action.getName())) {
-                if(action.getTarget().getName().matches("lactose")) {
+                if(action.getTarget().getName().matches("lactose|lactoseintolerant")) {
                     kb.addCategoriesNotWanted("dairy");
                 }
                 if(action.getTarget().getName().equals("allergic") && action.getTarget().getSubTarget() !=null) {
@@ -162,22 +162,24 @@ public class LogicEvaluator {
                 kb.setNrOfPersons(n);
             }
             if(!target.isNegation()) {
-                if(isCategory(target)) {
-                    handleCategory(target, false);
-                } else if(isIngredient(target)) {
-                    handleIngredient(target, false);
-                } else {
-                    handleUnknown(target, false);
-                }
+                handleSubTarget(target, false);
+//                if(isCategory(target)) {
+//                    handleCategory(target, false);
+//                } else if(isIngredient(target)) {
+//                    handleIngredient(target, false);
+//                } else {
+//                    handleUnknown(target, false);
+//                }
             } else {
                 // User does not want this category
-                if(isCategory(target)) {
-                    handleCategory(target, true);
-                } else if(isIngredient(target)) {
-                    handleIngredient(target, true);
-                } else {
-                    handleUnknown(target, true);
-                }
+//                if(isCategory(target)) {
+//                    handleCategory(target, true);
+//                } else if(isIngredient(target)) {
+//                    handleIngredient(target, true);
+//                } else {
+//                    handleUnknown(target, true);
+//                }
+                handleSubTarget(target, true);
             }
         }
     }
