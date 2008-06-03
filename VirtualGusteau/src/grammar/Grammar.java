@@ -104,8 +104,8 @@ public class Grammar {
     public boolean identifyKeyWords(String[] tags, String[] words) {
         if(words.length == 1) {
             String word = words[0];
-            if(word.toLowerCase().matches("[yes|ok|sure|no|quit|restart|hello|greetings|hi|goodbye|bye|" +
-                    "leave|exit]")) {
+            if(word.toLowerCase().matches("yes|ok|sure|no|quit|restart|hello|greetings|hi|goodbye|bye|" +
+                    "leave|exit")) {
                 keyWord = word;
                 return true;
             }

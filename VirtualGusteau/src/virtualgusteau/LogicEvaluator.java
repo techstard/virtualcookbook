@@ -96,7 +96,7 @@ public class LogicEvaluator {
                     }
                 }
             } else if(amPhrases.contains(action.getName())) {
-                if(action.getTarget().getName().matches("lactose|lactoseintolerant")) {
+                if(action.getTarget().getName().toLowerCase().matches("lactose[a-z| ]*")) {
                     kb.addCategoriesNotWanted("dairy");
                 }
                 if(action.getTarget().getName().equals("allergic") && action.getTarget().getSubTarget() !=null) {
