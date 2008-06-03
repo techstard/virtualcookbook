@@ -76,13 +76,6 @@ public class Model extends Observable {
      */
     public void parse(String arg) {
         
-        if(arg.toLowerCase().matches("i pity the fool[a-z|' ']*")) {
-            View v = new View(this);
-            v.setAvatar("mrT.jpg");
-            v.repaint();
-            System.out.println("shut up fool!");
-        }
-        
         words = Tokenizer.wordsToArray(arg);
         tags = fastTag.tag(words);
         userInput = arg;
