@@ -190,7 +190,7 @@ public class LogicEvaluator {
      */
     public boolean isCategory(Target tag) {
         String name = tag.getName().toLowerCase();
-        if(name.equals("something") || name.equals("dinner") || name.equals("meal")) {
+        if(name.matches("something|dinner|dish|meal")) {
             return true;
         } else {
             DB_connect db = new DB_connect();
