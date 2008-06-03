@@ -35,9 +35,9 @@ public class FastTag {
         try {
             //System.out.println("Starting kbs.fasttag.FastTag static initialization...");
             InputStream ins = FastTag.class.getResourceAsStream("lexicon.txt");
-            if (ins == null) {
-                ins = new FileInputStream("data/lexicon.txt");
-            }
+//            if (ins == null) {
+//                ins = new FileInputStream("data/lexicon.txt");
+//            }
             if (ins == null) {
                 System.out.println("Failed to open 'lexicon.txt'");
                 System.exit(1);
