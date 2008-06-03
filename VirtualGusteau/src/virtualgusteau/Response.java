@@ -37,9 +37,9 @@ public class Response {
         LinkedList<String> notWantedCategories = kb.getCategoriesNotWanted();
         LinkedList<String> wantedDishes = kb.getDishesWanted();
 
-//        if (kb.getCurrentState() == state.ALLERGIC) {
-//        	return "What are you allergic to?";
-//        }
+        if (kb.getCurrentState() == state.ALLERGIC) {
+        	return "What are you allergic to?";
+        }
 
 //        LinkedList<String> wantedDishes = kb.getDishesWanted();
         
@@ -71,6 +71,8 @@ public class Response {
             		else
             			response += ".";
             	}
+            } else if (!notWanted.isEmpty()) {
+                response = "So what is it that you want?";
             } else {
                 response = "You haven't told me what you want, I'm good but not that good...";
             }
