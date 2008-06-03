@@ -54,51 +54,6 @@ public class LogicEvaluator {
         return memory;
     }
     
-    public void checkAnafora(Object obj) {
-        
-    }
-    public String rationalResponse() {
-        LinkedList rID;
-        LinkedList<String[]> ingredients = new LinkedList<String[]>();
-        DB_connect db = new DB_connect();
-        Iterator iw = kb.iWIterator();
-        
-        if(!iw.hasNext())
-            return "OMG my brain is empty!";
-        
-        rID = db.searchRecipe(iw);
-        //db.closeConnection();
-        System.out.println("size: "+rID.size());
-        int id;
-        String[] tmp;
-        TreeMap<String,Value> basket = new TreeMap<String, Value>();
-        
-        for (int i = 0; i < rID.size(); i++) {
-            id = (Integer)rID.get(i);
-            //ingredients.add(db.getIngredients(id));
-            tmp = db.getIngredients(id);
-            for (int j = 0; j < tmp.length; j++) {
-               // if(!kbv.checkConsistency(kb.getIngredientsNotWanted(), tmp[j])) { //true → ingredients is ok, add to basket
-                Value v = basket.get(tmp[j]);
-                if(v == null) {
-                    // no value found → no ingredient of that name
-                    basket.put(tmp[j], new Value(1,id));
-                } else {
-                    v.addRID(id);
-                    v.incrementCounter();
-                    basket.put(tmp[j], v);
-                }
-               // }
-                //desition trees.  (ID tree)
-            }
-        }
-        System.out.println(basket.toString());
-        System.out.println("size: "+basket.size());
-        db.closeConnection();
-                
-        return "lol"; //TODO
-    }
-
     /**
      * Extracts ingredient and/or category from the inputed 
      * object and puts it in the correct part of KB, depending 
@@ -111,11 +66,6 @@ public class LogicEvaluator {
         // If object is an action
         if(obj instanceof Action) {
             Action action = (Action)obj;
-//            if(action.getName().equals("allergic"))
-//                kb.setCurrentState(Response.state.ALLERGIC);
-//            else
-//                kb.setCurrentState(Response.state.NORMAL);
-            
             if(wantPhrases.contains(action.getName())) {
                 int n = action.getNumberOfPeople();
                 if(n != 0) {
@@ -134,10 +84,6 @@ public class LogicEvaluator {
                         handleUnknown(target, false);
                     }
                 } else {
-                    if(kb.getCurrentState() == Response.state.ALLERGIC) {
-                        if(target.getSubTarget() != null)
-                            handleSubTarget(target.getSubTarget(), true);
-                    }
                     // The Action is NEGATED
                     if(isCategory(target)) {
                         handleCategory(target,true);
@@ -150,11 +96,24 @@ public class LogicEvaluator {
                     }
                 }
             } else if(amPhrases.contains(action.getName())) {
-//                if(action.getTarget().getName().equals("allergic") && action.getTarget().getSubTarget() !=null) {
-//                    handleSubTarget(action.getTarget().getSubTarget(), true);
-//                } else if(action.getTarget().getName().equals("allergic")) {
-//                    kb.setCurrentState(Response.state.ALLERGIC);
-//                }
+                if(action.getTarget().getName().matches("lactose")) {
+                    kb.addCategoriesNotWanted("dairy");
+                }
+                if(action.getTarget().getName().equals("allergic") && action.getTarget().getSubTarget() !=null) {
+                    handleSubTarget(action.getTarget().getSubTarget(), true);
+                    return;
+                } else if(action.getTarget().getName().equals("allergic")) {
+                    kb.setCurrentState(Response.state.ALLERGIC);
+                    return;
+                }
+                
+                if(kb.getCurrentState() == Response.state.ALLERGIC)
+                {
+                    handleSubTarget(action.getTarget(), true);
+                    kb.setCurrentState(Response.state.NORMAL);
+                    return;
+                }
+                
                 if(action.getNumberOfPeople() != 0) {
                     kb.setNrOfPersons(action.getNumberOfPeople());
                 } else if(action.getTarget().getName().toLowerCase().equals("legion")) {
@@ -192,12 +151,11 @@ public class LogicEvaluator {
         } else if(obj instanceof Target) {
             // Object is a target
             Target target = (Target)obj;
-//            if(kb.getCurrentState() == Response.state.ALLERGIC) {
-//                target.getSubTarget().setNegation(true);
-//                handleSubTarget(target, true);
-//                kb.setCurrentState(Response.state.NORMAL);
-//                //return;
-//            }
+            if(kb.getCurrentState() == Response.state.ALLERGIC) {
+                handleSubTarget(target, true);
+                kb.setCurrentState(Response.state.NORMAL);
+                return;
+            }
             
             int n = target.getNumberOfPeople();
             if(n != 0) {
