@@ -1,0 +1,12 @@
+#Links to each members working diary.
+
+_back to Project Home ->_ http://code.google.com/p/virtualcookbook/
+
+# Diaries #
+
+  * Anders Lorentzen -> AndersDiary
+  * Magnus Spånggård -> MagnusDiary
+  * Olof Millberg -> OlofDiary
+  * Patrik Björkman -> PatrikDiary
+  * Robert Krantz -> RobertDiary
+  * Tobias Alette -> TobiasDiary

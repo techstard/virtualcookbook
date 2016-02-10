@@ -1,0 +1,77 @@
+# April 17 #
+Today we met with Fredrik and discussed the project. We got some things clearer and it now feels as if we are more on track and know what we should do next.
+
+After the meeting with Fredrik we sat down and made a simple bit of code so that we now can identify simple sentence structures such as verbs, nouns, objects and subjects.
+
+Work Time: 3h
+
+---
+
+# April 18 #
+Today I started analyzing the parser (FastTag.java and Tokenizer.java) in an attempt to get an understanding of it and to document it for later use in the report. When done I will hopefully have a quite explanatory Graph (UML) for how the parser works.
+
+Work Time: 3h
+
+---
+
+# April 22 #
+Started to work with the knowledge base.
+
+Work Time: 1.5h
+
+---
+
+# April 23 #
+"Finished" with the knowledge base and started to work with the logic.
+
+Work Time: 3h
+
+---
+
+# April 24 #
+Worked with the knowledge base and the logic.
+
+Work Time: 4h
+
+---
+
+# April 28 #
+Have been working with the logic. Have fixed so that the logic will convert all plural strings to singular so that we can add them to the kb (knowledge base) and later do querys towards the database.
+
+Work Time: 6h
+
+---
+
+# May 7 #
+Started work with the pragmatics and fixed so that we only use the classes from grammar to grammar related things.
+
+Work Time: 3h
+
+---
+
+# May 8 #
+Continued the work with the pragmatics.
+
+Work Time: 6h
+
+---
+
+# May 9 #
+Continued the work with the pragmatics.
+
+Work Time: 5h
+
+---
+
+# May 14 #
+Found bug that objects don't seems to be added to kb. Trying to solve
+
+Work Time: 1h
+
+---
+
+# May 15 #
+Fixed the bug that was found yesterday. Started working so that the input is correctly added and removed to and from the kb.
+I have also formed an idea (algorithm) for how to eliminate recipies.
+
+Work Time: 4h

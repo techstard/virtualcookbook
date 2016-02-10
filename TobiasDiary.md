@@ -1,0 +1,19 @@
+# Tobias Diary #
+
+## Week 1 ##
+
+## Week 2 ##
+
+## Week 3 ##
+
+18/4 -2008 :  3h trying to get the program to connect to the database correctly
+
+## Week 4 ##
+
+## Week 5 ##
+
+## Week 6 ##
+
+## Week 7 ##
+
+## Week 8 ##

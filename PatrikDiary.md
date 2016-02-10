@@ -1,0 +1,9 @@
+2008 04 17
+Hello diary!
+Today we had ourselfs a meeting with Fredrik and had a discussion about starting the I part of AI in our project.
+
+Later we started implementing, and have a crude verb-phrase-thing.
+
+We sat for about 7 hours.
+
+---

@@ -1,0 +1,11 @@
+# 17/4 #
+
+Today we met with Fredrik and he made our picture of the project a bit clearer. After that we worked on the parser and made it able to give a very simple sentence structure. At the moment it can identify subject, verb and object. Next task will probably be to handle more than one object.
+
+# ?/4 #
+
+Helped a bit with the parser and general grammatics. Thought about the structure of sentences and how to represent them as trees, and about auxillary verbs.
+
+# 29/4 #
+
+Met with Harald. Studied pragmatics.

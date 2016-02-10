@@ -1,0 +1,51 @@
+#contains planning and information about the report.
+
+_back to Project Home ->_ http://code.google.com/p/virtualcookbook/
+
+# Important #
+
+Things to think about when writing:
+
+  * Never write **"our"** and **"we"** when writing. Think of yourself as a neutral part trying to explain the project.
+  * If you find words that sounds hard to understand, enter them in the **wordlist**.
+  * You have to give **references** on everything you write, like the fasttag parser. Look below on how to give proper references.
+  * Write your chapter/s and **send them to Anders** so that he can manage them into the actual report.
+
+# Deadlines #
+
+Until the first deadline, chapter 1 and 2 should be written and done.
+
+**DEADLINE 1:** Sunday the 1st of June
+
+Until the second deadline, chapter 3 and the appendix should be written and done.
+
+**DEADLINE 2:** Thursday the 5th of June
+
+# Chapters #
+
+| 1 | INTRODUCTION | (Patrik) |
+|:--|:-------------|:---------|
+| 1.1 | THE PURPOSE  | (Patrik) |
+| - | -            | -        |
+| 2 | THE APPROACH | (Anders) |
+| 2.1 | THE APPLICATION | (Anders) |
+| 2.2 | FILE DESCRIPTION | (?)      |
+| 2.3 | THE GRAMMAR  | (Robert) |
+| 2.4 | THE PARSER   | (Robert) |
+| 2.5 | THE SEMANTICS | (Robert and Magnus) |
+| 2.6 | THE PRAGMATICS | (?)      |
+| 2.7 | THE RESPONSE | (Olof)   |
+| 2.8 | THE DATABASE	| (Anders and Tobias) |
+| 2.9 | THE KNOWLEDGEBASE | (Magnus and Patrik) |
+| - | -            | -        |
+| 3 | DISCUSSION   | (not yet decided) |
+| 3.1 | LIMITATIONS  | (?)      |
+| 3.1.1 | The Grammar  | (?)      |
+| 3.1.2 | The Parser   | (?)      |
+| 3.1.3 | The Response | (?)      |
+| 3.1.4 | The BDI Model | (?)      |
+| 3.1.5 | The Database Query | (?)      |
+| 3.2 | FUTURE DEVELOPMENT | (?)      |
+| - | -            | -        |
+| A | APPENDIX A   | (The least prioritized thing to write) |
+| A.1 | DIALOGUE EXAMPLE | (?)      |
